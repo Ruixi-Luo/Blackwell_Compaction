@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "all_30_chunks_with_special_tokens_fit_512": true,
+  "long_items": [
+    {
+      "id": "boolq-dev-02904",
+      "original_model_tokens": 599,
+      "chunk_tokens_without_special": [
+        493,
+        106
+      ],
+      "no_truncation": true
+    }
+  ]
+}

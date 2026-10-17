@@ -1,0 +1,194 @@
+{
+  "identity": {
+    "config": {
+      "run_name": "boolq_dev30_sc_llmlingua2_r50_seed20261017",
+      "dataset_split": "dev",
+      "sample_size": 30,
+      "sample_seed": 20261017,
+      "retained_ratio": 0.5,
+      "provider": "siliconflow",
+      "base_url": "https://api.siliconflow.cn/v1",
+      "api_key_env": "SILICONFLOW_API_KEY",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "temperature": 0.0,
+      "enable_thinking": false,
+      "prediction_max_tokens": 128,
+      "timeout_seconds": 90,
+      "min_interval_seconds": 1.0,
+      "max_api_attempts": 80,
+      "bootstrap_repetitions": 500,
+      "bootstrap_seed": 20261017,
+      "methods": [
+        "full",
+        "no_context",
+        "head_tail",
+        "summary",
+        "selective_context",
+        "llmlingua2"
+      ],
+      "reuse_api_cache_from": "boolq_dev30_qwen3_30b_r50_seed20261017"
+    },
+    "dataset": {
+      "name": "BoolQ",
+      "split": "dev",
+      "source_url": "https://dl.fbaipublicfiles.com/glue/superglue/data/v2/BoolQ.zip",
+      "archive_member": "BoolQ/val.jsonl",
+      "dataset_home": "https://github.com/google-research-datasets/boolean-questions",
+      "source_sha256": "853fbe7922f70c59629f06a39e8d9ca440c3d740e760fd3b87a5ddf3dcba2436",
+      "available_rows": 3270,
+      "sample_seed": 20261017,
+      "license": "CC BY-SA 3.0 (as stated by the dataset authors)",
+      "context_definition": "passage only; title excluded"
+    },
+    "examples_sha256": "97adb774f7fdcc9749f9abdf38bb44d4c7ab0774e28beffeaa5854e90fcfee9c",
+    "tokenizer_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "code": {
+      "python": "3.12.14",
+      "files_sha256": {
+        "run_experiment.py": "cff43bebbbad105275c73d3344b0f2e4ca8e55f3b85c263d6cba1a2aa180fe8c",
+        "blackwell/__init__.py": "19caff771ab86146b45d3c4ff2392e63675543f62b8616c37a46fffe6221076d",
+        "blackwell/cache_reuse.py": "1480f5d74057f915d10ce381aad4073cab356f0dcca80273f1adc83c1a8608b7",
+        "blackwell/client.py": "4d55336d72bdc5f9a15c87926d61d660fb1e68974dbae665613b7801baf312a0",
+        "blackwell/compression.py": "a7d400740f6f33936484ca71c7470bbfbb80be675e7c9dc39fe06829039695f7",
+        "blackwell/compressors/__init__.py": "1ae23bc395a6cbf43a06e9f75fcccf91740dc8648d3898995f86a7d98af2cea5",
+        "blackwell/compressors/llmlingua2.py": "fbbc7c34a221d3abd1e4c5d143f8979a23c8f399c4e2cd06b6fd34a4b6374e2d",
+        "blackwell/compressors/runtime.py": "f065122e2dd275342ef325ac4a260a3d4e56c32f7907b9b66cffdfdee9e3d59d",
+        "blackwell/compressors/selective_context.py": "3b5d25eaa54ac879664c855844f6e757154b5974608a2bf53b8486073a925798",
+        "blackwell/data.py": "b8037d3d418176f12ea679780b113035655a029a53c03c29cd40e27b68d41c6b",
+        "blackwell/local_cache.py": "2cbd8d9ec064e3bf08ffdacee815497138a17a71813264cd4237b68bc1f0c509",
+        "blackwell/metrics.py": "e2e1fc3e333d15bcf7ff61d39e0760fbb55da0fdd1783887ebaaab2126edf16f",
+        "blackwell/prompts.py": "9f726955a5b8b65a5f68e78cfdee20ab5c57e2392fb0c2fd8d0da3feb93943dc",
+        "blackwell/reporting.py": "8b5c4fdb198fcd27f436f8baa8c05b170a4989ad43c5ab8a75c2b99a203a6b69",
+        "blackwell/storage.py": "ca434b849d863ea0430e2949c3705ed9001f4037d4a3d135397c30c0a7879b93",
+        "blackwell/tokenization.py": "740d6287166e22af0f6ee0ef9c8fb4d26fb2d01b2e59678a381801bcc3a17ce3"
+      },
+      "git_commit_at_run": "4cb5674db83c1dc822dd6b6e264d79ad4ac2feeb"
+    },
+    "local_compressors": {
+      "device": "cpu",
+      "dtype": "float32",
+      "torch_threads": 4,
+      "upstream_files_sha256": {
+        "selective_context/__init__.py": "35bc30bb1059dd18dc7cc474282abb3f82059ac64486e33a5cfe39bdee1fbb23",
+        "llmlingua/prompt_compressor.py": "472fde8f6f55f273fe94eee40c25c73508f1ed3a7f5d61788636c20fc4be5068",
+        "llmlingua/utils.py": "1ed3eb0734354ea0136a0d98a9366233a872d22ff350fab107e53de45c954e33"
+      },
+      "packages": {
+        "torch": "2.8.0+cpu",
+        "transformers": "4.57.1",
+        "tokenizers": "0.22.1",
+        "accelerate": "1.10.1",
+        "llmlingua": "0.2.2",
+        "selective-context": "0.1.4",
+        "spacy": "3.8.7",
+        "en-core-web-sm": "3.8.0",
+        "numpy": "2.2.6",
+        "nltk": "3.9.2",
+        "tiktoken": "0.12.0",
+        "safetensors": "0.8.0",
+        "sentencepiece": "0.2.1",
+        "click": "8.5.0"
+      },
+      "assets": {
+        "selective_context": {
+          "model_id": "openai-community/gpt2",
+          "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+          "directory": "data/models/gpt2",
+          "files": {
+            "config.json": {
+              "url": "https://huggingface.co/openai-community/gpt2/resolve/607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json",
+              "sha256": "0daed7749b4f02b8f76240d5444551d7b08712dab4d0adb8239c56ba823bb7b4",
+              "bytes": 665
+            },
+            "generation_config.json": {
+              "url": "https://huggingface.co/openai-community/gpt2/resolve/607a30d783dfa663caf39e06633721c8d4cfcd7e/generation_config.json",
+              "sha256": "ed0b32ac72c0f5f44a719abb2d7786ea5146c871f83717b7f2018065954de02b",
+              "bytes": 124
+            },
+            "merges.txt": {
+              "url": "https://huggingface.co/openai-community/gpt2/resolve/607a30d783dfa663caf39e06633721c8d4cfcd7e/merges.txt",
+              "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+              "bytes": 456318
+            },
+            "model.safetensors": {
+              "url": "https://huggingface.co/openai-community/gpt2/resolve/607a30d783dfa663caf39e06633721c8d4cfcd7e/model.safetensors",
+              "sha256": "248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707",
+              "bytes": 548105171
+            },
+            "tokenizer.json": {
+              "url": "https://huggingface.co/openai-community/gpt2/resolve/607a30d783dfa663caf39e06633721c8d4cfcd7e/tokenizer.json",
+              "sha256": "8414cab924d8b9b33013f0d221c5862f365ee9be39c5c2bfae8a5a9e970478a6",
+              "bytes": 1355256
+            },
+            "tokenizer_config.json": {
+              "url": "https://huggingface.co/openai-community/gpt2/resolve/607a30d783dfa663caf39e06633721c8d4cfcd7e/tokenizer_config.json",
+              "sha256": "5e04eb606e3a1583530a42e36c2a6b6615c86f34fe77e44d9ddeb43ff940931f",
+              "bytes": 26
+            },
+            "vocab.json": {
+              "url": "https://huggingface.co/openai-community/gpt2/resolve/607a30d783dfa663caf39e06633721c8d4cfcd7e/vocab.json",
+              "sha256": "196139668be63f3b5d6574427317ae82f612a97c5d1cdaf36ed2256dbf636783",
+              "bytes": 1042301
+            }
+          }
+        },
+        "llmlingua2": {
+          "model_id": "microsoft/llmlingua-2-xlm-roberta-large-meetingbank",
+          "revision": "ebaba9b0e874dadd3003ffcff828e4397e568089",
+          "directory": "data/models/llmlingua-2-xlm-roberta-large-meetingbank",
+          "files": {
+            "config.json": {
+              "url": "https://huggingface.co/microsoft/llmlingua-2-xlm-roberta-large-meetingbank/resolve/ebaba9b0e874dadd3003ffcff828e4397e568089/config.json",
+              "sha256": "a3fdcf4e63057797101ecc84412bc654f9adb4e8d4ed3c91c5afb28eda327706",
+              "bytes": 752
+            },
+            "model.safetensors": {
+              "url": "https://huggingface.co/microsoft/llmlingua-2-xlm-roberta-large-meetingbank/resolve/ebaba9b0e874dadd3003ffcff828e4397e568089/model.safetensors",
+              "sha256": "a33a153b2493bff6be06af6921e69de9c0d0bb6ff06fe5bbb68670ba8d980ae2",
+              "bytes": 2235829648
+            },
+            "special_tokens_map.json": {
+              "url": "https://huggingface.co/microsoft/llmlingua-2-xlm-roberta-large-meetingbank/resolve/ebaba9b0e874dadd3003ffcff828e4397e568089/special_tokens_map.json",
+              "sha256": "06e405a36dfe4b9604f484f6a1e619af1a7f7d09e34a8555eb0b77b66318067f",
+              "bytes": 280
+            },
+            "tokenizer.json": {
+              "url": "https://huggingface.co/microsoft/llmlingua-2-xlm-roberta-large-meetingbank/resolve/ebaba9b0e874dadd3003ffcff828e4397e568089/tokenizer.json",
+              "sha256": "f59925fcb90c92b894cb93e51bb9b4a6105c5c249fe54ce1c704420ac39b81af",
+              "bytes": 17082756
+            },
+            "tokenizer_config.json": {
+              "url": "https://huggingface.co/microsoft/llmlingua-2-xlm-roberta-large-meetingbank/resolve/ebaba9b0e874dadd3003ffcff828e4397e568089/tokenizer_config.json",
+              "sha256": "f90024142df07163e5e6c5b9a6ad7c8c68b22a9112af11e3db4559a9ff90f737",
+              "bytes": 1147
+            }
+          }
+        }
+      },
+      "selective_context": {
+        "language": "en",
+        "reduce_level": "phrase",
+        "model_type": "gpt2"
+      },
+      "llmlingua2": {
+        "use_context_level_filter": false,
+        "token_to_word": "mean",
+        "force_tokens": [],
+        "force_reserve_digit": false,
+        "drop_consecutive": false,
+        "max_batch_size": 1
+      },
+      "budget_policy": "one native call at requested retained_ratio; no post-truncation"
+    }
+  },
+  "created_utc": "2026-10-17T06:45:53.393311+00:00",
+  "status": "complete",
+  "completed_utc": "2026-10-17T06:51:09.788389+00:00",
+  "last_execution": {
+    "new_api_attempts": 0,
+    "cache_hits": 227
+  },
+  "verified_source_commit": "1c3c58a4c1de35a115f71d159d96d8b6a0155159",
+  "source_commit_note": "Initial preparation preceded the code commit. All recorded source files match this commit after LF/CRLF normalization; identity hashes preserve exact working-file bytes."
+}

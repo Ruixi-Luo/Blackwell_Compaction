@@ -1,0 +1,208 @@
+<!doctype html><html lang="en" data-language="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Local compressors · Code and comparison</title><style>
+:root{font-family:Segoe UI,Microsoft YaHei,Arial,sans-serif;color:#243445;background:#f4f7fa;line-height:1.65}
+body{max-width:1180px;margin:auto;padding:28px}header,section{background:white;padding:26px;margin-bottom:22px;border-radius:14px;border:1px solid #dce5ee}
+h1{font-size:30px;line-height:1.3}h2{font-size:22px}h3{font-size:17px}button,select{font:inherit;padding:6px 12px;cursor:pointer}
+html[data-language=en] [lang=zh],html[data-language=zh] [lang=en]{display:none}
+.toolbar{float:right;display:flex;gap:8px}.note{padding:12px 16px;background:#edf4fb;border-left:4px solid #35789a;margin:12px 0}
+.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%}th,td{padding:10px;border-bottom:1px solid #dce5ee;text-align:left;white-space:nowrap}th{background:#f0f5f8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.card{padding:15px;border:1px solid #dce5ee;border-radius:9px}
+pre,code{font-family:Consolas,monospace}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:14px;font-size:13px}details{border-top:1px solid #dce5ee;padding:12px 0}summary{cursor:pointer;font-weight:600}
+a{color:#176b97}svg{width:100%;height:auto}svg text{font-family:Segoe UI,Arial,sans-serif}.muted{color:#5b6c7e;font-size:14px}
+@media(max-width:650px){body{padding:10px}header,section{padding:16px}.toolbar{float:none}h1{font-size:25px}}
+</style></head><body><header><div class="toolbar"><button onclick="language('en')">English</button><button onclick="language('zh')">中文</button></div><h1><span lang="en">Selective Context &amp; LLMLingua-2</span><span lang="zh">Selective Context 与 LLMLingua-2</span></h1><p><span lang="en">Module guide · Paired BoolQ pilot · 2026-10-17</span><span lang="zh">模块导读 · BoolQ 配对 pilot · 2026-10-17</span></p></header><section><h2><span lang="en">What has been integrated</span><span lang="zh">接入了什么</span></h2><p><span lang="en">Two official text compressors now share one small interface. The compressor receives only context and a retained ratio. The evaluation question is added later by the unchanged API reader. No training is performed.</span><span lang="zh">两个官方文本压缩器现在共用一个小接口。压缩器只接收上下文和保留率，评测问题在之后才由原有 API reader 加入，不进行训练。</span></p><div class="tablewrap"><table><thead><tr><th>Method</th><th><span lang="en">Official implementation / model</span><span lang="zh">官方实现／模型</span></th><th><span lang="en">Pipeline</span><span lang="zh">流程</span></th></tr></thead><tbody><tr><td>Selective Context</td><td>selective-context 0.1.4 · GPT-2 (124M)</td><td><span lang="en">Text → sentence-level GPT-2 self-information → spaCy phrases → discard low-score phrases → text</span><span lang="zh">文本 → GPT-2 按句计算自信息 → spaCy 短语聚合 → 删除低分短语 → 文本</span></td></tr><tr><td>LLMLingua-2</td><td>llmlingua 0.2.2 · XLM-R-large MeetingBank</td><td><span lang="en">Text → encoder token scores → mean score per word → percentile selection → text</span><span lang="zh">文本 → 编码器 token 分类分数 → 词内平均 → 百分位筛选 → 文本</span></td></tr></tbody></table></div><p><a href="https://github.com/liyucheng09/Selective_Context">Selective Context · official repository</a> · <a href="https://aclanthology.org/2023.emnlp-main.391/">EMNLP 2023 paper</a><br><a href="https://github.com/microsoft/LLMLingua">LLMLingua-2 · official repository</a> · <a href="https://aclanthology.org/2024.findings-acl.57/">ACL Findings 2024 paper</a></p></section><section><h2><span lang="en">Use it in your experiment</span><span lang="zh">在实验中怎么用</span></h2><p><span lang="en">Run from the repository root using its .venv Python. The input and output are ordinary strings. Create a separate instance for each method; the first creation loads its local model. Inference needs no API key.</span><span lang="zh">在仓库根目录使用 .venv 中的 Python 运行。输入和输出都是普通字符串；每个方法创建一个实例，首次创建时加载本地模型。压缩推理本身不需要 API key。</span></p><pre>from blackwell.compressors import create_compressor
+
+# Create once; reuse the loaded model across many contexts.
+compressor = create_compressor(&quot;llmlingua2&quot;)
+# Or: create_compressor(&quot;selective_context&quot;)
+
+compressed_text = compressor.compress(
+    &quot;Alice booked a train to Paris on Friday. The booking was later cancelled.&quot;,
+    retained_ratio=0.5,
+)
+print(compressed_text)  # str, not a probability or model object
+</pre><p><span lang="en">One-time installation and experiment commands:</span><span lang="zh">一次性安装与实验命令：</span></p><pre>.\setup-local.ps1
+.\run.ps1 -Mode Test
+.\run.ps1 -Mode Report -Config configs/local_comparison.json
+.\run.ps1 -Mode Audit -Config configs/local_comparison.json
+.\run.ps1 -Mode Replay -Config configs/local_comparison.json
+# Makes paid reader calls only when a complete request is not cached:
+.\run.ps1 -Mode Run -Config configs/local_comparison.json</pre><p><span lang="en">The 30-item comparison config imports matching responses from the previous local pilot. A fresh clone has no private run caches: configs/local_fresh.json provides a four-condition comparison (full, no_context, Selective Context, LLMLingua-2) without reuse. Run it with -Config configs/local_fresh.json after checking the paid API budget. Do not change a completed run in place.</span><span lang="zh">30 条对比配置会导入上一次本机 pilot 中请求完全一致的响应。新克隆不含 runs 缓存：configs/local_fresh.json 提供不依赖缓存的四组对比（原文、无上下文、SC、LLMLingua-2）；核对付费预算后使用 -Config configs/local_fresh.json 运行。不要原地修改已完成的运行。</span></p><p><span lang="en">Report and Audit can still read the original pilot. Strict Replay also verifies source hashes, so replaying that original code requires commit fb641ef in a separate checkout. The old HTML snapshots remain unchanged.</span><span lang="zh">Report 和 Audit 仍可读取原 pilot。严格 Replay 还核验源码哈希，因此重放原代码需在独立 checkout 使用 fb641ef 提交。旧 HTML 快照保留原样。</span></p></section><section><h2><span lang="en">Length conventions and fidelity</span><span lang="zh">长度约定与复现边界</span></h2><p><span lang="en">retained_ratio always means the fraction to keep. Selective Context receives reduce_ratio = 1 − retained_ratio; LLMLingua-2 receives rate = retained_ratio. We keep the native output unchanged, count it using the same Qwen tokenizer as the reader, and mark outputs above the Qwen-token budget.</span><span lang="zh">retained_ratio 始终表示保留比例。Selective Context 收到 reduce_ratio = 1 − retained_ratio；LLMLingua-2 收到 rate = retained_ratio。原生输出不做二次截断，统一用 reader 的 Qwen tokenizer 计数，并标记超预算输出。</span></p><p><span lang="en">Thus equal nominal ratios do not imply equal lengths. Phrase filtering, word filtering and summarization allocate length differently. These pilot results cannot establish a fair matched-token winner. A later experiment should compare curves at matched measured budgets.</span><span lang="zh">因此名义比例相同不代表输出等长。短语筛选、词筛选、摘要的长度分配不同，本次结果不能确立严格等 token 预算下的优胜者。后续应按实际预算比较曲线。</span></p><p><span lang="en">Selective Context uses its published package code; only its model-loading hook is overridden for a pinned local safetensors model on CPU. Its old spaCy 3.2.0 / click 8.0.4 dependency pins are bypassed: the tested versions are recorded below. This is an official-implementation integration with modern dependency adaptation, not an exact reproduction of the original paper environment. Sentences exceeding GPT-2’s 1024-token limit fail explicitly.</span><span lang="zh">Selective Context 使用官方包源码，只覆盖模型加载钩子，使其加载固定的本地 safetensors 权重并在 CPU 运行。旧版 spaCy 3.2.0 / click 8.0.4 依赖锁定被绕过，实测版本见下表。这是适配现代依赖的官方实现接入，不是原论文环境的逐位复现。单句超过 GPT-2 的 1024-token 上限会明确报错。</span></p><p><span lang="en">LLMLingua-2 uses the dedicated second-generation method, with context-level filtering off and no forced question tokens or digit preservation. CPU float32, four PyTorch threads and a batch size of one keep this pilot portable. The reader remains Qwen3-30B-A3B-Instruct-2507 on SiliconFlow.</span><span lang="zh">LLMLingua-2 调用专属二代方法，关闭 context-level filtering，不强制保留问题词或数字。此 pilot 使用 CPU float32、4 个 PyTorch 线程、batch size 1。Reader 仍为硅基流动 Qwen3-30B-A3B-Instruct-2507。</span></p></section><section><h2><span lang="en">What actually ran</span><span lang="zh">实际跑了什么</span></h2><p><span lang="en">Exactly the same 30 BoolQ dev items, seed 20261017, with six paired conditions. 120 old forecasts are unchanged. Both local methods compressed all 30 contexts while socket connections were blocked. The new run made 60 reader API attempts (12,768 tokens reported by the provider).</span><span lang="zh">完全相同的 30 条 BoolQ dev 样本，seed 20261017，六组配对条件。原有 120 条预测保持一致。两个本地方法在禁止 socket 连接的情况下，各完成 30 条上下文压缩。本轮 reader 新增 60 次 API 尝试，服务端记录 12,768 tokens。</span></p><div class="tablewrap"><table><thead><tr><th>Method</th><th><span lang="en">Actual kept</span><span lang="zh">实际保留</span></th><th>Accuracy</th><th>Brier</th><th>G(Full, method)</th><th>G(method, Full)</th></tr></thead><tbody><tr><td>full</td><td>100.0%</td><td>0.900</td><td>0.0813</td><td>0.0000</td><td>0.0000</td></tr><tr><td>no_context</td><td>0.0%</td><td>0.733</td><td>0.2048</td><td>0.1900</td><td>0.0000</td></tr><tr><td>head_tail</td><td>49.7%</td><td>0.833</td><td>0.1446</td><td>0.1033</td><td>0.0000</td></tr><tr><td>summary</td><td>51.2%</td><td>0.900</td><td>0.0816</td><td>0.0467</td><td>0.0300</td></tr><tr><td>selective_context</td><td>55.7%</td><td>0.867</td><td>0.1048</td><td>0.1107</td><td>0.0600</td></tr><tr><td>llmlingua2</td><td>48.1%</td><td>0.833</td><td>0.1112</td><td>0.0667</td><td>0.0633</td></tr></tbody></table></div><p><span lang="en">InfoGap is directional: G(A,B) is the largest estimated payoff advantage of A over B. Both directions can be positive. The factor-2 convention, exact breakpoint scan and auxiliary probability scores are unchanged. A 30-item, short-context pilot using verbalized forecasts is not a general method ranking or a proof of Blackwell dominance.</span><span lang="zh">InfoGap 有方向：G(A,B) 为 A 相对 B 的最大决策收益优势估计，两边都可能为正。系数 2 的约定、精确断点扫描和辅助概率指标保持不变。30 条短上下文样本、模型自报概率的 pilot 不能用于给方法普遍排名或证明 Blackwell 支配。</span></p><p><a href="Local_Compressors_Results.html"><span lang="en">Open all six conditions, full matrix and 30 inspectable cases</span><span lang="zh">查看六组条件、完整矩阵及 30 条可展开案例</span></a></p></section><section><h2><span lang="en">Audit the code</span><span lang="zh">怎么审计代码</span></h2><div class="tablewrap"><table><thead><tr><th><span lang="en">File</span><span lang="zh">文件</span></th><th><span lang="en">Responsibility</span><span lang="zh">职责</span></th></tr></thead><tbody><tr><td>blackwell/compressors/__init__.py</td><td><span lang="en">Factory; creates only the selected compressor</span><span lang="zh">工厂入口，仅创建所选压缩器</span></td></tr><tr><td>blackwell/compressors/selective_context.py</td><td><span lang="en">GPT-2 phrase-filter adapter; flips keep to remove ratio</span><span lang="zh">GPT-2 短语筛选封装；保留率转删除率</span></td></tr><tr><td>blackwell/compressors/llmlingua2.py</td><td><span lang="en">Dedicated LLMLingua-2 adapter; context only</span><span lang="zh">LLMLingua-2 专属封装；只传上下文</span></td></tr><tr><td>blackwell/local_cache.py</td><td><span lang="en">Caches context-only input and native output with fingerprints</span><span lang="zh">缓存上下文输入及原生输出，带指纹</span></td></tr><tr><td>blackwell/cache_reuse.py</td><td><span lang="en">Validates and imports previous API responses</span><span lang="zh">核验并导入旧 API 响应</span></td></tr><tr><td>run_experiment.py</td><td><span lang="en">Configured methods → compression → reader → paired metrics</span><span lang="zh">按配置选择方法 → 压缩 → reader → 配对指标</span></td></tr><tr><td>tools/check_local_compressors.py</td><td><span lang="en">All 30 local compressions with network blocked</span><span lang="zh">禁止网络后验证全部本地压缩</span></td></tr><tr><td>tools/audit_run.py</td><td><span lang="en">Checks inputs, raw responses, unchanged forecasts and all 36 InfoGap cells</span><span lang="zh">核验输入、原始响应、旧预测一致性和 36 个 InfoGap 单元格</span></td></tr></tbody></table></div><p><span lang="en">Start with the two compress() signatures: no question or label parameter exists. Then inspect generate_predictions(): compression is complete before prediction_messages() adds the question. Audit checks the actual cached inputs, rather than relying only on interface names.</span><span lang="zh">先看两个 compress() 的签名：没有 question 或 label 参数。再看 generate_predictions()：压缩完成后，prediction_messages() 才加入问题。审计还会核对实际缓存输入，而不是仅凭接口名称认定隔离。</span></p><details><summary>blackwell/compressors/__init__.py</summary><pre>&quot;&quot;&quot;本地压缩器的统一入口；导入本包不会导入 PyTorch 或加载权重。&quot;&quot;&quot;
+
+LOCAL_METHODS = (&quot;selective_context&quot;, &quot;llmlingua2&quot;)
+
+
+def create_compressor(method):
+    &quot;&quot;&quot;只创建所选方法。返回对象的 compress(context, retained_ratio) 输出字符串。&quot;&quot;&quot;
+    if method == &quot;selective_context&quot;:
+        from .selective_context import SelectiveContextCompressor
+        return SelectiveContextCompressor()
+    if method == &quot;llmlingua2&quot;:
+        from .llmlingua2 import LLMLingua2Compressor
+        return LLMLingua2Compressor()
+    raise ValueError(f&quot;Unknown local compressor: {method}&quot;)
+
+
+def validate_input(context, retained_ratio):
+    if not isinstance(context, str):
+        raise TypeError(&quot;context must be a string, not an example containing a question/label.&quot;)
+    if isinstance(retained_ratio, bool) or not 0 &lt; retained_ratio &lt;= 1:
+        raise ValueError(&quot;retained_ratio is the fraction to KEEP, in (0, 1].&quot;)
+</pre></details><details><summary>blackwell/compressors/selective_context.py</summary><pre>&quot;&quot;&quot;官方 selective-context 0.1.4 的薄封装：只替换固定版本的模型加载位置。&quot;&quot;&quot;
+import re
+
+from . import validate_input
+from .runtime import model_directory, prepare_torch
+
+
+class SelectiveContextCompressor:
+    def __init__(self):
+        prepare_torch()
+        from selective_context import SelectiveContext
+        from transformers import GPT2LMHeadModel, GPT2Tokenizer
+        folder = str(model_directory(&quot;selective_context&quot;))
+
+        class PinnedSelectiveContext(SelectiveContext):
+            def _prepare_model(self):
+                # 保留官方句内 self-information、短语聚合与百分位筛选代码。
+                # 覆盖此钩子，只为 CPU、safetensors、离线固定模型路径。
+                self.device = &quot;cpu&quot;
+                self.tokenizer = GPT2Tokenizer.from_pretrained(folder, local_files_only=True)
+                self.model = GPT2LMHeadModel.from_pretrained(
+                    folder, local_files_only=True, use_safetensors=True
+                ).to(self.device).eval()
+                self.max_token_length = self.model.config.n_positions
+                self.get_self_information = self._get_self_info_via_gpt2
+
+        self.engine = PinnedSelectiveContext(model_type=&quot;gpt2&quot;, lang=&quot;en&quot;)
+
+    def compress(self, context, retained_ratio=0.5):
+        &quot;&quot;&quot;仅输入上下文和保留率，输出压缩文本；不接收 query。&quot;&quot;&quot;
+        validate_input(context, retained_ratio)
+        if not context.strip() or retained_ratio == 1:
+            return context
+        # 官方 GPT-2 按句计算，有 1024-token 位置上限。超长单句明确失败。
+        clean = self.engine.beautify_context(context)
+        for sentence in re.split(self.engine.sent_tokenize_pattern, clean):
+            if sentence.strip():
+                ids = self.engine.tokenizer.encode(&quot;&lt;|endoftext|&gt;&quot; + sentence.strip(), add_special_tokens=False)
+                if len(ids) &gt; self.engine.max_token_length:
+                    raise ValueError(&quot;Selective Context: a sentence exceeds GPT-2&#x27;s 1024-token limit; no silent truncation.&quot;)
+        # 注意：官方参数表示删去比例；本项目统一参数表示保留比例。
+        text, _removed_phrases = self.engine(
+            context, reduce_ratio=1 - retained_ratio, reduce_level=&quot;phrase&quot;
+        )
+        return text
+</pre></details><details><summary>blackwell/compressors/llmlingua2.py</summary><pre>&quot;&quot;&quot;官方 llmlingua 0.2.2 的 LLMLingua-2 路径；不调用 LLMLingua-1。&quot;&quot;&quot;
+from . import validate_input
+from .runtime import model_directory, prepare_torch
+
+
+class LLMLingua2Compressor:
+    def __init__(self):
+        torch = prepare_torch()
+        from llmlingua import PromptCompressor
+        self.engine = PromptCompressor(
+            model_name=str(model_directory(&quot;llmlingua2&quot;)), device_map=&quot;cpu&quot;,
+            model_config={&quot;local_files_only&quot;: True, &quot;trust_remote_code&quot;: False,
+                          &quot;torch_dtype&quot;: torch.float32},
+            use_llmlingua2=True, llmlingua2_config={&quot;max_batch_size&quot;: 1},
+        )
+        self.engine.model.eval()
+
+    def compress(self, context, retained_ratio=0.5):
+        &quot;&quot;&quot;仅输入上下文和保留率，输出压缩文本；不接收 query。&quot;&quot;&quot;
+        validate_input(context, retained_ratio)
+        if not context.strip() or retained_ratio == 1:
+            return context
+        # 直接调用二代专属接口。此接口没有 question / instruction 参数。
+        result = self.engine.compress_prompt_llmlingua2(
+            context=[context], rate=retained_ratio, target_token=-1,
+            use_context_level_filter=False, use_token_level_filter=True,
+            token_to_word=&quot;mean&quot;, force_tokens=[], force_reserve_digit=False,
+            drop_consecutive=False,
+        )
+        return result[&quot;compressed_prompt&quot;]
+</pre></details><details><summary>blackwell/local_cache.py</summary><pre>&quot;&quot;&quot;缓存本地压缩结果；缓存身份只含 context、长度设置、模型和软件版本。&quot;&quot;&quot;
+import time
+
+from .compressors import create_compressor
+from .storage import fingerprint, read_json, write_json
+
+
+class LocalCompressionCache:
+    def __init__(self, run_dir, identity, offline=False):
+        self.directory = run_dir / &quot;local_compression_cache&quot;
+        self.identity = identity
+        self.offline = offline
+        self.engines = {}
+
+    def compress(self, context, budget, method, retained_ratio):
+        request = {&quot;context&quot;: context, &quot;budget_tokens&quot;: budget, &quot;method&quot;: method,
+                   &quot;retained_ratio&quot;: retained_ratio, &quot;runtime&quot;: self.identity}
+        key = fingerprint(request)
+        path = self.directory / f&quot;{key}.json&quot;
+        if path.exists():
+            entry = read_json(path)
+            if entry[&quot;request&quot;] != request or entry[&quot;result_sha256&quot;] != fingerprint(entry[&quot;result&quot;]):
+                raise ValueError(&quot;Local compression cache failed integrity checks.&quot;)
+            return {**entry[&quot;result&quot;], &quot;local_compression_hash&quot;: key}
+        if self.offline:
+            raise RuntimeError(&quot;Offline local compression cache miss; inference is disabled.&quot;)
+        if method not in self.engines:
+            self.engines[method] = create_compressor(method)
+        start = time.perf_counter()
+        text = self.engines[method].compress(context, retained_ratio)
+        if not isinstance(text, str):
+            raise TypeError(&quot;Local compressor must return text.&quot;)
+        result = {&quot;text&quot;: text, &quot;compression_seconds&quot;: time.perf_counter() - start,
+                  &quot;native_retained_ratio&quot;: retained_ratio}
+        write_json(path, {&quot;request&quot;: request, &quot;result&quot;: result, &quot;result_sha256&quot;: fingerprint(result)})
+        return {**result, &quot;local_compression_hash&quot;: key}
+</pre></details><details><summary>blackwell/compression.py</summary><pre>&quot;&quot;&quot;统一压缩接口：公共输入只有上下文、预算和方法名。&quot;&quot;&quot;
+from .prompts import compression_messages
+from .compressors import LOCAL_METHODS
+
+
+class Compactor:
+    def __init__(self, client, tokenizer, local_cache=None, retained_ratio=0.5):
+        self.client = client
+        self.tokenizer = tokenizer
+        self.local_cache = local_cache
+        self.retained_ratio = retained_ratio
+
+    def compress(self, context, budget, method):
+        &quot;&quot;&quot;故意不接收 question、label 或原文预测，确保 query-blind。&quot;&quot;&quot;
+        if method in LOCAL_METHODS:
+            if self.local_cache is None:
+                raise RuntimeError(&quot;Local compressor cache/runtime was not configured.&quot;)
+            local = self.local_cache.compress(context, budget, method, self.retained_ratio)
+            return {**self._result(local[&quot;text&quot;], budget, [], False), **local}
+        if method == &quot;head_tail&quot;:
+            text = self.tokenizer.head_tail(context, budget)
+            return self._result(text, budget, [], False)
+        if method != &quot;summary&quot;:
+            raise ValueError(f&quot;Unknown compaction method: {method}&quot;)
+        hashes = []
+        previous = None
+        previous_tokens = None
+        for attempt in range(2):  # 最多一次长度修复；不根据预测效果挑摘要。
+            messages = compression_messages(context, budget, previous, previous_tokens)
+            text, request_hash = self.client.complete(
+                messages, max_tokens=min(2048, max(256, budget * 3 + 100))
+            )
+            hashes.append(request_hash)
+            count = self.tokenizer.count(text)
+            if count &lt;= budget:
+                return self._result(text, budget, hashes, attempt == 1)
+            previous, previous_tokens = text, count
+        # 仍然超预算就明确标记并保留原输出，不偷偷追加截断策略。
+        return self._result(previous, budget, hashes, True)
+
+    def _result(self, text, budget, hashes, repaired):
+        count = self.tokenizer.count(text)
+        return {
+            &quot;text&quot;: text, &quot;tokens&quot;: count, &quot;budget_tokens&quot;: budget,
+            &quot;budget_met&quot;: count &lt;= budget, &quot;length_repair_used&quot;: repaired,
+            &quot;compression_request_hashes&quot;: hashes,
+        }
+</pre></details></section><section><h2><span lang="en">Validation evidence</span><span lang="zh">验证记录</span></h2><p><span lang="en">22 automated tests passed. Both compressors processed all 30 items without network access. The audit checked all 180 forecasts, 60 local compression records, 120 unchanged prior forecasts and 36 InfoGap cells using an independent two-action payoff calculation. A replay with API keys removed, sockets blocked and local model loading blocked made zero API attempts and reproduced predictions, metrics and the API ledger byte for byte.</span><span lang="zh">22 项自动化测试通过。两种压缩器均在断网下处理了全部 30 条样本。审计核验了 180 条预测、60 条本地压缩记录、120 条旧预测的一致性，并以独立两动作收益计算核验 36 个 InfoGap 单元格。移除 API key、禁止 socket 和本地模型加载后，完整重放新增 API 次数为 0，预测、指标、API 账本逐字节一致。</span></p><p><span lang="en">The longest item has 599 XLM-R tokens before chunking. Its native chunks contain 493 and 106 tokens; with special tokens, both fit the 512-token encoder input. All 30 items were checked for this limit. Model downloads, CPU inference time and API-token usage are different costs and should not be conflated.</span><span lang="zh">最长样本在分块前有 599 个 XLM-R token，原生分块分别为 493 和 106 个；加特殊 token 后均满足编码器 512-token 输入上限。全部 30 条样本都做了此项检查。模型下载、本地 CPU 推理时间与 API token 用量属于不同成本，不应混为一谈。</span></p></section><section><h2><span lang="en">Frozen assets and local storage</span><span lang="zh">固定版本与本地存储</span></h2><div class="tablewrap"><table><thead><tr><th>Asset</th><th>Revision</th></tr></thead><tbody><tr><td>selective_context</td><td><code>607a30d783dfa663caf39e06633721c8d4cfcd7e</code></td></tr><tr><td>llmlingua2</td><td><code>ebaba9b0e874dadd3003ffcff828e4397e568089</code></td></tr></tbody></table></div><div class="tablewrap"><table><thead><tr><th>Package</th><th>Version</th></tr></thead><tbody><tr><td>torch</td><td>2.8.0+cpu</td></tr><tr><td>transformers</td><td>4.57.1</td></tr><tr><td>tokenizers</td><td>0.22.1</td></tr><tr><td>accelerate</td><td>1.10.1</td></tr><tr><td>llmlingua</td><td>0.2.2</td></tr><tr><td>selective-context</td><td>0.1.4</td></tr><tr><td>spacy</td><td>3.8.7</td></tr><tr><td>en-core-web-sm</td><td>3.8.0</td></tr><tr><td>numpy</td><td>2.2.6</td></tr><tr><td>nltk</td><td>3.9.2</td></tr><tr><td>tiktoken</td><td>0.12.0</td></tr><tr><td>safetensors</td><td>0.8.0</td></tr><tr><td>sentencepiece</td><td>0.2.1</td></tr><tr><td>click</td><td>8.5.0</td></tr></tbody></table></div><p><span lang="en">Model files are pinned by repository revision and per-file SHA256 in configs/local_models.lock.json. Weight downloads total about 2.8 GB (decimal); Python packages and download caches take additional space. All are stored under data/, .venv/ and .cache/ on D:, and are excluded from Git. The published docs contain no API keys.</span><span lang="zh">configs/local_models.lock.json 固定模型仓库 revision 与每个文件的 SHA256。两个模型权重合计约 2.8 GB（十进制），Python 依赖和下载缓存另占空间。全部存于 D 盘的 data/、.venv/、.cache/，不提交到 Git。公开文档不包含 API key。</span></p></section><script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}</script></body></html>

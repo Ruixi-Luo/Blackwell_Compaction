@@ -1,0 +1,547 @@
+{
+  "status": "passed",
+  "socket_connections_blocked": true,
+  "llm_api_calls": 0,
+  "records": [
+    {
+      "id": "boolq-dev-01148",
+      "method": "selective_context",
+      "original_tokens": 192,
+      "compressed_tokens": 106,
+      "budget_tokens": 96,
+      "retained_ratio": 0.5520833333333334,
+      "cache_hash": "a395044f607897c0d33e2dac711d3bca4ab6f4cc3f5f32b9b7eb598f3f5fe234"
+    },
+    {
+      "id": "boolq-dev-00124",
+      "method": "selective_context",
+      "original_tokens": 117,
+      "compressed_tokens": 66,
+      "budget_tokens": 58,
+      "retained_ratio": 0.5641025641025641,
+      "cache_hash": "c6fbab2c9cd30540bf97ad64e78dde606d32347700ca4d709af90dda9011b97b"
+    },
+    {
+      "id": "boolq-dev-01793",
+      "method": "selective_context",
+      "original_tokens": 89,
+      "compressed_tokens": 59,
+      "budget_tokens": 44,
+      "retained_ratio": 0.6629213483146067,
+      "cache_hash": "b0ce366da371dab76c7ad79f664951d1322378c8dfcaaa6cc39455d15477d916"
+    },
+    {
+      "id": "boolq-dev-00748",
+      "method": "selective_context",
+      "original_tokens": 177,
+      "compressed_tokens": 93,
+      "budget_tokens": 88,
+      "retained_ratio": 0.5254237288135594,
+      "cache_hash": "26b06dcaac6257627d77b42ae33166758392d22da1eb3f9c576fa97e297e17c4"
+    },
+    {
+      "id": "boolq-dev-02717",
+      "method": "selective_context",
+      "original_tokens": 94,
+      "compressed_tokens": 55,
+      "budget_tokens": 47,
+      "retained_ratio": 0.5851063829787234,
+      "cache_hash": "74504dac79368c6118e9fdee812eb5b163d72f20ccb9dc6e70f9a5d9973fab0a"
+    },
+    {
+      "id": "boolq-dev-00497",
+      "method": "selective_context",
+      "original_tokens": 45,
+      "compressed_tokens": 23,
+      "budget_tokens": 22,
+      "retained_ratio": 0.5111111111111111,
+      "cache_hash": "711b227c3310239a8855c722a4ac83fcf9c7d055f57d33ad2573bd7aa04d2638"
+    },
+    {
+      "id": "boolq-dev-01984",
+      "method": "selective_context",
+      "original_tokens": 159,
+      "compressed_tokens": 79,
+      "budget_tokens": 79,
+      "retained_ratio": 0.4968553459119497,
+      "cache_hash": "ad30df2bbe98b7cd20d0503b7a652f8bd3ae09d71c818003a8fc85d54d50a9c1"
+    },
+    {
+      "id": "boolq-dev-03248",
+      "method": "selective_context",
+      "original_tokens": 194,
+      "compressed_tokens": 127,
+      "budget_tokens": 97,
+      "retained_ratio": 0.654639175257732,
+      "cache_hash": "3a4183ff07046130eb75eb2db315e4bda8a7788541bf990f8dd69decc796d9d5"
+    },
+    {
+      "id": "boolq-dev-02144",
+      "method": "selective_context",
+      "original_tokens": 74,
+      "compressed_tokens": 44,
+      "budget_tokens": 37,
+      "retained_ratio": 0.5945945945945946,
+      "cache_hash": "fb90f8daa9e007a0dcbeb12bd747ba15152eccbd8182a35c2e6969f204b2f9d6"
+    },
+    {
+      "id": "boolq-dev-02172",
+      "method": "selective_context",
+      "original_tokens": 74,
+      "compressed_tokens": 35,
+      "budget_tokens": 37,
+      "retained_ratio": 0.47297297297297297,
+      "cache_hash": "12bf61ea4dcabb0f99321d2b8f44b71b82e5180316924af86cc30f59c2c9cdf7"
+    },
+    {
+      "id": "boolq-dev-02136",
+      "method": "selective_context",
+      "original_tokens": 120,
+      "compressed_tokens": 62,
+      "budget_tokens": 60,
+      "retained_ratio": 0.5166666666666667,
+      "cache_hash": "50c65b42f212321b05b3da81cc6803ce9f72867a45925736f3415016d360fe7e"
+    },
+    {
+      "id": "boolq-dev-03085",
+      "method": "selective_context",
+      "original_tokens": 71,
+      "compressed_tokens": 43,
+      "budget_tokens": 35,
+      "retained_ratio": 0.6056338028169014,
+      "cache_hash": "924463e81ef1b6367dc9e730d540c1481e13a369f7bf25a4995643cfaa94cc30"
+    },
+    {
+      "id": "boolq-dev-02273",
+      "method": "selective_context",
+      "original_tokens": 135,
+      "compressed_tokens": 71,
+      "budget_tokens": 67,
+      "retained_ratio": 0.5259259259259259,
+      "cache_hash": "f546e861c129eb6dc79ce1022962d88d35e34d3e7a527f7df6ccab78db91c7fe"
+    },
+    {
+      "id": "boolq-dev-02266",
+      "method": "selective_context",
+      "original_tokens": 200,
+      "compressed_tokens": 109,
+      "budget_tokens": 100,
+      "retained_ratio": 0.545,
+      "cache_hash": "6704229df1a380d2c850f27745aef9d107625828ad889b3810c481196d522e02"
+    },
+    {
+      "id": "boolq-dev-01350",
+      "method": "selective_context",
+      "original_tokens": 89,
+      "compressed_tokens": 50,
+      "budget_tokens": 44,
+      "retained_ratio": 0.5617977528089888,
+      "cache_hash": "2d20b82429208ec6540dc5cb8739f2e57632c0d6e3c8d9c33a8b77709f5f36f1"
+    },
+    {
+      "id": "boolq-dev-02404",
+      "method": "selective_context",
+      "original_tokens": 94,
+      "compressed_tokens": 54,
+      "budget_tokens": 47,
+      "retained_ratio": 0.574468085106383,
+      "cache_hash": "b9ecc58f0309b44af285f66c626a5dd8db76f191414b6b8829488b9588f05582"
+    },
+    {
+      "id": "boolq-dev-00722",
+      "method": "selective_context",
+      "original_tokens": 84,
+      "compressed_tokens": 42,
+      "budget_tokens": 42,
+      "retained_ratio": 0.5,
+      "cache_hash": "3c3ab993d4120c2eb07fc78251a3edb3f13789dedf504527308af9f1aa3c6b00"
+    },
+    {
+      "id": "boolq-dev-01956",
+      "method": "selective_context",
+      "original_tokens": 134,
+      "compressed_tokens": 80,
+      "budget_tokens": 67,
+      "retained_ratio": 0.5970149253731343,
+      "cache_hash": "84dcd137d8d2f967e6b5f1158f2d6d4a90624009b3e76bf6c9247df908637702"
+    },
+    {
+      "id": "boolq-dev-02101",
+      "method": "selective_context",
+      "original_tokens": 77,
+      "compressed_tokens": 44,
+      "budget_tokens": 38,
+      "retained_ratio": 0.5714285714285714,
+      "cache_hash": "816089c558db8d5247dc6d6a83802bd0fe78bc60f2af964da95c4873e5e41217"
+    },
+    {
+      "id": "boolq-dev-01625",
+      "method": "selective_context",
+      "original_tokens": 71,
+      "compressed_tokens": 44,
+      "budget_tokens": 35,
+      "retained_ratio": 0.6197183098591549,
+      "cache_hash": "1c27ba435ab30c37c39929f2a3dea9412e0f9ac19de0cb5fb67e9c768ca4bd95"
+    },
+    {
+      "id": "boolq-dev-02252",
+      "method": "selective_context",
+      "original_tokens": 60,
+      "compressed_tokens": 29,
+      "budget_tokens": 30,
+      "retained_ratio": 0.48333333333333334,
+      "cache_hash": "42fb52632b906443c89fce7ed8802d9f951bce2b1ea77e7045ba96ef66b92cd4"
+    },
+    {
+      "id": "boolq-dev-02307",
+      "method": "selective_context",
+      "original_tokens": 93,
+      "compressed_tokens": 56,
+      "budget_tokens": 46,
+      "retained_ratio": 0.6021505376344086,
+      "cache_hash": "9b69d33b0fdb991874178bf930ebeac2ef78d96bbc1b75bf7856a58a33156f23"
+    },
+    {
+      "id": "boolq-dev-00353",
+      "method": "selective_context",
+      "original_tokens": 277,
+      "compressed_tokens": 156,
+      "budget_tokens": 138,
+      "retained_ratio": 0.5631768953068592,
+      "cache_hash": "394c072a37841f8a1247519273bd494d36ce29621f4cfc307bf47458d9e5340b"
+    },
+    {
+      "id": "boolq-dev-00730",
+      "method": "selective_context",
+      "original_tokens": 140,
+      "compressed_tokens": 80,
+      "budget_tokens": 70,
+      "retained_ratio": 0.5714285714285714,
+      "cache_hash": "f96cdd9a9b9def5632a890537c0837533fe7b9bf700fe7c7d03aa379d8230206"
+    },
+    {
+      "id": "boolq-dev-02904",
+      "method": "selective_context",
+      "original_tokens": 545,
+      "compressed_tokens": 285,
+      "budget_tokens": 272,
+      "retained_ratio": 0.5229357798165137,
+      "cache_hash": "ec78e70c5fee9156d91c4e49f0f1c6a9f5dd157cf5e60064508701d7f22874d9"
+    },
+    {
+      "id": "boolq-dev-00758",
+      "method": "selective_context",
+      "original_tokens": 33,
+      "compressed_tokens": 18,
+      "budget_tokens": 16,
+      "retained_ratio": 0.5454545454545454,
+      "cache_hash": "6e8e2b4ab27b4aafdf3297ec0a22a9bdd8b44723fbfe47a4421b1f06c4967a83"
+    },
+    {
+      "id": "boolq-dev-00670",
+      "method": "selective_context",
+      "original_tokens": 25,
+      "compressed_tokens": 13,
+      "budget_tokens": 12,
+      "retained_ratio": 0.52,
+      "cache_hash": "36f78831dcbb319b457e1e2a0dd058abf770f8c89d21a889d8d39da2c7e3e78a"
+    },
+    {
+      "id": "boolq-dev-01035",
+      "method": "selective_context",
+      "original_tokens": 83,
+      "compressed_tokens": 47,
+      "budget_tokens": 41,
+      "retained_ratio": 0.5662650602409639,
+      "cache_hash": "f40cde8027f194f8fa59e9bd8695f99388fdb2afa9a02b5563fd2c9b0f9f6379"
+    },
+    {
+      "id": "boolq-dev-01290",
+      "method": "selective_context",
+      "original_tokens": 66,
+      "compressed_tokens": 40,
+      "budget_tokens": 33,
+      "retained_ratio": 0.6060606060606061,
+      "cache_hash": "aa3669422df8e0495d5fc965241b0cc49f4626f37ebb67993898c2f1ca605c34"
+    },
+    {
+      "id": "boolq-dev-01840",
+      "method": "selective_context",
+      "original_tokens": 174,
+      "compressed_tokens": 98,
+      "budget_tokens": 87,
+      "retained_ratio": 0.5632183908045977,
+      "cache_hash": "329f78092f8d74c39444516a535733ae0140d5df3cb8466ae875453acec7324b"
+    },
+    {
+      "id": "boolq-dev-01148",
+      "method": "llmlingua2",
+      "original_tokens": 192,
+      "compressed_tokens": 95,
+      "budget_tokens": 96,
+      "retained_ratio": 0.4947916666666667,
+      "cache_hash": "0333155827cf9958993264e2a6fb40af9d1d62101235b158ef797afbc32ace1e"
+    },
+    {
+      "id": "boolq-dev-00124",
+      "method": "llmlingua2",
+      "original_tokens": 117,
+      "compressed_tokens": 53,
+      "budget_tokens": 58,
+      "retained_ratio": 0.452991452991453,
+      "cache_hash": "dc15e0a99c9d0d8c63e76c640357a9724458453d11cd93ea1c79c1fb89fdc72c"
+    },
+    {
+      "id": "boolq-dev-01793",
+      "method": "llmlingua2",
+      "original_tokens": 89,
+      "compressed_tokens": 43,
+      "budget_tokens": 44,
+      "retained_ratio": 0.48314606741573035,
+      "cache_hash": "d02a73923ec5fd4bbb455cfc738910661ae5c98bcd24480b56a8d9962031422f"
+    },
+    {
+      "id": "boolq-dev-00748",
+      "method": "llmlingua2",
+      "original_tokens": 177,
+      "compressed_tokens": 76,
+      "budget_tokens": 88,
+      "retained_ratio": 0.4293785310734463,
+      "cache_hash": "5da5ba34e6d60e09c80e7c833ccecb1e4d8bd744d4968156b91121bc8285ee25"
+    },
+    {
+      "id": "boolq-dev-02717",
+      "method": "llmlingua2",
+      "original_tokens": 94,
+      "compressed_tokens": 44,
+      "budget_tokens": 47,
+      "retained_ratio": 0.46808510638297873,
+      "cache_hash": "4887b7fbd23b04b63c490e2455c509afe9fcd9de55a3e6a16826b83aea8d930d"
+    },
+    {
+      "id": "boolq-dev-00497",
+      "method": "llmlingua2",
+      "original_tokens": 45,
+      "compressed_tokens": 22,
+      "budget_tokens": 22,
+      "retained_ratio": 0.4888888888888889,
+      "cache_hash": "19c2965ca5a531e6e4355d75038f879285a9ccbbb50f1055fe2db72522d904b6"
+    },
+    {
+      "id": "boolq-dev-01984",
+      "method": "llmlingua2",
+      "original_tokens": 159,
+      "compressed_tokens": 76,
+      "budget_tokens": 79,
+      "retained_ratio": 0.4779874213836478,
+      "cache_hash": "fe29de1de4af91586caf298fc4d2f711581b72cf15c421c7ff82e852e60fd1d0"
+    },
+    {
+      "id": "boolq-dev-03248",
+      "method": "llmlingua2",
+      "original_tokens": 194,
+      "compressed_tokens": 103,
+      "budget_tokens": 97,
+      "retained_ratio": 0.5309278350515464,
+      "cache_hash": "5a68bf58a4696bfd0cbf0f9b77d2df78c41099dce313199676bf35ba4b4ac0fc"
+    },
+    {
+      "id": "boolq-dev-02144",
+      "method": "llmlingua2",
+      "original_tokens": 74,
+      "compressed_tokens": 33,
+      "budget_tokens": 37,
+      "retained_ratio": 0.44594594594594594,
+      "cache_hash": "b417aa23356939dbc43becb7fce020ae3944387d575b71d8a19399ff4dfae55a"
+    },
+    {
+      "id": "boolq-dev-02172",
+      "method": "llmlingua2",
+      "original_tokens": 74,
+      "compressed_tokens": 32,
+      "budget_tokens": 37,
+      "retained_ratio": 0.43243243243243246,
+      "cache_hash": "ab2cee970d25a1708d663080a4e74721ef37e6130bb99fe6f859ba8b23e58e3f"
+    },
+    {
+      "id": "boolq-dev-02136",
+      "method": "llmlingua2",
+      "original_tokens": 120,
+      "compressed_tokens": 55,
+      "budget_tokens": 60,
+      "retained_ratio": 0.4583333333333333,
+      "cache_hash": "a2321a4596db8913c4b5bb3ed798c3932758b5abf8c58862c7aa7c972996e741"
+    },
+    {
+      "id": "boolq-dev-03085",
+      "method": "llmlingua2",
+      "original_tokens": 71,
+      "compressed_tokens": 35,
+      "budget_tokens": 35,
+      "retained_ratio": 0.49295774647887325,
+      "cache_hash": "8b13eeb287150f92283d00435192a5b2d194de4e5d6101b044d81a6b291f3b5e"
+    },
+    {
+      "id": "boolq-dev-02273",
+      "method": "llmlingua2",
+      "original_tokens": 135,
+      "compressed_tokens": 68,
+      "budget_tokens": 67,
+      "retained_ratio": 0.5037037037037037,
+      "cache_hash": "631f2fc21575441c8c40fa4c9ca5abfc1a4fc2bb7b0a517b3d0c29c3d5ef444d"
+    },
+    {
+      "id": "boolq-dev-02266",
+      "method": "llmlingua2",
+      "original_tokens": 200,
+      "compressed_tokens": 89,
+      "budget_tokens": 100,
+      "retained_ratio": 0.445,
+      "cache_hash": "5058906061407812ec55e3907485448b88074be3522ede34f21ad47104a8d8c2"
+    },
+    {
+      "id": "boolq-dev-01350",
+      "method": "llmlingua2",
+      "original_tokens": 89,
+      "compressed_tokens": 39,
+      "budget_tokens": 44,
+      "retained_ratio": 0.43820224719101125,
+      "cache_hash": "d4ce8fc8bad5f017c8c942e1c0569399c6eef8fbc5d339137fc512ede8ea8e9a"
+    },
+    {
+      "id": "boolq-dev-02404",
+      "method": "llmlingua2",
+      "original_tokens": 94,
+      "compressed_tokens": 43,
+      "budget_tokens": 47,
+      "retained_ratio": 0.4574468085106383,
+      "cache_hash": "b6c3c68f053252b822528c80bb487ac29a6c95200ae235020bbe08c08e255cfe"
+    },
+    {
+      "id": "boolq-dev-00722",
+      "method": "llmlingua2",
+      "original_tokens": 84,
+      "compressed_tokens": 43,
+      "budget_tokens": 42,
+      "retained_ratio": 0.5119047619047619,
+      "cache_hash": "185839bb19260010c6961027268feb4774c24c1537b164f74c02e0d3f262d49d"
+    },
+    {
+      "id": "boolq-dev-01956",
+      "method": "llmlingua2",
+      "original_tokens": 134,
+      "compressed_tokens": 53,
+      "budget_tokens": 67,
+      "retained_ratio": 0.39552238805970147,
+      "cache_hash": "d0dc5c4fa12dd08d28aa619f99dbe042fd218c0cf3c7c82266a879b0ba4c2e31"
+    },
+    {
+      "id": "boolq-dev-02101",
+      "method": "llmlingua2",
+      "original_tokens": 77,
+      "compressed_tokens": 46,
+      "budget_tokens": 38,
+      "retained_ratio": 0.5974025974025974,
+      "cache_hash": "ea696321231afec90dc654dd41bd2eb5e4bcd2434e39c1b5f5b14c7eff4f216a"
+    },
+    {
+      "id": "boolq-dev-01625",
+      "method": "llmlingua2",
+      "original_tokens": 71,
+      "compressed_tokens": 32,
+      "budget_tokens": 35,
+      "retained_ratio": 0.4507042253521127,
+      "cache_hash": "917956e3aeb1c3ded61f27b8fb9517d1f59667e799d70d0731e878cc0592e006"
+    },
+    {
+      "id": "boolq-dev-02252",
+      "method": "llmlingua2",
+      "original_tokens": 60,
+      "compressed_tokens": 33,
+      "budget_tokens": 30,
+      "retained_ratio": 0.55,
+      "cache_hash": "dc0a62dec43dc9c4037ae51fdd2522dc64194f1433a80d7f3ef646a4267cf351"
+    },
+    {
+      "id": "boolq-dev-02307",
+      "method": "llmlingua2",
+      "original_tokens": 93,
+      "compressed_tokens": 46,
+      "budget_tokens": 46,
+      "retained_ratio": 0.4946236559139785,
+      "cache_hash": "18d1cbda629693f3a02af85605c125b7673c00612745a17d8ac86a4d0c88326a"
+    },
+    {
+      "id": "boolq-dev-00353",
+      "method": "llmlingua2",
+      "original_tokens": 277,
+      "compressed_tokens": 148,
+      "budget_tokens": 138,
+      "retained_ratio": 0.5342960288808665,
+      "cache_hash": "2c41fb1069fbd412d4f52b8c457128f7837c5f0b10271cd7c7540f897a41466f"
+    },
+    {
+      "id": "boolq-dev-00730",
+      "method": "llmlingua2",
+      "original_tokens": 140,
+      "compressed_tokens": 70,
+      "budget_tokens": 70,
+      "retained_ratio": 0.5,
+      "cache_hash": "e5bb69135bd4e9cb0c9158e0a5f8c9327bfe79fbe9af6af5bc29b97877c674f7"
+    },
+    {
+      "id": "boolq-dev-02904",
+      "method": "llmlingua2",
+      "original_tokens": 545,
+      "compressed_tokens": 256,
+      "budget_tokens": 272,
+      "retained_ratio": 0.46972477064220186,
+      "cache_hash": "816a4a2750f82515669e47ca0798a6feaf9d4979dcbff8967f873bbcbd8064de"
+    },
+    {
+      "id": "boolq-dev-00758",
+      "method": "llmlingua2",
+      "original_tokens": 33,
+      "compressed_tokens": 16,
+      "budget_tokens": 16,
+      "retained_ratio": 0.48484848484848486,
+      "cache_hash": "af9a550b1ac995daee1bdc43065aece48d0f2c3c1ec09114244d1506b3abef9a"
+    },
+    {
+      "id": "boolq-dev-00670",
+      "method": "llmlingua2",
+      "original_tokens": 25,
+      "compressed_tokens": 12,
+      "budget_tokens": 12,
+      "retained_ratio": 0.48,
+      "cache_hash": "41a0095f35a0ca031df475f39e72c0093dbd5b5a3098c8e846ba43eef89aae6a"
+    },
+    {
+      "id": "boolq-dev-01035",
+      "method": "llmlingua2",
+      "original_tokens": 83,
+      "compressed_tokens": 43,
+      "budget_tokens": 41,
+      "retained_ratio": 0.5180722891566265,
+      "cache_hash": "83f83e0cb26f7fccd07c1c5a071d9a3ee2080d4358c92194a50c9d74e312ef5f"
+    },
+    {
+      "id": "boolq-dev-01290",
+      "method": "llmlingua2",
+      "original_tokens": 66,
+      "compressed_tokens": 31,
+      "budget_tokens": 33,
+      "retained_ratio": 0.4696969696969697,
+      "cache_hash": "ce1f42276b6601fe88539d71c46b77f70f6b03530d5d8d7d17e718b8ac5bf3c5"
+    },
+    {
+      "id": "boolq-dev-01840",
+      "method": "llmlingua2",
+      "original_tokens": 174,
+      "compressed_tokens": 85,
+      "budget_tokens": 87,
+      "retained_ratio": 0.4885057471264368,
+      "cache_hash": "7724fae744f6e0712bbd4ca8d41fd1f989db55e3449e4fa48916dcf7bc1e3159"
+    }
+  ]
+}

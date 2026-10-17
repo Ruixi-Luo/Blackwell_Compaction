@@ -114,6 +114,14 @@ print(compressed_text)  # str, not a probability or model object
     sections.append(section('Audit the code', '怎么审计代码', table([bi('File','文件'),bi('Responsibility','职责')],guide_rows) +
         paragraph('Start with the two compress() signatures: no question or label parameter exists. Then inspect generate_predictions(): compression is complete before prediction_messages() adds the question. Audit checks the actual cached inputs, rather than relying only on interface names.',
                   '先看两个 compress() 的签名：没有 question 或 label 参数。再看 generate_predictions()：压缩完成后，prediction_messages() 才加入问题。审计还会核对实际缓存输入，而不是仅凭接口名称认定隔离。') + code_details))
+    replay = read_json(run / 'replay_verification.json')
+    if replay['status'] != 'passed':
+        raise ValueError('Offline replay verification must pass.')
+    sections.append(section('Validation evidence', '验证记录',
+        paragraph('22 automated tests passed. Both compressors processed all 30 items without network access. The audit checked all 180 forecasts, 60 local compression records, 120 unchanged prior forecasts and 36 InfoGap cells using an independent two-action payoff calculation. A replay with API keys removed, sockets blocked and local model loading blocked made zero API attempts and reproduced predictions, metrics and the API ledger byte for byte.',
+                  '22 项自动化测试通过。两种压缩器均在断网下处理了全部 30 条样本。审计核验了 180 条预测、60 条本地压缩记录、120 条旧预测的一致性，并以独立两动作收益计算核验 36 个 InfoGap 单元格。移除 API key、禁止 socket 和本地模型加载后，完整重放新增 API 次数为 0，预测、指标、API 账本逐字节一致。') +
+        paragraph('The longest item has 599 XLM-R tokens before chunking. Its native chunks contain 493 and 106 tokens; with special tokens, both fit the 512-token encoder input. All 30 items were checked for this limit. Model downloads, CPU inference time and API-token usage are different costs and should not be conflated.',
+                  '最长样本在分块前有 599 个 XLM-R token，原生分块分别为 493 和 106 个；加特殊 token 后均满足编码器 512-token 输入上限。全部 30 条样本都做了此项检查。模型下载、本地 CPU 推理时间与 API token 用量属于不同成本，不应混为一谈。')))
     sections.append(section('Frozen assets and local storage', '固定版本与本地存储',
         table(['Asset','Revision'], [[m, '<code>'+s['revision']+'</code>'] for m,s in runtime['assets'].items()]) +
         table(['Package','Version'],list(runtime['packages'].items())) +
