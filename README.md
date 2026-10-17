@@ -24,6 +24,9 @@
 # 不消耗 LLM API：检查数学、缓存、数据隔离和预算约束。
 .\run.ps1 -Mode Test
 
+# 不消耗 LLM API：核对真实请求、概率与独立计算的决策收益。
+.\run.ps1 -Mode Audit
+
 # 不消耗 LLM API：从已有预测重算指标和 HTML。
 .\run.ps1 -Mode Report
 
@@ -65,6 +68,7 @@ runs/<run_name>/
   predictions.json       每条样本的完整上下文、压缩文本和概率
   predictions.csv        方便查看的长表，每条样本对应 4 行
   metrics.json           精确数值、双向矩阵、阈值和 bootstrap 范围
+  audit.json             对实际请求、概率、预算与独立决策收益的核验
   api_cache/*.json       不含密钥的实际请求正文与原始 API 响应
   api_attempts.json      含失败/重试在内的 API 次数与返回 usage
   report.html            自包含交互结果页

@@ -1,0 +1,15 @@
+{
+  "offline_replay": "passed",
+  "network_blocked": true,
+  "keys_removed_in_test_process": true,
+  "unchanged_artifacts": [
+    "predictions.json",
+    "metrics.json",
+    "api_attempts.json"
+  ],
+  "hashes": {
+    "predictions.json": "3455f0bc7a0243feeb52319880bafaf307ea22eaa4bfa8884e0438b38830bed5",
+    "metrics.json": "5ab67292a630a236d76a95ef2b87c0883549733d7630101cf3f785b2f8ce53f5",
+    "api_attempts.json": "de5e0e3e9b3ae759d3d3205a1dd9f1c74f4b0feb7efea6cb198039df61a82f27"
+  }
+}

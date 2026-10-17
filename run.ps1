@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('Run','Prepare','Replay','Report','Test')][string]$Mode = 'Report',
+    [ValidateSet('Run','Prepare','Replay','Report','Test','Audit')][string]$Mode = 'Report',
     [string]$Config = 'configs/pilot.json'
 )
 $ErrorActionPreference = 'Stop'
@@ -14,6 +14,8 @@ $pythonExe = Join-Path $PSScriptRoot '.venv/Scripts/python.exe'
 if (-not (Test-Path -LiteralPath $pythonExe)) { throw 'Run .\setup.ps1 first.' }
 if ($Mode -eq 'Test') {
     & $pythonExe -m unittest discover -s tests -v
+} elseif ($Mode -eq 'Audit') {
+    & $pythonExe tools/audit_run.py --config $Config
 } else {
     $extra = @()
     if ($Mode -eq 'Prepare') { $extra += '--prepare-only' }

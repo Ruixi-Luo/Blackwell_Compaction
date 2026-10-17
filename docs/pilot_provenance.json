@@ -1,0 +1,61 @@
+{
+  "identity": {
+    "config": {
+      "run_name": "boolq_dev30_qwen3_30b_r50_seed20261017",
+      "dataset_split": "dev",
+      "sample_size": 30,
+      "sample_seed": 20261017,
+      "retained_ratio": 0.5,
+      "provider": "siliconflow",
+      "base_url": "https://api.siliconflow.cn/v1",
+      "api_key_env": "SILICONFLOW_API_KEY",
+      "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+      "temperature": 0.0,
+      "enable_thinking": false,
+      "prediction_max_tokens": 128,
+      "timeout_seconds": 90,
+      "min_interval_seconds": 1.0,
+      "max_api_attempts": 240,
+      "bootstrap_repetitions": 500,
+      "bootstrap_seed": 20261017
+    },
+    "dataset": {
+      "name": "BoolQ",
+      "split": "dev",
+      "source_url": "https://dl.fbaipublicfiles.com/glue/superglue/data/v2/BoolQ.zip",
+      "archive_member": "BoolQ/val.jsonl",
+      "dataset_home": "https://github.com/google-research-datasets/boolean-questions",
+      "source_sha256": "853fbe7922f70c59629f06a39e8d9ca440c3d740e760fd3b87a5ddf3dcba2436",
+      "available_rows": 3270,
+      "sample_seed": 20261017,
+      "license": "CC BY-SA 3.0 (as stated by the dataset authors)",
+      "context_definition": "passage only; title excluded"
+    },
+    "examples_sha256": "97adb774f7fdcc9749f9abdf38bb44d4c7ab0774e28beffeaa5854e90fcfee9c",
+    "tokenizer_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+    "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "code": {
+      "python": "3.12.14",
+      "files_sha256": {
+        "run_experiment.py": "fc741fcc55e1ff6286053b1858be46a5fc43d25f4f3a85a2148007e9ac49ed59",
+        "blackwell/__init__.py": "19caff771ab86146b45d3c4ff2392e63675543f62b8616c37a46fffe6221076d",
+        "blackwell/client.py": "4d55336d72bdc5f9a15c87926d61d660fb1e68974dbae665613b7801baf312a0",
+        "blackwell/compression.py": "935352b213d0b6fb6c174e26c6f4fe8fbd2deeaa1a450d548c7d896b0b815d2c",
+        "blackwell/data.py": "b8037d3d418176f12ea679780b113035655a029a53c03c29cd40e27b68d41c6b",
+        "blackwell/metrics.py": "e2e1fc3e333d15bcf7ff61d39e0760fbb55da0fdd1783887ebaaab2126edf16f",
+        "blackwell/prompts.py": "9f726955a5b8b65a5f68e78cfdee20ab5c57e2392fb0c2fd8d0da3feb93943dc",
+        "blackwell/reporting.py": "6df84e2694723cc867e0ea5ce36a9d78672e5f4716a202b3a06bbdcbd4da88aa",
+        "blackwell/storage.py": "ca434b849d863ea0430e2949c3705ed9001f4037d4a3d135397c30c0a7879b93",
+        "blackwell/tokenization.py": "740d6287166e22af0f6ee0ef9c8fb4d26fb2d01b2e59678a381801bcc3a17ce3"
+      },
+      "git_commit_at_run": "fb641ef24d71e407fe548814c7e0442ad8dc4e10"
+    }
+  },
+  "created_utc": "2026-10-17T06:13:44.438288+00:00",
+  "status": "complete",
+  "completed_utc": "2026-10-17T06:19:12.516824+00:00",
+  "last_execution": {
+    "new_api_attempts": 0,
+    "cache_hits": 167
+  }
+}

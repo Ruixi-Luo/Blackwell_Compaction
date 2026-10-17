@@ -30,6 +30,9 @@ def main():
     rows = read_json(run / 'predictions.json')
     manifest = read_json(run / 'manifest.json')
     ledger = read_json(run / 'api_attempts.json')
+    audit = read_json(run / 'audit.json')
+    if audit['status'] != 'passed':
+        raise ValueError('Run audit has not passed.')
     if manifest['status'] != 'complete':
         raise ValueError('Only publish a completed run.')
     docs = ROOT / 'docs'
@@ -39,6 +42,7 @@ def main():
     attribution = '<section><p>Dataset: <a href="https://github.com/google-research-datasets/boolean-questions">BoolQ · Clark et al.</a>. Reproduced questions, passages and experimental compressed adaptations are shared under <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>. Compression outputs are machine-generated adaptations.</p></section>'
     published_report.write_text(published_report.read_text(encoding='utf-8').replace('</body>', attribution + '</body>'), encoding='utf-8')
     shutil.copy2(run / 'metrics.json', docs / 'pilot_metrics.json')
+    shutil.copy2(run / 'audit.json', docs / 'pilot_audit.json')
     shutil.copy2(run / 'predictions.csv', docs / 'pilot_predictions.csv')
     # 上传的是无需密钥的小型审计快照；原始 API 响应与环境不上传。
     write_json(docs / 'pilot_provenance.json', manifest)
@@ -101,12 +105,14 @@ def main():
     section(heading('7 · What actually ran', '7 · 本地实际跑出了什么') +
         p(f"Completed: {len(rows)} dev items × 4 input conditions = {4*len(rows)} probability forecasts. The main run made {len(ledger)} API attempts and the provider reported {total_tokens:,} tokens, including retries where usage was returned. A separate 2-item train smoke test is excluded from this table.", f"已完成：{len(rows)} 条 dev 样本 × 4 组输入 = {4*len(rows)} 个概率预测。主实验共 {len(ledger)} 次 API 尝试，服务商返回的 usage 合计 {total_tokens:,} token，包含能获取 usage 的重试。单独的 2 条训练集检查不进入本表。") +
         table(['Method','Accuracy','Brier','G(Full, method)','G(method, Full)',bi('Actual retained','实际保留率')], result_rows) +
+        '<div class="note">' + bi(f"Budget compliance: {metrics['scores']['summary']['over_budget_samples']}/{len(rows)} summaries still exceed their per-item 50% target after one repair. Their pooled retained ratio is {metrics['scores']['summary']['pooled_retained_ratio']:.1%}, versus {metrics['scores']['head_tail']['pooled_retained_ratio']:.1%} for head+tail. The full paired sample is retained; this is not a strictly matched-budget comparison.", f"预算执行情况：{len(rows)} 条摘要中有 {metrics['scores']['summary']['over_budget_samples']} 条在一次修复后仍超过单条 50% 的目标预算。摘要整体保留率为 {metrics['scores']['summary']['pooled_retained_ratio']:.1%}，首尾截断为 {metrics['scores']['head_tail']['pooled_retained_ratio']:.1%}。保留完整配对样本，不丢弃失败项；本次不能视为严格等预算比较。") + '</div>' +
+        p(f"The audit checked {audit['forecasts']} saved forecasts and {audit['unique_api_responses_checked']} distinct API responses. It also independently evaluated two-action utilities for all 16 InfoGap cells, without making new API calls.", f"审计检查了 {audit['forecasts']} 个保存的预测和 {audit['unique_api_responses_checked']} 个不同的 API 响应，并独立计算两动作决策收益，核验全部 16 个 InfoGap 单元格；没有新增 API 调用。") +
         p('A lower Brier score or higher accuracy can coexist with a positive InfoGap in the other direction. The objectives are different; do not infer a universal ranking from one scalar. No winner is claimed from these 30 examples.', '较低的 Brier 或较高的 Accuracy 可以与反向正 InfoGap 同时出现；它们评价的目标不同。不能从一个标量推出普遍排序。本次 30 个样本不宣称方法胜负。') +
         p('Open <a href="Pilot_Results.html">the complete results page</a> for both-direction matrices, probability scatterplots and every original/compacted passage. The HTML is standalone; copied alone, the plots and examples still work.', '打开<a href="Pilot_Results.html">完整结果页</a>查看双向矩阵、概率散点图、每条原文和压缩文本。结果 HTML 自包含，单独复制也能查看图和案例。') +
         p('The free Qwen3-8B endpoint repeatedly rate-limited preliminary attempts, which are excluded. The final pilot uses paid Qwen3-30B-A3B-Instruct-2507 for every condition, with at least 1 second between requests and longer waits after HTTP 429. This version does not switch models on failure. Failed requests remain visible in the ledger. An exact currency charge was not obtained from the account endpoint; token counts are recorded instead.', '免费 Qwen3-8B 端点反复限流，初步尝试已排除。最终 pilot 的所有组统一使用付费 Qwen3-30B-A3B-Instruct-2507，请求至少间隔 1 秒，遇到 HTTP 429 再延长等待；失败时不切换模型。失败请求保留在账本中。账户接口未提供可核验的实际扣费，因此只记录 token 用量，不编造人民币金额。'))
 
     section(heading('8 · Running it yourself', '8 · 你自己怎么运行') +
-        code('.\\run.ps1 -Mode Report   # recompute metrics, no LLM API\n.\\run.ps1 -Mode Replay   # replay saved responses, no network\n.\\run.ps1 -Mode Test     # offline correctness checks\n.\\run.ps1 -Mode Prepare  # download public data/tokenizer only\n.\\run.ps1 -Mode Run      # real API calls when cache is missing') +
+        code('.\\run.ps1 -Mode Report   # recompute metrics, no LLM API\n.\\run.ps1 -Mode Replay   # replay saved responses, no network\n.\\run.ps1 -Mode Audit    # audit actual requests and payoffs, no LLM API\n.\\run.ps1 -Mode Test     # offline correctness checks\n.\\run.ps1 -Mode Prepare  # download public data/tokenizer only\n.\\run.ps1 -Mode Run      # real API calls when cache is missing') +
         p('On this computer the environment is already installed in .venv on D:. A fresh checkout requires .\\setup.ps1. If script execution is blocked, use powershell -ExecutionPolicy Bypass -File .\\run.ps1 -Mode Report. The wrapper’s default action is Report, not a paid run.', '本机环境已安装在 D 盘仓库的 .venv 中。新克隆需要先执行 .\\setup.ps1。脚本被 Windows 阻止时，可用 powershell -ExecutionPolicy Bypass -File .\\run.ps1 -Mode Report。包装脚本默认动作是 Report，不会默认发起付费运行。') +
         p('For real calls, set SILICONFLOW_API_KEY in the current environment, or edit a local .env copied from .env.example. This file is Git-ignored. The key is read only at the point of a network request and is never written into cache, manifest or reports. OpenAI Pro subscription quota does not pay for OpenAI API usage; this version does not use OpenAI.', '真实调用需要当前环境中的 SILICONFLOW_API_KEY，或复制 .env.example 为本地 .env 后填写。该文件被 Git 忽略。密钥只在发起请求时读取，不写入缓存、manifest 或报告。OpenAI Pro 订阅额度不能抵扣 OpenAI API 用量；本版没有使用 OpenAI。') +
         p('To expand n, copy the config and change both sample_size and run_name. The nominal call count is 5n: four reader calls plus one summary call per item, before length repair and network retries. Adjust max_api_attempts deliberately. It is a hard attempt cap, not an RMB billing guarantee.', '扩大样本量时，复制配置，同时修改 sample_size 和 run_name。基础调用量约为 5n：每例四次 reader、一次摘要，尚未计入长度修复和网络重试。请明确调整 max_api_attempts；它是请求次数硬上限，不是人民币账单保证。'))
@@ -125,9 +131,9 @@ def main():
         p('Next useful additions are HotpotQA native yes/no examples, a stronger fixed reader, and a published query-agnostic compressor. Keep those as new, separately named experiments rather than retroactively changing this pilot.', '下一步适合加入 HotpotQA 原生 yes/no、一个更强的固定 reader，以及已发表的 query-agnostic 压缩方法。都应另建实验编号，不回头改写这次 pilot。'))
 
     source_blocks = []
-    for relative in ['run_experiment.py','blackwell/prompts.py','blackwell/compression.py','blackwell/metrics.py','blackwell/client.py','blackwell/data.py','blackwell/tokenization.py','blackwell/storage.py','tests/test_metrics.py','tests/test_pipeline.py']:
+    for relative in ['run_experiment.py','blackwell/prompts.py','blackwell/compression.py','blackwell/metrics.py','blackwell/client.py','blackwell/data.py','blackwell/tokenization.py','blackwell/storage.py','tools/audit_run.py','tests/test_metrics.py','tests/test_pipeline.py']:
         source = (ROOT / relative).read_text(encoding='utf-8')
-        numbered = '\n'.join(f'{i:03d}  {line}' for i,line in enumerate(source.splitlines(),1))
+        numbered = '\n'.join(f'{i:03d}  {line}'.rstrip() for i,line in enumerate(source.splitlines(),1))
         source_blocks.append(f'<details><summary>{html.escape(relative)}</summary>{code(numbered)}</details>')
     section(heading('10 · Expandable source snapshot', '10 · 可展开的源码快照') +
         p('These are the actual local source files when this guide was generated. Line numbers are for reading only. Read the first four modules before the transport and file helpers.', '以下是生成文档时的真实本地源码。行号仅用于阅读。建议先读前四个模块，再读网络与文件工具。') + ''.join(source_blocks))
