@@ -10,6 +10,9 @@ from blackwell.client import parse_probability
 from blackwell.prompts import compression_messages, prediction_messages
 from blackwell.storage import fingerprint, read_json, write_json
 from blackwell.tokenization import ContextTokenizer
+from blackwell.compressors import LOCAL_METHODS
+from blackwell.storage import file_hash
+from run_experiment import selected_methods
 
 
 def require(condition, message):
@@ -33,6 +36,8 @@ def main():
     require((ROOT / 'data/tokenizer/qwen3-30b-a3b-instruct-2507.json').exists(), 'Local tokenizer is missing; run Prepare first.')
     tokenizer = ContextTokenizer()
     checked_requests = set()
+    checked_local = set()
+    methods = selected_methods(config)
 
     def cached_text(request_hash, messages):
         cached = read_json(run / 'api_cache' / f'{request_hash}.json')
@@ -48,7 +53,7 @@ def main():
 
     for row, example in zip(rows, examples):
         require(all(row[key] == value for key, value in example.items()), 'Example fields or order differ.')
-        require(set(row['conditions']) == {'full','no_context','head_tail','summary'}, 'Missing condition.')
+        require(set(row['conditions']) == set(methods), 'Missing condition.')
         require(row['conditions']['full']['text'] == example['context'], 'Full context was changed.')
         require(row['conditions']['no_context']['text'] == '', 'No-context control is not empty.')
         require(row['original_tokens'] == tokenizer.count(example['context']), 'Original token count differs.')
@@ -57,18 +62,31 @@ def main():
             messages = prediction_messages(condition['text'], example['question'])
             raw = cached_text(condition['prediction_request_hash'], messages)
             require(parse_probability(raw) == condition['p_yes'], 'Saved probability differs from actual response.')
-            if method in {'head_tail','summary'}:
+            if method not in {'full','no_context'}:
                 require(condition['budget_met'] == (condition['tokens'] <= condition['budget_tokens']), 'Budget flag differs.')
-        summary = row['conditions']['summary']
-        require(1 <= len(summary['compression_request_hashes']) <= 2, 'Unexpected summary attempt count.')
-        previous, previous_tokens = None, None
-        for request_hash in summary['compression_request_hashes']:
-            # 只允许 passage、预算与上一版摘要；不允许问题、标签或 reader 输出。
-            messages = compression_messages(example['context'], summary['budget_tokens'], previous, previous_tokens)
-            previous = cached_text(request_hash, messages)
-            previous_tokens = tokenizer.count(previous)
-        require(previous == summary['text'], 'Final summary differs from the saved API output.')
-
+            if method == 'head_tail':
+                require(condition['text'] == tokenizer.head_tail(example['context'], condition['budget_tokens']), 'Head-tail differs.')
+            if method in LOCAL_METHODS:
+                key = condition['local_compression_hash']
+                entry = read_json(run / 'local_compression_cache' / f'{key}.json')
+                allowed = {'context': example['context'], 'budget_tokens': condition['budget_tokens'],
+                           'method': method, 'retained_ratio': config['retained_ratio'],
+                           'runtime': manifest['identity']['local_compressors']}
+                require(entry['request'] == allowed and fingerprint(allowed) == key, 'Local compressor inputs differ.')
+                require(entry['result_sha256'] == fingerprint(entry['result']), 'Local output digest differs.')
+                require(entry['result']['text'] == condition['text'], 'Compressed text was changed after local inference.')
+                require(condition['compression_request_hashes'] == [], 'Local compression unexpectedly called API.')
+                checked_local.add(key)
+        if 'summary' in methods:
+            summary = row['conditions']['summary']
+            require(1 <= len(summary['compression_request_hashes']) <= 2, 'Unexpected summary attempt count.')
+            previous, previous_tokens = None, None
+            for request_hash in summary['compression_request_hashes']:
+                # 只允许 passage、预算与上一版摘要；不允许问题、标签或 reader 输出。
+                messages = compression_messages(example['context'], summary['budget_tokens'], previous, previous_tokens)
+                previous = cached_text(request_hash, messages)
+                previous_tokens = tokenizer.count(previous)
+            require(previous == summary['text'], 'Final summary differs from the saved API output.')
     # 独立算两动作的实际收益，核验每个 InfoGap 单元格，不调用 infogap()。
     metrics = read_json(run / 'metrics.json')
     methods = list(rows[0]['conditions'])
@@ -88,10 +106,25 @@ def main():
                 advantages.append(sum(differences) / len(rows))
             expected = max(0., *advantages)
             require(abs(metrics['infogap'][a][b]['value'] - expected) < 1e-12, 'Independent decision-payoff check failed.')
-    result = {'status':'passed', 'samples':len(rows), 'forecasts':4*len(rows),
-              'unique_api_responses_checked':len(checked_requests), 'infogap_cells_independently_checked':16,
+    result = {'status':'passed', 'samples':len(rows), 'forecasts':len(methods)*len(rows),
+              'unique_api_responses_checked':len(checked_requests), 'infogap_cells_independently_checked':len(methods)**2,
+              'local_compressions_checked':len(checked_local),
               'checks':['sample identities', 'actual query-blind compression messages', 'raw probabilities',
                         'actual token counts', 'two-action payoff verification'], 'new_api_calls':0}
+    if (run / 'cache_import.json').exists():
+        receipt = read_json(run / 'cache_import.json')
+        for name, digest in receipt['files_sha256'].items():
+            require(file_hash(run / 'api_cache' / name) == digest, 'Imported response changed.')
+        source = ROOT / 'runs' / receipt['source_run']
+        source_rows = read_json(source / 'predictions.json')
+        require(len(source_rows) == len(rows), 'Paired reuse sample count differs.')
+        compared = 0
+        for row, old_row in zip(rows, source_rows):
+            require(row['id'] == old_row['id'], 'Paired reuse sample order differs.')
+            for method in set(row['conditions']) & set(old_row['conditions']):
+                require(row['conditions'][method] == old_row['conditions'][method], 'Reused condition differs from original.')
+                compared += 1
+        result['unchanged_forecasts_from_previous_run'] = compared
     write_json(run / 'audit.json', result)
     print(result)
 

@@ -2,11 +2,50 @@
 
 一个适合逐行阅读的 **query-blind 上下文压缩 + 二元概率预测 + InfoGap** 基础实验。
 
-同一道 BoolQ 问题使用 4 种输入：原文 `full`、无上下文 `no_context`、首尾截断 `head_tail`、API 摘要 `summary`。两个压缩 baseline 都不能看到后续问题或真实标签。Reader 固定为硅基流动 `Qwen/Qwen3-30B-A3B-Instruct-2507`，输出 `{"p_yes": 0.73}`，表示 Bernoulli(0.73)。不训练模型、不下载模型权重、不需要 GPU。
+同一道 BoolQ 问题使用 4 种输入：原文 `full`、无上下文 `no_context`、首尾截断 `head_tail`、API 摘要 `summary`。两个压缩 baseline 都不能看到后续问题或真实标签。Reader 固定为硅基流动 `Qwen/Qwen3-30B-A3B-Instruct-2507`，输出 `{"p_yes": 0.73}`，表示 Bernoulli(0.73)。这个原始 API 版不训练模型、不下载模型权重、不需要 GPU。新增的可选本地版还支持官方 **Selective Context** 和 **LLMLingua-2**：压缩器在本地运行，reader 继续使用 API。
 
 这是验证代码与协议的小样本实验，不是论文级方法比较。摘要 baseline 是通用摘要，不声称复现 ACON 或 LLMLingua。
 
-## 先看哪里
+## 新增：Selective Context 与 LLMLingua-2
+
+- **[模块导读和对比结论](docs/Local_Compressors.html)**：中英文切换、接口示例、兼容性说明、可展开源码。
+- **[六组配对实验结果](docs/Local_Compressors_Results.html)**：同一批 30 条样本，保留旧四组预测，增加两个官方方法。
+- 官方代码：[Selective Context](https://github.com/liyucheng09/Selective_Context)（EMNLP 2023）与 [LLMLingua-2](https://github.com/microsoft/LLMLingua)（ACL Findings 2024）。
+
+```python
+from blackwell.compressors import create_compressor
+
+# 第一次创建会加载本地权重；创建一次后可反复压缩。
+compressor = create_compressor("llmlingua2")
+# 或 create_compressor("selective_context")
+compressed_text = compressor.compress(context_text, retained_ratio=0.5)
+```
+
+输入、输出均为字符串。接口不接收 query、label 或 reader 预测。Selective Context 使用 GPT-2 + phrase；LLMLingua-2 使用官方 XLM-R-large MeetingBank 模型，明确启用二代算法。无训练，CPU 即可运行。本地权重约 2.8 GB（另加依赖和缓存），全部在 D 盘；压缩不消耗 LLM API。
+
+```powershell
+# 在基础环境 setup.ps1 之后，安装一次可选模型和依赖。
+.\setup-local.ps1
+
+# 本机已有的六组实验：重算报告、审计和完全离线重放。
+.\run.ps1 -Mode Report -Config configs/local_comparison.json
+.\run.ps1 -Mode Audit -Config configs/local_comparison.json
+.\run.ps1 -Mode Replay -Config configs/local_comparison.json
+
+# 新克隆没有旧 runs 缓存时：原文、空上下文、SC、LLMLingua-2 四组。
+# 这个命令会产生付费 API 调用；运行前核对配置和密钥。
+.\run.ps1 -Mode Run -Config configs/local_fresh.json
+```
+
+`configs/local_comparison.json` 会复用原 pilot 的完全相同 API 请求缓存；本机预计仅需为两个新方法增加 60 次 reader 调用。`configs/local_fresh.json` 不依赖旧运行。两者都使用 30 条相同 seed 的 BoolQ dev 样本，实际 API 次数由去重和重试决定。
+
+**长度解释**：`retained_ratio` 表示保留率；SC 的原生参数是删除率，因此使用 `reduce_ratio = 1 - retained_ratio`。原生短语/词筛选不能精确保证 Qwen token 预算，本项目记录实际 token 数并保留超预算输出，不追加截断。这是相同名义比例的 pilot，不是严格等 token 预算排名。
+
+**依赖兼容性**：SC 0.1.4 原始 spaCy 3.2.0 与当前 Python 3.12 不兼容。使用官方包的算法，覆盖模型加载钩子以固定本地权重，采用已验证的 spaCy 3.8.7。安装时显式绕过其旧 spaCy / click 依赖锁定；`pip check` 会报告这两项已知偏差。实际版本、模型 revision、文件 SHA256 和官方源码哈希会写入运行记录。详见导读。这不声称精确复现论文的原始软件环境。
+
+旧 `docs/Pilot_Results.html` 和原导读保留不变。旧配置仍可用于 Report / Audit；旧运行的严格 Replay 需要与其记录一致的原源码（`fb641ef`，使用独立 checkout），否则哈希检查会按设计拒绝。后续更改协议或源码仍需新 `run_name`。
+
+## 原始四组 pilot：先看哪里
 
 - **[代码导读与审计文档](docs/Code_Walkthrough_and_Audit.html)**：支持中英文，默认英文；含流程、公式、真实结果和可展开源码。
 - **[已运行的实验结果](docs/Pilot_Results.html)**：逐条查看问题、标签、压缩文本、四组概率和 InfoGap。
@@ -66,9 +105,11 @@ runs/<run_name>/
   manifest.json          配置、数据/代码校验值、版本与运行状态
   examples.json          固定样本及其来源行号
   predictions.json       每条样本的完整上下文、压缩文本和概率
-  predictions.csv        方便查看的长表，每条样本对应 4 行
+  predictions.csv        方便查看的长表，每条样本对应 methods 中各方法的一行
   metrics.json           精确数值、双向矩阵、阈值和 bootstrap 范围
   audit.json             对实际请求、概率、预算与独立决策收益的核验
+  local_compression_cache/  本地压缩输入、输出与模型/依赖指纹（本地版）
+  cache_import.json     旧 API 响应的来源及逐文件哈希（复用时）
   api_cache/*.json       不含密钥的实际请求正文与原始 API 响应
   api_attempts.json      含失败/重试在内的 API 次数与返回 usage
   report.html            自包含交互结果页
@@ -92,7 +133,7 @@ G(A,B) = 2 × sup over t∈[0,1] of mean[h_t(p_A,y) − h_t(p_B,y)]
 
 - 先复制 `configs/pilot.json`，修改 `run_name` 与 `sample_size`；`max_api_attempts` 要覆盖约 `5 × 样本数` 加长度修复与重试，默认上限会中止超额调用。
 - `retained_ratio` 表示保留率，例如 `0.25` 对应目标 4 倍压缩。
-- 添加 baseline：在 `compression.py` 中只接收 `context` 和 `budget`，不要把整个带标签的 example 传进去。
+- 添加 baseline：参照 `blackwell/compressors/` 的独立模块，在配置 `methods` 中选择；只接收上下文和长度参数，不要传整个带标签的 example。
 - 更换模型前需同时核对 tokenizer、API 参数、JSON 格式和价格。第一版显式拒绝未经验证的模型设置。
 - 下一阶段再增加 HotpotQA 原生 yes/no 子集；不把本次 BoolQ 小样本结果解释为长上下文 benchmark 结论。
 

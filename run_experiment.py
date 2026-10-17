@@ -13,12 +13,23 @@ from pathlib import Path
 
 from blackwell.client import CachedChatClient, parse_probability
 from blackwell.compression import Compactor
+from blackwell.compressors import LOCAL_METHODS
+from blackwell.cache_reuse import import_api_cache
 from blackwell.data import load_boolq
 from blackwell.metrics import bootstrap_gaps, forecast_scores, infogap
 from blackwell.prompts import prediction_messages
 from blackwell.storage import ROOT, file_hash, fingerprint, read_json, write_json
 
-METHODS = ("full", "no_context", "head_tail", "summary")
+DEFAULT_METHODS = ("full", "no_context", "head_tail", "summary")
+
+
+def selected_methods(config):
+    methods = config.get("methods", list(DEFAULT_METHODS))
+    allowed = set(DEFAULT_METHODS) | set(LOCAL_METHODS)
+    if (not isinstance(methods, list) or len(methods) != len(set(methods))
+            or not {"full", "no_context"}.issubset(methods) or set(methods) - allowed):
+        raise ValueError("methods must be a unique list of supported names including full and no_context.")
+    return methods
 
 
 def load_local_keys():
@@ -51,11 +62,12 @@ def load_config(path):
             raise ValueError(f"Invalid setting: {key}")
     if config["min_interval_seconds"] < 0 or config["timeout_seconds"] <= 0:
         raise ValueError("Invalid timing setting.")
+    selected_methods(config)
     return config
 
 
 def code_provenance():
-    paths = [ROOT / "run_experiment.py", *sorted((ROOT / "blackwell").glob("*.py"))]
+    paths = [ROOT / "run_experiment.py", *sorted((ROOT / "blackwell").rglob("*.py"))]
     hashes = {p.relative_to(ROOT).as_posix(): file_hash(p) for p in paths}
     result = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True)
     return {"python": platform.python_version(), "files_sha256": hashes,
@@ -70,6 +82,12 @@ def prepare_run(config, run_dir):
     identity = {"config": config, "dataset": provenance, "examples_sha256": fingerprint(examples),
                 "tokenizer_revision": TOKENIZER_REVISION, "tokenizer_sha256": TOKENIZER_SHA256,
                 "code": code_provenance()}
+    local_methods = [m for m in selected_methods(config) if m in LOCAL_METHODS]
+    if local_methods:
+        from blackwell.compressors.runtime import configure_cache, runtime_identity, verify_assets
+        configure_cache()
+        verify_assets(local_methods)
+        identity["local_compressors"] = runtime_identity(local_methods)
     manifest_path = run_dir / "manifest.json"
     if manifest_path.exists():
         manifest = read_json(manifest_path)
@@ -88,7 +106,13 @@ def prepare_run(config, run_dir):
 
 def generate_predictions(config, run_dir, tokenizer, examples, offline=False):
     client = CachedChatClient(config, run_dir, offline)
-    compactor = Compactor(client, tokenizer)
+    methods = selected_methods(config)
+    local_cache = None
+    if any(m in LOCAL_METHODS for m in methods):
+        from blackwell.local_cache import LocalCompressionCache
+        identity = read_json(run_dir / "manifest.json")["identity"]["local_compressors"]
+        local_cache = LocalCompressionCache(run_dir, identity, offline)
+    compactor = Compactor(client, tokenizer, local_cache, config["retained_ratio"])
     rows = []
     for number, example in enumerate(examples, 1):
         context = example["context"]
@@ -101,10 +125,12 @@ def generate_predictions(config, run_dir, tokenizer, examples, offline=False):
             "no_context": {"text": "", "tokens": 0, "budget_tokens": None,
                            "budget_met": None, "length_repair_used": False, "compression_request_hashes": []},
         }
-        for method in ("head_tail", "summary"):
+        for method in methods:
+            if method in {"full", "no_context"}:
+                continue
             compacted[method] = compactor.compress(context, budget, method)
         conditions = {}
-        for method in METHODS:
+        for method in methods:
             compressed = compacted[method]
             raw, request_hash = client.complete(
                 prediction_messages(compressed["text"], example["question"]),
@@ -119,18 +145,21 @@ def generate_predictions(config, run_dir, tokenizer, examples, offline=False):
         rows.append({**example, "original_tokens": original_tokens, "conditions": conditions})
         write_json(run_dir / "predictions.json", rows)
         print(f"[{number:02d}/{len(examples):02d}] {example['id']}  " +
-              "  ".join(f"{m}={conditions[m]['p_yes']:.3f}" for m in METHODS), flush=True)
+              "  ".join(f"{m}={conditions[m]['p_yes']:.3f}" for m in methods), flush=True)
     return rows, {"new_api_attempts": client.new_attempts, "cache_hits": client.cache_hits}
 
 
 def analyze(rows, config):
     if len(rows) != config["sample_size"] or len({r["id"] for r in rows}) != len(rows):
         raise ValueError("Incomplete or duplicate samples: refusing to report a silently reduced dataset.")
+    methods = selected_methods(config)
+    if any(set(r["conditions"]) != set(methods) for r in rows):
+        raise ValueError("Conditions must match the configured methods on every sample.")
     labels = [r["label"] for r in rows]
     groups = [r["context_group"] for r in rows]
-    probabilities = {method: [r["conditions"][method]["p_yes"] for r in rows] for method in METHODS}
+    probabilities = {method: [r["conditions"][method]["p_yes"] for r in rows] for method in methods}
     scores = {}
-    for method in METHODS:
+    for method in methods:
         conditions = [r["conditions"][method] for r in rows]
         scores[method] = {
             **forecast_scores(probabilities[method], labels),
@@ -139,11 +168,11 @@ def analyze(rows, config):
             "over_budget_samples": sum(c["budget_met"] is False for c in conditions),
             "length_repairs": sum(c["length_repair_used"] for c in conditions),
         }
-    matrix = {a: {b: infogap(probabilities[a], probabilities[b], labels) for b in METHODS} for a in METHODS}
+    matrix = {a: {b: infogap(probabilities[a], probabilities[b], labels) for b in methods} for a in methods}
     uncertainty = {method: bootstrap_gaps(
         probabilities["full"], probabilities[method], labels, groups,
         config["bootstrap_repetitions"], config["bootstrap_seed"],
-    ) for method in METHODS if method != "full"}
+    ) for method in methods if method != "full"}
     return {"n": len(rows), "positive_labels": sum(labels), "scores": scores,
             "infogap": matrix, "bootstrap_vs_full": uncertainty,
             "normalization": "2 * sup_t mean[(t-y)(1[p_A<=t]-1[p_B<=t])]; also save unscaled.",
@@ -152,6 +181,7 @@ def analyze(rows, config):
 
 def write_outputs(run_dir, rows, config):
     from blackwell.reporting import write_report
+    methods = selected_methods(config)
     metrics = analyze(rows, config)
     write_json(run_dir / "metrics.json", metrics)
     fields = ["id", "label", "method", "p_yes", "p_no", "predicted_label", "context_tokens", "budget_tokens", "retained_ratio", "budget_met"]
@@ -159,7 +189,7 @@ def write_outputs(run_dir, rows, config):
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
         for row in rows:
-            for method in METHODS:
+            for method in methods:
                 c = row["conditions"][method]
                 writer.writerow({"id": row["id"], "label": row["label"], "method": method,
                                  "p_yes": c["p_yes"], "p_no": 1 - c["p_yes"], "predicted_label": c["predicted_label"],
@@ -196,10 +226,11 @@ def main():
         if not all(p.exists() for p in required):
             raise RuntimeError("Offline replay needs the previously prepared local files.")
     tokenizer, examples, manifest = prepare_run(config, run_dir)
-    print(f"{len(examples)} BoolQ {config['dataset_split']} samples; 4 conditions; nominal {5 * len(examples)} API requests.")
+    print(f"{len(examples)} BoolQ {config['dataset_split']} samples; {len(selected_methods(config))} paired conditions.")
     if args.prepare_only:
         print("Prepared. No LLM API calls were made.")
         return
+    import_api_cache(config, run_dir, args.offline)
     load_local_keys()
     manifest.update(status="running")
     write_json(run_dir / "manifest.json", manifest)
@@ -222,4 +253,3 @@ if __name__ == "__main__":
     except (ValueError, RuntimeError) as error:
         print(f"Stopped: {error}", file=sys.stderr)
         sys.exit(1)
-

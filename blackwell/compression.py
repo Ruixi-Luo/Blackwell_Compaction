@@ -1,14 +1,22 @@
-"""两个 baseline；公共接口只接收上下文和长度预算。"""
+"""统一压缩接口：公共输入只有上下文、预算和方法名。"""
 from .prompts import compression_messages
+from .compressors import LOCAL_METHODS
 
 
 class Compactor:
-    def __init__(self, client, tokenizer):
+    def __init__(self, client, tokenizer, local_cache=None, retained_ratio=0.5):
         self.client = client
         self.tokenizer = tokenizer
+        self.local_cache = local_cache
+        self.retained_ratio = retained_ratio
 
     def compress(self, context, budget, method):
         """故意不接收 question、label 或原文预测，确保 query-blind。"""
+        if method in LOCAL_METHODS:
+            if self.local_cache is None:
+                raise RuntimeError("Local compressor cache/runtime was not configured.")
+            local = self.local_cache.compress(context, budget, method, self.retained_ratio)
+            return {**self._result(local["text"], budget, [], False), **local}
         if method == "head_tail":
             text = self.tokenizer.head_tail(context, budget)
             return self._result(text, budget, [], False)
@@ -37,4 +45,3 @@ class Compactor:
             "budget_met": count <= budget, "length_repair_used": repaired,
             "compression_request_hashes": hashes,
         }
-

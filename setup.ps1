@@ -12,6 +12,8 @@ if (-not (Test-Path -LiteralPath '.venv/Scripts/python.exe')) {
 }
 $dependencyFile = 'requirements.txt'
 if (Test-Path -LiteralPath 'requirements-lock.txt') { $dependencyFile = 'requirements-lock.txt' }
+# Do not roll back the optional Transformers-compatible environment on repeated setup.
+if (Test-Path -LiteralPath '.venv/Lib/site-packages/llmlingua') { $dependencyFile = 'requirements.txt' }
 & '.venv/Scripts/python.exe' -m pip install --disable-pip-version-check -r $dependencyFile
 if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
 Write-Output 'Ready. Run: .\run.ps1 -Mode Test'
