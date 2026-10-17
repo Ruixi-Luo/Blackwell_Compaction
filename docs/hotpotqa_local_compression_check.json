@@ -1,0 +1,547 @@
+{
+  "status": "passed",
+  "socket_connections_blocked": true,
+  "llm_api_calls": 0,
+  "records": [
+    {
+      "id": "hotpotqa-dev-5ab934465542996be202043e",
+      "method": "selective_context",
+      "original_tokens": 972,
+      "compressed_tokens": 617,
+      "budget_tokens": 486,
+      "retained_ratio": 0.6347736625514403,
+      "cache_hash": "8fcd5547fe76836ae2a19a1e0b34d0199da866529c3a5028df3d9146910e1fc6"
+    },
+    {
+      "id": "hotpotqa-dev-5ab6ba245542995eadef007f",
+      "method": "selective_context",
+      "original_tokens": 996,
+      "compressed_tokens": 632,
+      "budget_tokens": 498,
+      "retained_ratio": 0.6345381526104418,
+      "cache_hash": "d1ecee313fe6e2d72c581b750cee392b9bd6920111d5c3ac581d95ce755a6e87"
+    },
+    {
+      "id": "hotpotqa-dev-5adfa12c554299025d62a301",
+      "method": "selective_context",
+      "original_tokens": 1542,
+      "compressed_tokens": 951,
+      "budget_tokens": 771,
+      "retained_ratio": 0.6167315175097277,
+      "cache_hash": "9d36a993850a0a27dbc7f2444afe32ad101111ccbadb9007295677a4e67f9b3c"
+    },
+    {
+      "id": "hotpotqa-dev-5a8b5b1c5542995d1e6f1387",
+      "method": "selective_context",
+      "original_tokens": 1351,
+      "compressed_tokens": 810,
+      "budget_tokens": 675,
+      "retained_ratio": 0.5995558845299778,
+      "cache_hash": "14ae97604548ee907ac5392347a15f15a4329c00a495f116f303fc335e1e6e4a"
+    },
+    {
+      "id": "hotpotqa-dev-5ac3ac8255429939154138ad",
+      "method": "selective_context",
+      "original_tokens": 836,
+      "compressed_tokens": 508,
+      "budget_tokens": 418,
+      "retained_ratio": 0.6076555023923444,
+      "cache_hash": "6178e07296df353950a1c7f5f20a880f7c71aadd3dd03a5ec61701894c08427d"
+    },
+    {
+      "id": "hotpotqa-dev-5a8aee2c55429970aeb70338",
+      "method": "selective_context",
+      "original_tokens": 1087,
+      "compressed_tokens": 676,
+      "budget_tokens": 543,
+      "retained_ratio": 0.6218951241950322,
+      "cache_hash": "a2901a8bf120a2bc799657e3443d3f923b2d563ad96c8cd3abaf2987aa2d4484"
+    },
+    {
+      "id": "hotpotqa-dev-5ac3b4e0554299741d48a2ec",
+      "method": "selective_context",
+      "original_tokens": 1306,
+      "compressed_tokens": 841,
+      "budget_tokens": 653,
+      "retained_ratio": 0.6439509954058193,
+      "cache_hash": "9350cc3c56e81a4231aef00ca1d50299c695d104be0f6ee48785704e25f5c845"
+    },
+    {
+      "id": "hotpotqa-dev-5a8173fa554299260e20a28e",
+      "method": "selective_context",
+      "original_tokens": 1515,
+      "compressed_tokens": 911,
+      "budget_tokens": 757,
+      "retained_ratio": 0.6013201320132013,
+      "cache_hash": "06f50a75ec82266f783975fdb96576c2392db168fbd90e4a2f933edf892c19a2"
+    },
+    {
+      "id": "hotpotqa-dev-5a7f677455429969796c1a37",
+      "method": "selective_context",
+      "original_tokens": 918,
+      "compressed_tokens": 588,
+      "budget_tokens": 459,
+      "retained_ratio": 0.6405228758169934,
+      "cache_hash": "65510fd8a0f22fb0f366d5552900aa80911f5ca4f9a3845df2ad3d6762881160"
+    },
+    {
+      "id": "hotpotqa-dev-5ae12bcc5542997b2ef7d11a",
+      "method": "selective_context",
+      "original_tokens": 1784,
+      "compressed_tokens": 1075,
+      "budget_tokens": 892,
+      "retained_ratio": 0.6025784753363229,
+      "cache_hash": "683a063c76edcadaf55b2b5d1bf2257683b53eddf4756b0938a69c7c913b7eb2"
+    },
+    {
+      "id": "hotpotqa-dev-5a87bd4e5542994846c1cde0",
+      "method": "selective_context",
+      "original_tokens": 1513,
+      "compressed_tokens": 936,
+      "budget_tokens": 756,
+      "retained_ratio": 0.6186384666226041,
+      "cache_hash": "3143419a0a1460b5bc841de622fd38f6c70a82908dae1a228f9a1c715986d0df"
+    },
+    {
+      "id": "hotpotqa-dev-5a80a1b25542992bc0c4a78c",
+      "method": "selective_context",
+      "original_tokens": 954,
+      "compressed_tokens": 615,
+      "budget_tokens": 477,
+      "retained_ratio": 0.6446540880503144,
+      "cache_hash": "eb58a4dabf8fb746a1d4064ca8f2c1122ded47e089508877d37bffd6e1073008"
+    },
+    {
+      "id": "hotpotqa-dev-5a7e3117554299495941991b",
+      "method": "selective_context",
+      "original_tokens": 1274,
+      "compressed_tokens": 796,
+      "budget_tokens": 637,
+      "retained_ratio": 0.6248037676609105,
+      "cache_hash": "340947da7811f212acf7bfdad125fe92b5d7719c0d59edfacf04701792bd121d"
+    },
+    {
+      "id": "hotpotqa-dev-5ae4bb1255429913cc2044e7",
+      "method": "selective_context",
+      "original_tokens": 1462,
+      "compressed_tokens": 873,
+      "budget_tokens": 731,
+      "retained_ratio": 0.5971272229822161,
+      "cache_hash": "d57e5de32fc82b364cd2bf9ee568b5df654433ff9be8d6937cebe360a10563a1"
+    },
+    {
+      "id": "hotpotqa-dev-5a8778d25542994846c1cd89",
+      "method": "selective_context",
+      "original_tokens": 937,
+      "compressed_tokens": 538,
+      "budget_tokens": 468,
+      "retained_ratio": 0.5741728922091782,
+      "cache_hash": "5d1101243e52175c28382721c9265b8f3b552e9edb1b9c1918bb6a37374df8c1"
+    },
+    {
+      "id": "hotpotqa-dev-5abbf8bc5542993f40c73c35",
+      "method": "selective_context",
+      "original_tokens": 292,
+      "compressed_tokens": 178,
+      "budget_tokens": 146,
+      "retained_ratio": 0.6095890410958904,
+      "cache_hash": "13b30b5fe09ccea518b2e8b89181955260084753ab762f354942da7256f9fd05"
+    },
+    {
+      "id": "hotpotqa-dev-5ae33a6e5542992f92d8224d",
+      "method": "selective_context",
+      "original_tokens": 1650,
+      "compressed_tokens": 1054,
+      "budget_tokens": 825,
+      "retained_ratio": 0.6387878787878788,
+      "cache_hash": "fc8162dfe360b40985263e51f419ad66dca55c27a4adecb7c9534c560b92d403"
+    },
+    {
+      "id": "hotpotqa-dev-5a82accd55429966c78a6a78",
+      "method": "selective_context",
+      "original_tokens": 1315,
+      "compressed_tokens": 781,
+      "budget_tokens": 657,
+      "retained_ratio": 0.593916349809886,
+      "cache_hash": "57e617d444a6af3b3180faf005d7b48dc859f38089931ffc382a1202bfa57e88"
+    },
+    {
+      "id": "hotpotqa-dev-5a7e1cad55429965cec5ea75",
+      "method": "selective_context",
+      "original_tokens": 2330,
+      "compressed_tokens": 1379,
+      "budget_tokens": 1165,
+      "retained_ratio": 0.5918454935622317,
+      "cache_hash": "7587240735ad152f881c2a1d5a096f95ed438317a9ca4d4f0b3d9b28820ec1a7"
+    },
+    {
+      "id": "hotpotqa-dev-5a8651185542994775f60752",
+      "method": "selective_context",
+      "original_tokens": 1308,
+      "compressed_tokens": 832,
+      "budget_tokens": 654,
+      "retained_ratio": 0.636085626911315,
+      "cache_hash": "b6472105f544648dc3ef5b7e8f8f882c389db8718f1ec189bda32579786858fa"
+    },
+    {
+      "id": "hotpotqa-dev-5ac179bf5542994ab5c67d60",
+      "method": "selective_context",
+      "original_tokens": 1464,
+      "compressed_tokens": 912,
+      "budget_tokens": 732,
+      "retained_ratio": 0.6229508196721312,
+      "cache_hash": "125c28117d0ffc5cd6c924f92f432802afc9d04364548351757e4c1e40607f3f"
+    },
+    {
+      "id": "hotpotqa-dev-5abbd58d554299660624172f",
+      "method": "selective_context",
+      "original_tokens": 1339,
+      "compressed_tokens": 808,
+      "budget_tokens": 669,
+      "retained_ratio": 0.6034353995519044,
+      "cache_hash": "0fa5551dbc99ac3b8ba709df78ee04d87534aab511f30d9a9937d52fc5e04d8c"
+    },
+    {
+      "id": "hotpotqa-dev-5a82800855429966c78a6a2f",
+      "method": "selective_context",
+      "original_tokens": 1796,
+      "compressed_tokens": 1066,
+      "budget_tokens": 898,
+      "retained_ratio": 0.5935412026726058,
+      "cache_hash": "3b93fd7d0211a5a7a3efb6959a6136d5782944f653a8f010bad4e3cb53097eef"
+    },
+    {
+      "id": "hotpotqa-dev-5ab5c8c5554299637185c60d",
+      "method": "selective_context",
+      "original_tokens": 1028,
+      "compressed_tokens": 652,
+      "budget_tokens": 514,
+      "retained_ratio": 0.6342412451361867,
+      "cache_hash": "ced8e581bc1828246db9e7e290f01b94b663e130c3dafae45a8bd7d69bd58541"
+    },
+    {
+      "id": "hotpotqa-dev-5a866c04554299211dda2b25",
+      "method": "selective_context",
+      "original_tokens": 1097,
+      "compressed_tokens": 669,
+      "budget_tokens": 548,
+      "retained_ratio": 0.609845031905196,
+      "cache_hash": "5c5066c1373fc2ef583ee84457252af9f3b318964b90aa5a30abe2a144fcd479"
+    },
+    {
+      "id": "hotpotqa-dev-5ab67c3f55429954757d32f9",
+      "method": "selective_context",
+      "original_tokens": 1220,
+      "compressed_tokens": 738,
+      "budget_tokens": 610,
+      "retained_ratio": 0.6049180327868853,
+      "cache_hash": "a9b6767b3959939456e039b073fda39c43c968a981386c783dc197beca46725e"
+    },
+    {
+      "id": "hotpotqa-dev-5ab51ddf5542990594ba9d11",
+      "method": "selective_context",
+      "original_tokens": 1707,
+      "compressed_tokens": 1051,
+      "budget_tokens": 853,
+      "retained_ratio": 0.6157000585823081,
+      "cache_hash": "c5dd10dc0ae32d7d2309ec0260f96bb02e99814adb4c7ace2b0da2e7871b4071"
+    },
+    {
+      "id": "hotpotqa-dev-5a8fb3af5542997ba9cb32ee",
+      "method": "selective_context",
+      "original_tokens": 1172,
+      "compressed_tokens": 688,
+      "budget_tokens": 586,
+      "retained_ratio": 0.5870307167235495,
+      "cache_hash": "021bd908f74f0524f870807924be28004c90af6375d3ea765e9abf66073d907a"
+    },
+    {
+      "id": "hotpotqa-dev-5ae1d656554299234fd04322",
+      "method": "selective_context",
+      "original_tokens": 1262,
+      "compressed_tokens": 747,
+      "budget_tokens": 631,
+      "retained_ratio": 0.5919175911251982,
+      "cache_hash": "f034f75dc3d816930528053408ddeb9f40a71838052422cb535d85e763f0d286"
+    },
+    {
+      "id": "hotpotqa-dev-5ab981555542996be2020532",
+      "method": "selective_context",
+      "original_tokens": 525,
+      "compressed_tokens": 330,
+      "budget_tokens": 262,
+      "retained_ratio": 0.6285714285714286,
+      "cache_hash": "96e751eac2936d010ff92bc71e9140ffb56ae81e8243a8decde516c4cc5c80a0"
+    },
+    {
+      "id": "hotpotqa-dev-5ab934465542996be202043e",
+      "method": "llmlingua2",
+      "original_tokens": 972,
+      "compressed_tokens": 465,
+      "budget_tokens": 486,
+      "retained_ratio": 0.4783950617283951,
+      "cache_hash": "14cd6bcfc3e894709af0ef2859b3dc6feb95d3c61f0731b04a0e0c71e479f6d9"
+    },
+    {
+      "id": "hotpotqa-dev-5ab6ba245542995eadef007f",
+      "method": "llmlingua2",
+      "original_tokens": 996,
+      "compressed_tokens": 511,
+      "budget_tokens": 498,
+      "retained_ratio": 0.5130522088353414,
+      "cache_hash": "365b7e1e1a4c13d16122c07cbd95982daaeeb790b6069157a53bb3b9958cb916"
+    },
+    {
+      "id": "hotpotqa-dev-5adfa12c554299025d62a301",
+      "method": "llmlingua2",
+      "original_tokens": 1542,
+      "compressed_tokens": 740,
+      "budget_tokens": 771,
+      "retained_ratio": 0.4798962386511025,
+      "cache_hash": "1e839fe031decf0a1e2a759a75d3c286f6a74693ecccd63ecfb94137c34cfe14"
+    },
+    {
+      "id": "hotpotqa-dev-5a8b5b1c5542995d1e6f1387",
+      "method": "llmlingua2",
+      "original_tokens": 1351,
+      "compressed_tokens": 711,
+      "budget_tokens": 675,
+      "retained_ratio": 0.5262768319763138,
+      "cache_hash": "d2476457b432626ecf5776f2878d848e12d3529c68ec79f1a0dad577f739ebe6"
+    },
+    {
+      "id": "hotpotqa-dev-5ac3ac8255429939154138ad",
+      "method": "llmlingua2",
+      "original_tokens": 836,
+      "compressed_tokens": 437,
+      "budget_tokens": 418,
+      "retained_ratio": 0.5227272727272727,
+      "cache_hash": "87a5eb3be5a264c3c28c220441f117f08e7894c444e850149121d0c3fd8abfa2"
+    },
+    {
+      "id": "hotpotqa-dev-5a8aee2c55429970aeb70338",
+      "method": "llmlingua2",
+      "original_tokens": 1087,
+      "compressed_tokens": 542,
+      "budget_tokens": 543,
+      "retained_ratio": 0.49862005519779207,
+      "cache_hash": "e14888c656e7e3f1cd8791d0797d88e7d63e03df578b0cb9409e029dcc1142f3"
+    },
+    {
+      "id": "hotpotqa-dev-5ac3b4e0554299741d48a2ec",
+      "method": "llmlingua2",
+      "original_tokens": 1306,
+      "compressed_tokens": 657,
+      "budget_tokens": 653,
+      "retained_ratio": 0.503062787136294,
+      "cache_hash": "c4d0b92a5b6501f00e125e2b53a2a6ddf1e3a160345625ed14e103c0b91d9da9"
+    },
+    {
+      "id": "hotpotqa-dev-5a8173fa554299260e20a28e",
+      "method": "llmlingua2",
+      "original_tokens": 1515,
+      "compressed_tokens": 712,
+      "budget_tokens": 757,
+      "retained_ratio": 0.46996699669966996,
+      "cache_hash": "1cf891e8d8fb7fe29c5abfbfc41b237601e9e5e0aacefc06c2f5da46ee824510"
+    },
+    {
+      "id": "hotpotqa-dev-5a7f677455429969796c1a37",
+      "method": "llmlingua2",
+      "original_tokens": 918,
+      "compressed_tokens": 486,
+      "budget_tokens": 459,
+      "retained_ratio": 0.5294117647058824,
+      "cache_hash": "8d39f2e4a5682e4455062275a2e5c5ce1a7be7bd96d3f2eb71300e7d2d5f6706"
+    },
+    {
+      "id": "hotpotqa-dev-5ae12bcc5542997b2ef7d11a",
+      "method": "llmlingua2",
+      "original_tokens": 1784,
+      "compressed_tokens": 930,
+      "budget_tokens": 892,
+      "retained_ratio": 0.5213004484304933,
+      "cache_hash": "9354c7b7d5beba70618f01623773208e65e05c6eb33b78e9ab0cd6331844161b"
+    },
+    {
+      "id": "hotpotqa-dev-5a87bd4e5542994846c1cde0",
+      "method": "llmlingua2",
+      "original_tokens": 1513,
+      "compressed_tokens": 751,
+      "budget_tokens": 756,
+      "retained_ratio": 0.4963648380700595,
+      "cache_hash": "00a9d3080515acb7e9fc5cfedb1bb44f3b70065e2e8677c6d28728801296757c"
+    },
+    {
+      "id": "hotpotqa-dev-5a80a1b25542992bc0c4a78c",
+      "method": "llmlingua2",
+      "original_tokens": 954,
+      "compressed_tokens": 475,
+      "budget_tokens": 477,
+      "retained_ratio": 0.4979035639412998,
+      "cache_hash": "c27c2dee2b2734447eded58a337b7357dc7a0b76e317d2c57becf1ccf3ab31f4"
+    },
+    {
+      "id": "hotpotqa-dev-5a7e3117554299495941991b",
+      "method": "llmlingua2",
+      "original_tokens": 1274,
+      "compressed_tokens": 646,
+      "budget_tokens": 637,
+      "retained_ratio": 0.5070643642072213,
+      "cache_hash": "ce176cda514e6430acbd8f28be330a18d114420cee00c0cc9e8a392aa295f196"
+    },
+    {
+      "id": "hotpotqa-dev-5ae4bb1255429913cc2044e7",
+      "method": "llmlingua2",
+      "original_tokens": 1462,
+      "compressed_tokens": 716,
+      "budget_tokens": 731,
+      "retained_ratio": 0.4897400820793434,
+      "cache_hash": "eb96193399b5fc1cb7adcb2d44a118ae9d2a04cbe6abd0bf4b00449cdf5a9c97"
+    },
+    {
+      "id": "hotpotqa-dev-5a8778d25542994846c1cd89",
+      "method": "llmlingua2",
+      "original_tokens": 937,
+      "compressed_tokens": 498,
+      "budget_tokens": 468,
+      "retained_ratio": 0.5314834578441836,
+      "cache_hash": "ed79c76bf3a33a47b654d2a0a539c7d053cc668ee1519f3f8f675ea7a3957697"
+    },
+    {
+      "id": "hotpotqa-dev-5abbf8bc5542993f40c73c35",
+      "method": "llmlingua2",
+      "original_tokens": 292,
+      "compressed_tokens": 148,
+      "budget_tokens": 146,
+      "retained_ratio": 0.5068493150684932,
+      "cache_hash": "c033629a7e0589d695c08e0bea732af1a4419301c8f023e541826aa6f32ff96e"
+    },
+    {
+      "id": "hotpotqa-dev-5ae33a6e5542992f92d8224d",
+      "method": "llmlingua2",
+      "original_tokens": 1650,
+      "compressed_tokens": 812,
+      "budget_tokens": 825,
+      "retained_ratio": 0.4921212121212121,
+      "cache_hash": "804f45a311c04e75723b5b1749247b0fcb512e6353bc262eefd46db38331d74b"
+    },
+    {
+      "id": "hotpotqa-dev-5a82accd55429966c78a6a78",
+      "method": "llmlingua2",
+      "original_tokens": 1315,
+      "compressed_tokens": 679,
+      "budget_tokens": 657,
+      "retained_ratio": 0.5163498098859316,
+      "cache_hash": "3551e88d0edc42c4c638691d036502fb587900670c5342bdd149acb1f1e2e65d"
+    },
+    {
+      "id": "hotpotqa-dev-5a7e1cad55429965cec5ea75",
+      "method": "llmlingua2",
+      "original_tokens": 2330,
+      "compressed_tokens": 1213,
+      "budget_tokens": 1165,
+      "retained_ratio": 0.5206008583690988,
+      "cache_hash": "8a3369334b7a4c061e3bbf01a7487027d264bb4c3d527bac445d40b69989f2d9"
+    },
+    {
+      "id": "hotpotqa-dev-5a8651185542994775f60752",
+      "method": "llmlingua2",
+      "original_tokens": 1308,
+      "compressed_tokens": 652,
+      "budget_tokens": 654,
+      "retained_ratio": 0.4984709480122324,
+      "cache_hash": "00c3356f1cf53c94a749de5ae8010296251ef18d418a7d8049b845edb45b1dfd"
+    },
+    {
+      "id": "hotpotqa-dev-5ac179bf5542994ab5c67d60",
+      "method": "llmlingua2",
+      "original_tokens": 1464,
+      "compressed_tokens": 782,
+      "budget_tokens": 732,
+      "retained_ratio": 0.5341530054644809,
+      "cache_hash": "46a05f92f1e28e7e0471708b5c0720888978a825753dd2ef1792febb65d6ac7e"
+    },
+    {
+      "id": "hotpotqa-dev-5abbd58d554299660624172f",
+      "method": "llmlingua2",
+      "original_tokens": 1339,
+      "compressed_tokens": 664,
+      "budget_tokens": 669,
+      "retained_ratio": 0.4958924570575056,
+      "cache_hash": "1c4db90a5d130a3e34e3c90dffe226ec4950cdb0ca3eda89e6f5ed977bf1b51d"
+    },
+    {
+      "id": "hotpotqa-dev-5a82800855429966c78a6a2f",
+      "method": "llmlingua2",
+      "original_tokens": 1796,
+      "compressed_tokens": 906,
+      "budget_tokens": 898,
+      "retained_ratio": 0.5044543429844098,
+      "cache_hash": "3ee200c51e5fb19b9ed17e025adb94cde58d8f2dd6619ba27cc32dc35dcf94e5"
+    },
+    {
+      "id": "hotpotqa-dev-5ab5c8c5554299637185c60d",
+      "method": "llmlingua2",
+      "original_tokens": 1028,
+      "compressed_tokens": 534,
+      "budget_tokens": 514,
+      "retained_ratio": 0.519455252918288,
+      "cache_hash": "d428adf3cd096f78f09866dc70d0b4418e5c33c22b8ce90e385d0fe8e26c71c3"
+    },
+    {
+      "id": "hotpotqa-dev-5a866c04554299211dda2b25",
+      "method": "llmlingua2",
+      "original_tokens": 1097,
+      "compressed_tokens": 528,
+      "budget_tokens": 548,
+      "retained_ratio": 0.4813126709206928,
+      "cache_hash": "67f0af5068136a05afe6c0e557d28a4a9cde3322b4ed0f1c6695f5ab91c53776"
+    },
+    {
+      "id": "hotpotqa-dev-5ab67c3f55429954757d32f9",
+      "method": "llmlingua2",
+      "original_tokens": 1220,
+      "compressed_tokens": 613,
+      "budget_tokens": 610,
+      "retained_ratio": 0.5024590163934426,
+      "cache_hash": "ff5d1c6a4898ebf31a36b43aec0e0c9d617bc62ae8955f7b720c054c6a5a8838"
+    },
+    {
+      "id": "hotpotqa-dev-5ab51ddf5542990594ba9d11",
+      "method": "llmlingua2",
+      "original_tokens": 1707,
+      "compressed_tokens": 859,
+      "budget_tokens": 853,
+      "retained_ratio": 0.5032220269478618,
+      "cache_hash": "5bf81c92f37a4b829b10b43dd0937cd529bd1c17da79a4c1244bf480866ea691"
+    },
+    {
+      "id": "hotpotqa-dev-5a8fb3af5542997ba9cb32ee",
+      "method": "llmlingua2",
+      "original_tokens": 1172,
+      "compressed_tokens": 581,
+      "budget_tokens": 586,
+      "retained_ratio": 0.49573378839590443,
+      "cache_hash": "d82f8375a47898a9b8515136594be812b67a3e77f17bb1c99ee561b8971521cd"
+    },
+    {
+      "id": "hotpotqa-dev-5ae1d656554299234fd04322",
+      "method": "llmlingua2",
+      "original_tokens": 1262,
+      "compressed_tokens": 634,
+      "budget_tokens": 631,
+      "retained_ratio": 0.5023771790808241,
+      "cache_hash": "1de6cca6bbb5ff4d0f9268c6e0c85b106801a562095cc8be86b426aaa3646c56"
+    },
+    {
+      "id": "hotpotqa-dev-5ab981555542996be2020532",
+      "method": "llmlingua2",
+      "original_tokens": 525,
+      "compressed_tokens": 274,
+      "budget_tokens": 262,
+      "retained_ratio": 0.5219047619047619,
+      "cache_hash": "86ae4f1f08ae231b4edc589f965348cdf1df5cf492d6e5d068e44d75a299fcb6"
+    }
+  ]
+}

@@ -21,6 +21,5 @@
     "full",
     "no_context",
     "head_tail"
-  ],
-  "reuse_api_cache_from": "boolq_train2_qwen3_30b_smoke_seed20261017"
+  ]
 }

@@ -1,0 +1,251 @@
+{
+  "status": "passed",
+  "network_blocked": true,
+  "classifier_weights_loaded": false,
+  "max_chunk_tokens_including_special_tokens": 513,
+  "chunks_with_only_final_separator_trimmed": 3,
+  "content_tokens_truncated_by_classifier": 0,
+  "records": [
+    {
+      "id": "hotpotqa-dev-5ab934465542996be202043e",
+      "chunk_tokens_including_special_tokens": [
+        493,
+        504,
+        18
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ab6ba245542995eadef007f",
+      "chunk_tokens_including_special_tokens": [
+        476,
+        512,
+        18
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5adfa12c554299025d62a301",
+      "chunk_tokens_including_special_tokens": [
+        489,
+        513,
+        504,
+        176
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a8b5b1c5542995d1e6f1387",
+      "chunk_tokens_including_special_tokens": [
+        474,
+        470,
+        439
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ac3ac8255429939154138ad",
+      "chunk_tokens_including_special_tokens": [
+        467,
+        393
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a8aee2c55429970aeb70338",
+      "chunk_tokens_including_special_tokens": [
+        499,
+        510,
+        125
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ac3b4e0554299741d48a2ec",
+      "chunk_tokens_including_special_tokens": [
+        492,
+        507,
+        298
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a8173fa554299260e20a28e",
+      "chunk_tokens_including_special_tokens": [
+        487,
+        481,
+        488,
+        228
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a7f677455429969796c1a37",
+      "chunk_tokens_including_special_tokens": [
+        498,
+        380
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ae12bcc5542997b2ef7d11a",
+      "chunk_tokens_including_special_tokens": [
+        369,
+        493,
+        464,
+        401
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a87bd4e5542994846c1cde0",
+      "chunk_tokens_including_special_tokens": [
+        509,
+        500,
+        511,
+        81
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a80a1b25542992bc0c4a78c",
+      "chunk_tokens_including_special_tokens": [
+        498,
+        383
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a7e3117554299495941991b",
+      "chunk_tokens_including_special_tokens": [
+        497,
+        482,
+        380
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ae4bb1255429913cc2044e7",
+      "chunk_tokens_including_special_tokens": [
+        505,
+        512,
+        488,
+        58
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a8778d25542994846c1cd89",
+      "chunk_tokens_including_special_tokens": [
+        495,
+        390
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5abbf8bc5542993f40c73c35",
+      "chunk_tokens_including_special_tokens": [
+        292
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ae33a6e5542992f92d8224d",
+      "chunk_tokens_including_special_tokens": [
+        499,
+        459,
+        452,
+        392
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a82accd55429966c78a6a78",
+      "chunk_tokens_including_special_tokens": [
+        506,
+        500,
+        409
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a7e1cad55429965cec5ea75",
+      "chunk_tokens_including_special_tokens": [
+        502,
+        495,
+        491,
+        502,
+        357
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a8651185542994775f60752",
+      "chunk_tokens_including_special_tokens": [
+        408,
+        513,
+        316
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ac179bf5542994ab5c67d60",
+      "chunk_tokens_including_special_tokens": [
+        507,
+        485,
+        479
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5abbd58d554299660624172f",
+      "chunk_tokens_including_special_tokens": [
+        512,
+        490,
+        408
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a82800855429966c78a6a2f",
+      "chunk_tokens_including_special_tokens": [
+        502,
+        492,
+        508,
+        352
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ab5c8c5554299637185c60d",
+      "chunk_tokens_including_special_tokens": [
+        494,
+        512
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a866c04554299211dda2b25",
+      "chunk_tokens_including_special_tokens": [
+        488,
+        500,
+        178
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ab67c3f55429954757d32f9",
+      "chunk_tokens_including_special_tokens": [
+        508,
+        398,
+        343
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ab51ddf5542990594ba9d11",
+      "chunk_tokens_including_special_tokens": [
+        500,
+        507,
+        491,
+        294
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5a8fb3af5542997ba9cb32ee",
+      "chunk_tokens_including_special_tokens": [
+        427,
+        489,
+        396
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ae1d656554299234fd04322",
+      "chunk_tokens_including_special_tokens": [
+        513,
+        511,
+        309
+      ]
+    },
+    {
+      "id": "hotpotqa-dev-5ab981555542996be2020532",
+      "chunk_tokens_including_special_tokens": [
+        510
+      ]
+    }
+  ]
+}

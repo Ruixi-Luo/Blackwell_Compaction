@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from blackwell.client import parse_probability
+from blackwell.data import load_dataset
 from blackwell.prompts import compression_messages, prediction_messages
 from blackwell.storage import fingerprint, read_json, write_json
 from blackwell.tokenization import ContextTokenizer
@@ -31,6 +32,9 @@ def main():
     require(manifest['identity']['config'] == config, 'Config differs from the recorded run.')
     examples = read_json(run / 'examples.json')
     require(fingerprint(examples) == manifest['identity']['examples_sha256'], 'Example fingerprint differs.')
+    reloaded, provenance = load_dataset(config, offline=True)
+    require(reloaded == examples, 'Examples differ from the pinned raw dataset and sampling rule.')
+    require(provenance == manifest['identity']['dataset'], 'Dataset provenance differs.')
     rows = read_json(run / 'predictions.json')
     require(len(rows) == len(examples) == config['sample_size'], 'Sample counts differ.')
     require((ROOT / 'data/tokenizer/qwen3-30b-a3b-instruct-2507.json').exists(), 'Local tokenizer is missing; run Prepare first.')
@@ -109,7 +113,7 @@ def main():
     result = {'status':'passed', 'samples':len(rows), 'forecasts':len(methods)*len(rows),
               'unique_api_responses_checked':len(checked_requests), 'infogap_cells_independently_checked':len(methods)**2,
               'local_compressions_checked':len(checked_local),
-              'checks':['sample identities', 'actual query-blind compression messages', 'raw probabilities',
+              'checks':['pinned raw dataset and sampling', 'sample identities', 'actual query-blind compression messages', 'raw probabilities',
                         'actual token counts', 'two-action payoff verification'], 'new_api_calls':0}
     if (run / 'cache_import.json').exists():
         receipt = read_json(run / 'cache_import.json')

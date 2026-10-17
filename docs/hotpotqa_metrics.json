@@ -1,0 +1,223 @@
+{
+  "n": 30,
+  "positive_labels": 19,
+  "scores": {
+    "full": {
+      "accuracy": 0.9333333333333333,
+      "brier": 0.06462,
+      "log_loss": 1.0475381135108384,
+      "mean_context_tokens": 1265.0666666666666,
+      "pooled_retained_ratio": 1.0,
+      "over_budget_samples": 0,
+      "length_repairs": 0
+    },
+    "no_context": {
+      "accuracy": 0.7666666666666667,
+      "brier": 0.23410999999999998,
+      "log_loss": 4.0043819352581655,
+      "mean_context_tokens": 0.0,
+      "pooled_retained_ratio": 0.0,
+      "over_budget_samples": 0,
+      "length_repairs": 0
+    },
+    "selective_context": {
+      "accuracy": 0.8666666666666667,
+      "brier": 0.10626,
+      "log_loss": 0.3569871428030461,
+      "mean_context_tokens": 775.0666666666667,
+      "pooled_retained_ratio": 0.6126686340640809,
+      "over_budget_samples": 30,
+      "length_repairs": 0
+    },
+    "llmlingua2": {
+      "accuracy": 0.9,
+      "brier": 0.09328666666666667,
+      "log_loss": 1.14661148748035,
+      "mean_context_tokens": 638.5333333333333,
+      "pooled_retained_ratio": 0.5047428330522765,
+      "over_budget_samples": 18,
+      "length_repairs": 0
+    }
+  },
+  "infogap": {
+    "full": {
+      "full": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "no_context": {
+        "value": 0.3,
+        "unscaled": 0.15,
+        "threshold": 0.5,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "selective_context": {
+        "value": 0.08666666666666667,
+        "unscaled": 0.043333333333333335,
+        "threshold": 0.65,
+        "side": "left_limit",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "llmlingua2": {
+        "value": 0.06666666666666667,
+        "unscaled": 0.03333333333333333,
+        "threshold": 0.92,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      }
+    },
+    "no_context": {
+      "full": {
+        "value": 0.002666666666666669,
+        "unscaled": 0.0013333333333333346,
+        "threshold": 0.98,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "no_context": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "selective_context": {
+        "value": 0.006666666666666672,
+        "unscaled": 0.003333333333333336,
+        "threshold": 0.95,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "llmlingua2": {
+        "value": 0.003333333333333336,
+        "unscaled": 0.001666666666666668,
+        "threshold": 0.95,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      }
+    },
+    "selective_context": {
+      "full": {
+        "value": 0.06666666666666667,
+        "unscaled": 0.03333333333333333,
+        "threshold": 0.0,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "no_context": {
+        "value": 0.26666666666666666,
+        "unscaled": 0.13333333333333333,
+        "threshold": 0.0,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "selective_context": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "llmlingua2": {
+        "value": 0.06666666666666667,
+        "unscaled": 0.03333333333333333,
+        "threshold": 0.0,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      }
+    },
+    "llmlingua2": {
+      "full": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "no_context": {
+        "value": 0.26666666666666666,
+        "unscaled": 0.13333333333333333,
+        "threshold": 0.5,
+        "side": "at_threshold",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "selective_context": {
+        "value": 0.043333333333333335,
+        "unscaled": 0.021666666666666667,
+        "threshold": 0.65,
+        "side": "left_limit",
+        "n": 30,
+        "normalization_factor": 2
+      },
+      "llmlingua2": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 30,
+        "normalization_factor": 2
+      }
+    }
+  },
+  "bootstrap_vs_full": {
+    "no_context": {
+      "a_over_b": [
+        0.13333333333333333,
+        0.5
+      ],
+      "b_over_a": [
+        0.0,
+        0.12533333333333338
+      ],
+      "repetitions": 500,
+      "context_clusters": 30,
+      "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+    },
+    "selective_context": {
+      "a_over_b": [
+        0.043333333333333335,
+        0.26
+      ],
+      "b_over_a": [
+        0.0,
+        0.2
+      ],
+      "repetitions": 500,
+      "context_clusters": 30,
+      "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+    },
+    "llmlingua2": {
+      "a_over_b": [
+        0.013333333333333345,
+        0.25
+      ],
+      "b_over_a": [
+        0.0,
+        0.2
+      ],
+      "repetitions": 500,
+      "context_clusters": 30,
+      "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+    }
+  },
+  "normalization": "2 * sup_t mean[(t-y)(1[p_A<=t]-1[p_B<=t])]; also save unscaled.",
+  "scope": "Small pilot of verbalized probabilities, not true-posterior recovery or a dominance test."
+}

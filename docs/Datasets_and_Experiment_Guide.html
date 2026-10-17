@@ -1,0 +1,377 @@
+<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackwell Compaction · Datasets &amp; code guide</title><style>
+:root{font-family:Segoe UI,Microsoft YaHei,Arial,sans-serif;color:#243445;background:#f4f7fa;line-height:1.65}
+body{max-width:1180px;margin:auto;padding:28px}header,section{background:white;padding:26px;margin-bottom:22px;border-radius:14px;border:1px solid #dce5ee}
+h1{font-size:30px;line-height:1.3}h2{font-size:22px}h3{font-size:17px}button,select{font:inherit;padding:6px 12px;cursor:pointer}
+html[data-language=en] [lang=zh],html[data-language=zh] [lang=en]{display:none}
+.toolbar{float:right;display:flex;gap:8px}.note{padding:12px 16px;background:#edf4fb;border-left:4px solid #35789a;margin:12px 0}
+.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%}th,td{padding:10px;border-bottom:1px solid #dce5ee;text-align:left;white-space:nowrap}th{background:#f0f5f8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.card{padding:15px;border:1px solid #dce5ee;border-radius:9px}
+pre,code{font-family:Consolas,monospace}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:14px;font-size:13px}details{border-top:1px solid #dce5ee;padding:12px 0}summary{cursor:pointer;font-weight:600}
+a{color:#176b97}svg{width:100%;height:auto}svg text{font-family:Segoe UI,Arial,sans-serif}.muted{color:#5b6c7e;font-size:14px}
+@media(max-width:650px){body{padding:10px}header,section{padding:16px}.toolbar{float:none}h1{font-size:25px}}
+</style><body><header><div class="toolbar"><button onclick="language('en')">English</button><button onclick="language('zh')">中文</button></div><h1><span lang="en">From BoolQ to longer contexts</span><span lang="zh">从 BoolQ 走向更长上下文</span></h1><p><span lang="en">HotpotQA pilot · QASPER feasibility · A readable research project</span><span lang="zh">HotpotQA pilot · QASPER 可用规模 · 可读的科研项目</span></p></header><section><h2><span lang="en">What changed</span><span lang="zh">这次增加了什么</span></h2><p><span lang="en">BoolQ remains the two-item quick check. HotpotQA native yes/no is now a runnable dataset using the same reader and metrics. QASPER has been counted from the complete v0.3 release, but no QASPER LLM predictions have been run.</span><span lang="zh">BoolQ 保留为两条样本的快速检查；HotpotQA 原生 yes/no 已接入同一套 reader 和指标。QASPER 已完整核验 v0.3 的规模，但尚未运行 LLM 预测。</span></p><p><span lang="en"><a href="HotpotQA_Results.html">Open the 30-item HotpotQA results →</a></span><span lang="zh"><a href="HotpotQA_Results.html">打开 30 条 HotpotQA 的逐条实验结果 →</a></span></p></section><section><h2><span lang="en">HotpotQA: a useful intermediate step</span><span lang="zh">HotpotQA：更长上下文的过渡实验</span></h2><div class="tablewrap"><table><thead><tr><th><span lang="en">Population</span><span lang="zh">统计范围</span></th><th><span lang="en">Questions</span><span lang="zh">题数</span></th><th>Yes / No</th><th><span lang="en">Mean context tokens</span><span lang="zh">平均上下文 token</span></th><th><span lang="en">Range</span><span lang="zh">范围</span></th></tr></thead><tbody><tr><td><span lang="en">All dev native yes/no</span><span lang="zh">dev 全部原生 yes/no</span></td><td>458</td><td>225 / 233</td><td>1234.2</td><td>199–2668</td></tr><tr><td><span lang="en">Fixed-seed pilot</span><span lang="zh">固定种子 pilot</span></td><td>30</td><td>19 / 11</td><td>1265.1</td><td>292–2330</td></tr></tbody></table></div><p><span lang="en">There are 7,405 dev items in the pinned distractor file. We keep only native answers yes/no, without balancing labels. All 458 eligible items are comparison questions. Of these, 447 provide 10 paragraphs and 11 provide 2–9. All supplied paragraphs and titles are retained in their original order; no gold evidence selection or question-based reordering is performed.</span><span lang="zh">固定版本的 distractor dev 共 7,405 题，只筛原生 yes/no 答案，不平衡标签。458 道入选题全部为 comparison 类：447 道有 10 段，11 道有 2–9 段。保留全部所提供段落及标题和原始顺序，不按 gold evidence 筛选，不用问题重排。</span></p><p><span lang="en">This is roughly 1.2k-token context, longer than the previous BoolQ pilot, but not a 4k–16k long-context benchmark. The context retrieval was question-conditioned during dataset construction; only our compression step is query-blind. Results apply to this binary comparison subset, not all HotpotQA questions.</span><span lang="zh">这里约为 1.2k token 上下文，比此前的 BoolQ 长，但尚不属于 4k–16k 的长上下文评测。数据集构造时的检索依赖问题，只有我们的压缩环节是 query-blind。结果适用于该二元 comparison 子集，不能代表全部 HotpotQA。</span></p></section><section><h2><span lang="en">The pilot, with both InfoGap directions</span><span lang="zh">Pilot 结果与双向 InfoGap</span></h2><div class="tablewrap"><table><thead><tr><th>Method</th><th>Accuracy ↑</th><th>Brier ↓</th><th><span lang="en">Actual retained</span><span lang="zh">实际保留率</span></th><th>G(Full, M)</th><th>G(M, Full)</th></tr></thead><tbody><tr><td>full</td><td>0.933</td><td>0.0646</td><td>100.0%</td><td>0.0000</td><td>0.0000</td></tr><tr><td>no_context</td><td>0.767</td><td>0.2341</td><td>0.0%</td><td>0.3000</td><td>0.0027</td></tr><tr><td>selective_context</td><td>0.867</td><td>0.1063</td><td>61.3%</td><td>0.0867</td><td>0.0667</td></tr><tr><td>llmlingua2</td><td>0.900</td><td>0.0933</td><td>50.5%</td><td>0.0667</td><td>0.0000</td></tr></tbody></table></div><p><span lang="en">Reader: SiliconFlow Qwen3-30B-A3B-Instruct-2507, thinking off, temperature 0. Compressors: official Selective Context (GPT-2, phrase) and LLMLingua-2 (XLM-R-large MeetingBank), local CPU. Each uses a nominal 50% retained ratio. Actual output lengths differ and are not post-truncated. The reader reports p(Yes); these forecasts are not assumed to be true Bayesian posteriors.</span><span lang="zh">Reader 固定为硅基流动 Qwen3-30B-A3B-Instruct-2507，关闭思考、temperature=0。压缩使用官方 Selective Context（GPT-2、phrase）和 LLMLingua-2（XLM-R-large MeetingBank），本地 CPU 运行，名义保留率均为 50%。实际长度有差异，不追加截断。Reader 报告 p(Yes)，不预设这些概率等于真实贝叶斯后验。</span></p><p><span lang="en">A larger G(A,B) means a larger estimated decision-payoff advantage of A over B. Read both directions; n=30 is exploratory. These numbers neither prove population Blackwell dominance nor identify a generally superior compressor.</span><span lang="zh">G(A,B) 越大，表示 A 相对 B 的最大决策收益优势估计越大，必须双向阅读。30 条仅用于探索，不能证明总体 Blackwell 支配或某个压缩器普遍更好。</span></p></section><section><h2><span lang="en">QASPER: what is actually usable?</span><span lang="zh">QASPER：究竟有多少可用样本？</span></h2><p><span lang="en">The counting unit is a question, not an answer annotation. Strict eligibility requires a nonempty body, at least one annotation, every annotation classified as boolean by the official evaluator precedence, and unanimous yes/no labels. Unanswerable takes precedence; false means No, whereas null is missing. No majority vote or first-annotation shortcut is used.</span><span lang="zh">计数单位是问题，不是答案标注。严格入选要求正文非空、至少一份标注、全部标注按官方 evaluator 优先级都属于 boolean，且 yes/no 一致。unanswerable 优先，false 表示 No，null 才是缺失。不用多数投票或第一份答案代替一致性检查。</span></p><div class="tablewrap"><table><thead><tr><th>Split</th><th><span lang="en">All Q</span><span lang="zh">全部题</span></th><th><span lang="en">Strict Q</span><span lang="zh">严格一致题</span></th><th><span lang="en">Papers</span><span lang="zh">论文数</span></th><th>Yes / No</th><th><span lang="en">Text-verified Q</span><span lang="zh">文字证据可核验题</span></th><th><span lang="en">Papers</span><span lang="zh">论文数</span></th><th>Yes / No</th></tr></thead><tbody><tr><td>train</td><td>2593</td><td>389</td><td>299</td><td>215 / 174</td><td>283</td><td>233</td><td>192 / 91</td></tr><tr><td>dev</td><td>1005</td><td>89</td><td>77</td><td>42 / 47</td><td>51</td><td>46</td><td>35 / 16</td></tr><tr><td>test</td><td>1451</td><td>126</td><td>109</td><td>73 / 53</td><td>88</td><td>75</td><td>64 / 24</td></tr></tbody></table></div><p><span lang="en">The more conservative text-verified subset requires nonempty evidence in every annotation, no FLOAT SELECTED figure/table marker, and every evidence passage present in the proposed full-text input after whitespace normalization. This is an additional experiment-design filter, not an official QASPER split. It does not certify annotation correctness or complete PDF extraction.</span><span lang="zh">更保守的文字证据子集要求每份标注 evidence 非空、无 FLOAT SELECTED 图表标记，且所有证据段落在规范空白后的全文输入中都能找到。这是额外实验设计筛选，不是官方 QASPER 划分，也不能保证标注正确或 PDF 抽取完整。</span></p><p><span lang="en">The conservative filter removes many No questions whose evidence is empty, shifting the label distribution. Therefore both counts are retained: do not describe the conservative subset as an unbiased sample, and do not equate No with unanswerable.</span><span lang="zh">保守筛选会排除许多 evidence 为空的 No 问题，从而改变标签比例。因此同时保留两套统计：不能把保守子集称为无偏样本，也不能把 No 当作 unanswerable。</span></p></section><section><h2><span lang="en">Where the samples go</span><span lang="zh">样本在哪一步被排除</span></h2><div class="tablewrap"><table><thead><tr><th>Split</th><th><span lang="en">No boolean annotation</span><span lang="zh">没有 boolean 标注</span></th><th><span lang="en">Mixed types</span><span lang="zh">混合类型</span></th><th><span lang="en">Yes/No conflict</span><span lang="zh">Yes/No 冲突</span></th><th><span lang="en">Missing body</span><span lang="zh">缺正文</span></th><th><span lang="en">Figure/table¹</span><span lang="zh">含图表¹</span></th><th><span lang="en">Missing evidence¹</span><span lang="zh">缺证据¹</span></th></tr></thead><tbody><tr><td>train</td><td>2195</td><td>3</td><td>3</td><td>3</td><td>30</td><td>76</td></tr><tr><td>dev</td><td>876</td><td>30</td><td>10</td><td>0</td><td>10</td><td>28</td></tr><tr><td>test</td><td>1212</td><td>74</td><td>39</td><td>0</td><td>14</td><td>24</td></tr></tbody></table></div><p><span lang="en">First four exclusion columns partition questions excluded before strict eligibility (no-annotation count is zero here). ¹The last two are within the strict subset and are removed only by the conservative text filter. None of the remaining textual evidence passages failed the text-presence check.</span><span lang="zh">前四列是严格一致筛选前被排除的问题，本版本无空标注问题。¹后两列是在严格一致子集内部，仅被保守文字筛选排除的题，不能和前四列混用分母。其余文字证据均通过全文可见性检查。</span></p></section><section><h2><span lang="en">Full-paper length and the next experiment</span><span lang="zh">全文长度与下一步实验</span></h2><div class="tablewrap"><table><thead><tr><th>Split</th><th>Subset</th><th><span lang="en">Mean tokens</span><span lang="zh">平均 token</span></th><th>P50</th><th>P90</th><th><span lang="en">Range</span><span lang="zh">范围</span></th><th><span lang="en">4k–16k Q¹</span><span lang="zh">4k–16k 题¹</span></th><th><span lang="en">Multi-Q papers</span><span lang="zh">多题论文</span></th></tr></thead><tbody><tr><td>train</td><td>strict_boolean</td><td>5465</td><td>4930</td><td>8732</td><td>928–28474</td><td>240</td><td>72</td></tr><tr><td>train</td><td>text_verified</td><td>5542</td><td>5189</td><td>8501</td><td>928–28474</td><td>184</td><td>41</td></tr><tr><td>dev</td><td>strict_boolean</td><td>4970</td><td>4336</td><td>6819</td><td>1502–20217</td><td>46</td><td>11</td></tr><tr><td>dev</td><td>text_verified</td><td>4863</td><td>4195</td><td>6363</td><td>1773–20217</td><td>24</td><td>5</td></tr><tr><td>test</td><td>strict_boolean</td><td>5240</td><td>4877</td><td>8083</td><td>910–14502</td><td>84</td><td>15</td></tr><tr><td>test</td><td>text_verified</td><td>5224</td><td>4877</td><td>7811</td><td>910–14502</td><td>59</td><td>11</td></tr></tbody></table></div><p><span lang="en">¹4,000 ≤ tokens < 16,000. Tokens use the same frozen Qwen tokenizer, excluding prompts and questions. The proposed QASPER input is title + abstract + section headings + all body paragraphs, without selecting gold evidence or adding figure images/table bodies. These lengths are question-weighted; the JSON separately records unique-paper-weighted lengths.</span><span lang="zh">¹4,000 ≤ token &lt; 16,000。沿用固定 Qwen tokenizer，只计上下文，不含提示词和问题。QASPER 候选输入为标题＋摘要＋章节标题＋全部正文段落，不筛 gold evidence，不额外加入图片或表格内容。此表按题目加权，JSON 另存按独立论文加权的长度。</span></p><p><span lang="en">Use dev for protocol decisions and keep test predictions held out. Under the conservative rule, dev has 51 questions (24 in 4k–16k), test has 88 (59 in 4k–16k). That is enough for a pilot, not a large benchmark. Questions sharing a paper must reuse the same compressed context and be grouped by paper in splits and resampling; multiple queries per paper are limited in this subset.</span><span lang="zh">建议用 dev 定协议，暂不看 test 的预测结果。保守规则下 dev 51 题（4k–16k 为 24 题），test 88 题（4k–16k 为 59 题），适合 pilot，但不是大规模 benchmark。同论文的题应复用同一压缩文本，划分和重采样按论文分组；本子集多题论文的数量也有限。</span></p></section><section><h2><span lang="en">Read the project in this order</span><span lang="zh">按这个顺序读科研代码</span></h2><pre>config → load_dataset → context → compressor → compressed context
+reader(compressed context, question) → p_yes
+evaluate(p_yes, label) → InfoGap / Brier / log loss</pre><div class="tablewrap"><table><thead><tr><th>File</th><th><span lang="en">Responsibility</span><span lang="zh">职责</span></th></tr></thead><tbody><tr><td><a href="https://github.com/Ruixi-Luo/Blackwell_Compaction/blob/main/configs/hotpotqa.json">configs/hotpotqa.json</a></td><td><span lang="en">Choose dataset, seed, sample count, methods and API limit.</span><span lang="zh">选数据、seed、样本数、方法和 API 上限。</span></td></tr><tr><td><a href="https://github.com/Ruixi-Luo/Blackwell_Compaction/blob/main/blackwell/data.py">blackwell/data.py</a></td><td><span lang="en">Dispatch to a loader; keep the shared example format.</span><span lang="zh">选择 loader，保持统一样本格式。</span></td></tr><tr><td><a href="https://github.com/Ruixi-Luo/Blackwell_Compaction/blob/main/blackwell/datasets/hotpotqa.py">blackwell/datasets/hotpotqa.py</a></td><td><span lang="en">Filter native binary labels and assemble all supplied paragraphs.</span><span lang="zh">筛原生二元标签，拼接全部提供段落。</span></td></tr><tr><td><a href="https://github.com/Ruixi-Luo/Blackwell_Compaction/blob/main/blackwell/datasets/qasper.py">blackwell/datasets/qasper.py</a></td><td><span lang="en">Interpret annotations and define census eligibility.</span><span lang="zh">解释标注并定义统计规则。</span></td></tr><tr><td><a href="https://github.com/Ruixi-Luo/Blackwell_Compaction/blob/main/run_experiment.py">run_experiment.py</a></td><td><span lang="en">Prepare → compress → predict → evaluate; inspect this main flow next.</span><span lang="zh">准备→压缩→预测→评估，接着阅读主流程。</span></td></tr><tr><td><a href="https://github.com/Ruixi-Luo/Blackwell_Compaction/tree/main/blackwell/compressors/">blackwell/compressors/</a></td><td><span lang="en">Official-method adapters accept context and ratio only.</span><span lang="zh">官方方法适配器仅接收上下文和保留率。</span></td></tr><tr><td><a href="https://github.com/Ruixi-Luo/Blackwell_Compaction/blob/main/blackwell/metrics.py">blackwell/metrics.py</a></td><td><span lang="en">Pure mathematical evaluation, separate from API calls.</span><span lang="zh">纯数学评估，与 API 调用分离。</span></td></tr><tr><td><a href="https://github.com/Ruixi-Luo/Blackwell_Compaction/blob/main/tests/test_datasets.py">tests/test_datasets.py</a></td><td><span lang="en">Examples of label, leakage and regression checks.</span><span lang="zh">学习标签、信息隔离及回归检查。</span></td></tr></tbody></table></div><p><span lang="en">A loader returns a list of plain dictionaries with context, question, label, id and context_group, plus provenance. Compression is deliberately called with context only, never the whole dictionary. A new dataset needs a small loader and one dispatch entry; do not rewrite the reader or InfoGap. The reader remains deliberately restricted to the verified SiliconFlow/Qwen configuration.</span><span lang="zh">Loader 返回普通字典列表（context、question、label、id、context_group 等）和来源记录。压缩只接收 context，不接收整个字典。新增数据只需一个小 loader 和入口注册，不重写 reader 或 InfoGap。Reader 目前仍明确限制为已验证的硅基流动/Qwen 组合。</span></p></section><section><h2><span lang="en">Run and audit it yourself</span><span lang="zh">自己运行与审计</span></h2><pre># Run from the repository root. All caches stay on D:.
+$env:PIP_CACHE_DIR = &quot;$PWD/.cache/pip&quot;
+$env:TEMP = &quot;$PWD/.cache/tmp&quot;; $env:TMP = $env:TEMP
+.\.venv\Scripts\python.exe -m pip install -r requirements-data.txt
+.\run.ps1 -Mode Test
+.\run.ps1 -Mode Prepare -Config configs/hotpotqa.json
+# Calls the paid reader on cache misses; 30 × 4 forecasts, maximum 150 attempts.
+.\run.ps1 -Mode Run -Config configs/hotpotqa.json
+.\run.ps1 -Mode Audit -Config configs/hotpotqa.json
+.\.venv\Scripts\python.exe tools/check_local_chunking.py --config configs/hotpotqa.json
+.\.venv\Scripts\python.exe tools/verify_offline_replay.py --config configs/hotpotqa.json
+# QASPER inventory only; no LLM calls. Omit --offline for the first download.
+.\.venv\Scripts\python.exe tools/inspect_datasets.py --offline
+# Two-item BoolQ quick check, no local compressor weights required.
+.\run.ps1 -Mode Run -Config configs/quickcheck.json</pre><p><span lang="en">Run setup.ps1 first on a new clone, and setup-local.ps1 once for local compressor weights. Old runs are preserved. Changing code, configuration or data requires a new run_name; reports can still be recomputed from old predictions. Strict replay requires the corresponding source version. Raw datasets, environments and API caches remain ignored by Git.</span><span lang="zh">新克隆先运行 setup.ps1，本地压缩器额外运行一次 setup-local.ps1。旧实验全部保留。修改代码、配置或数据要换 run_name；旧预测仍可重算报告，严格重放需匹配源码版本。原始数据、环境及 API 缓存均不进入 Git。</span></p></section><section><h2><span lang="en">Sources and reproducibility</span><span lang="zh">来源与可复核性</span></h2><p><a href="https://hotpotqa.github.io/">HotpotQA · EMNLP 2018 · CC BY-SA 4.0</a><br><a href="https://aclanthology.org/2021.naacl-main.365/">QASPER · NAACL 2021 · CC BY 4.0</a><br><a href="https://github.com/allenai/qasper-led-baseline/blob/main/scripts/evaluator.py">QASPER official evaluator</a><br><a href="https://huggingface.co/datasets/allenai/qasper/blob/main/qasper.py">QASPER v0.3 release URLs</a><br><a href="https://arxiv.org/html/2507.12094v2">InfoGap theory and normalization source</a></p><p><span lang="en">The original HotpotQA server failed during this setup; the loader uses a pinned, SHA-256-verified Hugging Face mirror. QASPER uses the author-provided train/dev and test archives. The full inventory JSON includes eligible question IDs and per-paper token counts, enabling independent selection checks without committing raw documents.</span><span lang="zh">本次 HotpotQA 原服务器不可用，loader 使用固定 revision 和 SHA-256 的 Hugging Face 镜像。QASPER 使用作者提供的 train/dev 和 test 归档。完整 inventory JSON 保存入选 question ID 及全文 token 数，便于独立复核筛选，不提交原始文档。</span></p><p><span lang="en">Verified 120 paired forecasts and 60 local compression records against their actual inputs. Offline replay reproduced predictions, metrics and the API ledger byte for byte, with 0 new API calls. The HotpotQA run used 120 API attempts and 98,465 reported input+output tokens; QASPER used no LLM calls.</span><span lang="zh">已核验 120 条配对概率预测及 60 条本地压缩记录的真实输入。离线重放逐字节复现预测、指标和 API 账本，新增 API 调用为 0。HotpotQA 使用 120 次 API 尝试、服务端报告 98,465 个输入＋输出 token；QASPER 未调用 LLM。</span></p><details><summary><span lang="en">Inspect the exact census and source hashes</span><span lang="zh">展开精确统计与来源校验值</span></summary><pre>{
+  &quot;schema_version&quot;: 1,
+  &quot;tokenizer_revision&quot;: &quot;0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe&quot;,
+  &quot;code_sha256&quot;: {
+    &quot;tools/inspect_datasets.py&quot;: &quot;a4b22be4853859386a6015995497040fbd8a9b368302b281521f3680390bb53f&quot;,
+    &quot;blackwell/datasets/qasper.py&quot;: &quot;8393fe18b390555370173f01986c8152ca3c5ddeadfc07d2122e24a1ba144962&quot;,
+    &quot;blackwell/datasets/hotpotqa.py&quot;: &quot;3384075ca6ca2001c71a23463a8962b8c991aed996c273a4053bca0cf0482531&quot;
+  },
+  &quot;hotpotqa&quot;: {
+    &quot;provenance&quot;: {
+      &quot;name&quot;: &quot;HotpotQA yes/no (distractor)&quot;,
+      &quot;split&quot;: &quot;dev&quot;,
+      &quot;dataset_home&quot;: &quot;https://hotpotqa.github.io/&quot;,
+      &quot;source_url&quot;: &quot;https://huggingface.co/datasets/hotpotqa/hotpot_qa/resolve/1908d6afbbead072334abe2965f91bd2709910ab/distractor/validation-00000-of-00001.parquet&quot;,
+      &quot;source_sha256&quot;: &quot;c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6&quot;,
+      &quot;revision&quot;: &quot;1908d6afbbead072334abe2965f91bd2709910ab&quot;,
+      &quot;source_format&quot;: &quot;Hugging Face Parquet mirror; dev is named validation&quot;,
+      &quot;raw_rows&quot;: 7405,
+      &quot;available_rows&quot;: 458,
+      &quot;license&quot;: &quot;CC BY-SA 4.0&quot;,
+      &quot;selection_rule&quot;: &quot;answer.strip().lower() in {yes, no}; no balancing or outcome filtering&quot;,
+      &quot;context_definition&quot;: &quot;All supplied titles and paragraphs (usually 10), original order; sentences joined by spaces. No supporting_facts.&quot;,
+      &quot;scope&quot;: &quot;The supplied retrieved context is question-conditioned; only the compressor is query-blind.&quot;
+    },
+    &quot;questions&quot;: 458,
+    &quot;yes&quot;: 225,
+    &quot;no&quot;: 233,
+    &quot;types&quot;: {
+      &quot;comparison&quot;: 458
+    },
+    &quot;paragraph_counts&quot;: {
+      &quot;10&quot;: 447,
+      &quot;2&quot;: 4,
+      &quot;5&quot;: 1,
+      &quot;8&quot;: 1,
+      &quot;4&quot;: 2,
+      &quot;9&quot;: 1,
+      &quot;6&quot;: 1,
+      &quot;3&quot;: 1
+    },
+    &quot;context_tokens&quot;: {
+      &quot;n&quot;: 458,
+      &quot;mean&quot;: 1234.1572052401746,
+      &quot;min&quot;: 199,
+      &quot;p50&quot;: 1223,
+      &quot;p90&quot;: 1646,
+      &quot;max&quot;: 2668,
+      &quot;bins&quot;: {
+        &quot;&lt;4000&quot;: 458,
+        &quot;4000-7999&quot;: 0,
+        &quot;8000-15999&quot;: 0,
+        &quot;&gt;=16000&quot;: 0
+      }
+    }
+  },
+  &quot;qasper&quot;: {
+    &quot;train&quot;: {
+      &quot;all_papers&quot;: 888,
+      &quot;all_questions&quot;: 2593,
+      &quot;annotation_types&quot;: {
+        &quot;abstractive&quot;: 622,
+        &quot;extractive&quot;: 1363,
+        &quot;boolean&quot;: 409,
+        &quot;unanswerable&quot;: 281
+      },
+      &quot;exclusions&quot;: {
+        &quot;no_boolean&quot;: 2195,
+        &quot;mixed_answer_types&quot;: 3,
+        &quot;conflicting_boolean_labels&quot;: 3,
+        &quot;missing_full_text&quot;: 3
+      },
+      &quot;strict_boolean&quot;: {
+        &quot;questions&quot;: 389,
+        &quot;papers&quot;: 299,
+        &quot;yes&quot;: 215,
+        &quot;no&quot;: 174,
+        &quot;papers_with_multiple_questions&quot;: 72,
+        &quot;tokens_per_question&quot;: {
+          &quot;n&quot;: 389,
+          &quot;mean&quot;: 5464.624678663239,
+          &quot;min&quot;: 928,
+          &quot;p50&quot;: 4930,
+          &quot;p90&quot;: 8732,
+          &quot;max&quot;: 28474,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 144,
+            &quot;4000-7999&quot;: 195,
+            &quot;8000-15999&quot;: 45,
+            &quot;&gt;=16000&quot;: 5
+          }
+        },
+        &quot;tokens_per_unique_paper&quot;: {
+          &quot;n&quot;: 299,
+          &quot;mean&quot;: 5557.57525083612,
+          &quot;min&quot;: 928,
+          &quot;p50&quot;: 5061,
+          &quot;p90&quot;: 8732,
+          &quot;max&quot;: 28474,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 104,
+            &quot;4000-7999&quot;: 155,
+            &quot;8000-15999&quot;: 35,
+            &quot;&gt;=16000&quot;: 5
+          }
+        }
+      },
+      &quot;text_verified&quot;: {
+        &quot;questions&quot;: 283,
+        &quot;papers&quot;: 233,
+        &quot;yes&quot;: 192,
+        &quot;no&quot;: 91,
+        &quot;papers_with_multiple_questions&quot;: 41,
+        &quot;tokens_per_question&quot;: {
+          &quot;n&quot;: 283,
+          &quot;mean&quot;: 5542.102473498233,
+          &quot;min&quot;: 928,
+          &quot;p50&quot;: 5189,
+          &quot;p90&quot;: 8501,
+          &quot;max&quot;: 28474,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 96,
+            &quot;4000-7999&quot;: 151,
+            &quot;8000-15999&quot;: 33,
+            &quot;&gt;=16000&quot;: 3
+          }
+        },
+        &quot;tokens_per_unique_paper&quot;: {
+          &quot;n&quot;: 233,
+          &quot;mean&quot;: 5559.1330472103,
+          &quot;min&quot;: 928,
+          &quot;p50&quot;: 5197,
+          &quot;p90&quot;: 8417,
+          &quot;max&quot;: 28474,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 77,
+            &quot;4000-7999&quot;: 127,
+            &quot;8000-15999&quot;: 26,
+            &quot;&gt;=16000&quot;: 3
+          }
+        }
+      },
+      &quot;evidence_status&quot;: {
+        &quot;figure_or_table&quot;: 30,
+        &quot;missing_evidence&quot;: 76,
+        &quot;text_verified&quot;: 283
+      },
+      &quot;provenance&quot;: {
+        &quot;source_url&quot;: &quot;https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz&quot;,
+        &quot;source_sha256&quot;: &quot;a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a&quot;,
+        &quot;archive_member&quot;: &quot;qasper-train-v0.3.json&quot;,
+        &quot;license&quot;: &quot;CC BY 4.0&quot;,
+        &quot;version&quot;: &quot;0.3&quot;
+      }
+    },
+    &quot;dev&quot;: {
+      &quot;all_papers&quot;: 281,
+      &quot;all_questions&quot;: 1005,
+      &quot;annotation_types&quot;: {
+        &quot;extractive&quot;: 962,
+        &quot;abstractive&quot;: 431,
+        &quot;boolean&quot;: 208,
+        &quot;unanswerable&quot;: 163
+      },
+      &quot;exclusions&quot;: {
+        &quot;no_boolean&quot;: 876,
+        &quot;mixed_answer_types&quot;: 30,
+        &quot;conflicting_boolean_labels&quot;: 10
+      },
+      &quot;strict_boolean&quot;: {
+        &quot;questions&quot;: 89,
+        &quot;papers&quot;: 77,
+        &quot;yes&quot;: 42,
+        &quot;no&quot;: 47,
+        &quot;papers_with_multiple_questions&quot;: 11,
+        &quot;tokens_per_question&quot;: {
+          &quot;n&quot;: 89,
+          &quot;mean&quot;: 4970.314606741573,
+          &quot;min&quot;: 1502,
+          &quot;p50&quot;: 4336,
+          &quot;p90&quot;: 6819,
+          &quot;max&quot;: 20217,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 40,
+            &quot;4000-7999&quot;: 41,
+            &quot;8000-15999&quot;: 5,
+            &quot;&gt;=16000&quot;: 3
+          }
+        },
+        &quot;tokens_per_unique_paper&quot;: {
+          &quot;n&quot;: 77,
+          &quot;mean&quot;: 4891.207792207792,
+          &quot;min&quot;: 1502,
+          &quot;p50&quot;: 4261,
+          &quot;p90&quot;: 6819,
+          &quot;max&quot;: 20217,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 36,
+            &quot;4000-7999&quot;: 34,
+            &quot;8000-15999&quot;: 5,
+            &quot;&gt;=16000&quot;: 2
+          }
+        }
+      },
+      &quot;text_verified&quot;: {
+        &quot;questions&quot;: 51,
+        &quot;papers&quot;: 46,
+        &quot;yes&quot;: 35,
+        &quot;no&quot;: 16,
+        &quot;papers_with_multiple_questions&quot;: 5,
+        &quot;tokens_per_question&quot;: {
+          &quot;n&quot;: 51,
+          &quot;mean&quot;: 4862.764705882353,
+          &quot;min&quot;: 1773,
+          &quot;p50&quot;: 4195,
+          &quot;p90&quot;: 6363,
+          &quot;max&quot;: 20217,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 25,
+            &quot;4000-7999&quot;: 23,
+            &quot;8000-15999&quot;: 1,
+            &quot;&gt;=16000&quot;: 2
+          }
+        },
+        &quot;tokens_per_unique_paper&quot;: {
+          &quot;n&quot;: 46,
+          &quot;mean&quot;: 4795.521739130435,
+          &quot;min&quot;: 1773,
+          &quot;p50&quot;: 3728,
+          &quot;p90&quot;: 6374,
+          &quot;max&quot;: 20217,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 25,
+            &quot;4000-7999&quot;: 18,
+            &quot;8000-15999&quot;: 1,
+            &quot;&gt;=16000&quot;: 2
+          }
+        }
+      },
+      &quot;evidence_status&quot;: {
+        &quot;text_verified&quot;: 51,
+        &quot;missing_evidence&quot;: 28,
+        &quot;figure_or_table&quot;: 10
+      },
+      &quot;provenance&quot;: {
+        &quot;source_url&quot;: &quot;https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz&quot;,
+        &quot;source_sha256&quot;: &quot;a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a&quot;,
+        &quot;archive_member&quot;: &quot;qasper-dev-v0.3.json&quot;,
+        &quot;license&quot;: &quot;CC BY 4.0&quot;,
+        &quot;version&quot;: &quot;0.3&quot;
+      }
+    },
+    &quot;test&quot;: {
+      &quot;all_papers&quot;: 416,
+      &quot;all_questions&quot;: 1451,
+      &quot;annotation_types&quot;: {
+        &quot;extractive&quot;: 1817,
+        &quot;abstractive&quot;: 878,
+        &quot;unanswerable&quot;: 366,
+        &quot;boolean&quot;: 493
+      },
+      &quot;exclusions&quot;: {
+        &quot;no_boolean&quot;: 1212,
+        &quot;mixed_answer_types&quot;: 74,
+        &quot;conflicting_boolean_labels&quot;: 39
+      },
+      &quot;strict_boolean&quot;: {
+        &quot;questions&quot;: 126,
+        &quot;papers&quot;: 109,
+        &quot;yes&quot;: 73,
+        &quot;no&quot;: 53,
+        &quot;papers_with_multiple_questions&quot;: 15,
+        &quot;tokens_per_question&quot;: {
+          &quot;n&quot;: 126,
+          &quot;mean&quot;: 5240.476190476191,
+          &quot;min&quot;: 910,
+          &quot;p50&quot;: 4877,
+          &quot;p90&quot;: 8083,
+          &quot;max&quot;: 14502,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 42,
+            &quot;4000-7999&quot;: 71,
+            &quot;8000-15999&quot;: 13,
+            &quot;&gt;=16000&quot;: 0
+          }
+        },
+        &quot;tokens_per_unique_paper&quot;: {
+          &quot;n&quot;: 109,
+          &quot;mean&quot;: 5071.642201834862,
+          &quot;min&quot;: 910,
+          &quot;p50&quot;: 4853,
+          &quot;p90&quot;: 7345,
+          &quot;max&quot;: 14502,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 37,
+            &quot;4000-7999&quot;: 63,
+            &quot;8000-15999&quot;: 9,
+            &quot;&gt;=16000&quot;: 0
+          }
+        }
+      },
+      &quot;text_verified&quot;: {
+        &quot;questions&quot;: 88,
+        &quot;papers&quot;: 75,
+        &quot;yes&quot;: 64,
+        &quot;no&quot;: 24,
+        &quot;papers_with_multiple_questions&quot;: 11,
+        &quot;tokens_per_question&quot;: {
+          &quot;n&quot;: 88,
+          &quot;mean&quot;: 5223.909090909091,
+          &quot;min&quot;: 910,
+          &quot;p50&quot;: 4877,
+          &quot;p90&quot;: 7811,
+          &quot;max&quot;: 14502,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 29,
+            &quot;4000-7999&quot;: 51,
+            &quot;8000-15999&quot;: 8,
+            &quot;&gt;=16000&quot;: 0
+          }
+        },
+        &quot;tokens_per_unique_paper&quot;: {
+          &quot;n&quot;: 75,
+          &quot;mean&quot;: 5049.946666666667,
+          &quot;min&quot;: 910,
+          &quot;p50&quot;: 4853,
+          &quot;p90&quot;: 7321,
+          &quot;max&quot;: 14502,
+          &quot;bins&quot;: {
+            &quot;&lt;4000&quot;: 26,
+            &quot;4000-7999&quot;: 44,
+            &quot;8000-15999&quot;: 5,
+            &quot;&gt;=16000&quot;: 0
+          }
+        }
+      },
+      &quot;evidence_status&quot;: {
+        &quot;missing_evidence&quot;: 24,
+        &quot;figure_or_table&quot;: 14,
+        &quot;text_verified&quot;: 88
+      },
+      &quot;provenance&quot;: {
+        &quot;source_url&quot;: &quot;https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-test-and-evaluator-v0.3.tgz&quot;,
+        &quot;source_sha256&quot;: &quot;72a52a41193e2838b8074f80ac074b94f956b84886c36a61c58a7df4171bdd72&quot;,
+        &quot;archive_member&quot;: &quot;qasper-test-v0.3.json&quot;,
+        &quot;license&quot;: &quot;CC BY 4.0&quot;,
+        &quot;version&quot;: &quot;0.3&quot;
+      }
+    }
+  }
+}</pre></details><details><summary><span lang="en">LLMLingua-2 chunk boundary check</span><span lang="zh">LLMLingua-2 分块边界核验</span></summary><p><span lang="en">Across these 30 inputs, no content token was removed by the classifier input-length cap. The official implementation produced 3 chunks with 511 content tokens; adding start/end tokens gives 513, so its native 512-position slicing removes only the final separator. We retain and disclose this upstream behavior rather than change the baseline.</span><span lang="zh">这 30 条输入没有正文 token 被分类器的长度上限截去。官方实现有 3 个块包含 511 个正文 token，加首尾标记后为 513，原生 512 位裁剪仅去掉末尾分隔符。本项目保留并记录这一官方行为。</span></p></details></section><script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}</script></body></html>

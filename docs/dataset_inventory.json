@@ -1,0 +1,5188 @@
+{
+  "schema_version": 1,
+  "tokenizer_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+  "code_sha256": {
+    "tools/inspect_datasets.py": "a4b22be4853859386a6015995497040fbd8a9b368302b281521f3680390bb53f",
+    "blackwell/datasets/qasper.py": "8393fe18b390555370173f01986c8152ca3c5ddeadfc07d2122e24a1ba144962",
+    "blackwell/datasets/hotpotqa.py": "3384075ca6ca2001c71a23463a8962b8c991aed996c273a4053bca0cf0482531"
+  },
+  "hotpotqa": {
+    "provenance": {
+      "name": "HotpotQA yes/no (distractor)",
+      "split": "dev",
+      "dataset_home": "https://hotpotqa.github.io/",
+      "source_url": "https://huggingface.co/datasets/hotpotqa/hotpot_qa/resolve/1908d6afbbead072334abe2965f91bd2709910ab/distractor/validation-00000-of-00001.parquet",
+      "source_sha256": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6",
+      "revision": "1908d6afbbead072334abe2965f91bd2709910ab",
+      "source_format": "Hugging Face Parquet mirror; dev is named validation",
+      "raw_rows": 7405,
+      "available_rows": 458,
+      "license": "CC BY-SA 4.0",
+      "selection_rule": "answer.strip().lower() in {yes, no}; no balancing or outcome filtering",
+      "context_definition": "All supplied titles and paragraphs (usually 10), original order; sentences joined by spaces. No supporting_facts.",
+      "scope": "The supplied retrieved context is question-conditioned; only the compressor is query-blind."
+    },
+    "questions": 458,
+    "yes": 225,
+    "no": 233,
+    "types": {
+      "comparison": 458
+    },
+    "paragraph_counts": {
+      "10": 447,
+      "2": 4,
+      "5": 1,
+      "8": 1,
+      "4": 2,
+      "9": 1,
+      "6": 1,
+      "3": 1
+    },
+    "context_tokens": {
+      "n": 458,
+      "mean": 1234.1572052401746,
+      "min": 199,
+      "p50": 1223,
+      "p90": 1646,
+      "max": 2668,
+      "bins": {
+        "<4000": 458,
+        "4000-7999": 0,
+        "8000-15999": 0,
+        ">=16000": 0
+      }
+    }
+  },
+  "qasper": {
+    "train": {
+      "all_papers": 888,
+      "all_questions": 2593,
+      "annotation_types": {
+        "abstractive": 622,
+        "extractive": 1363,
+        "boolean": 409,
+        "unanswerable": 281
+      },
+      "exclusions": {
+        "no_boolean": 2195,
+        "mixed_answer_types": 3,
+        "conflicting_boolean_labels": 3,
+        "missing_full_text": 3
+      },
+      "strict_boolean": {
+        "questions": 389,
+        "papers": 299,
+        "yes": 215,
+        "no": 174,
+        "papers_with_multiple_questions": 72,
+        "tokens_per_question": {
+          "n": 389,
+          "mean": 5464.624678663239,
+          "min": 928,
+          "p50": 4930,
+          "p90": 8732,
+          "max": 28474,
+          "bins": {
+            "<4000": 144,
+            "4000-7999": 195,
+            "8000-15999": 45,
+            ">=16000": 5
+          }
+        },
+        "tokens_per_unique_paper": {
+          "n": 299,
+          "mean": 5557.57525083612,
+          "min": 928,
+          "p50": 5061,
+          "p90": 8732,
+          "max": 28474,
+          "bins": {
+            "<4000": 104,
+            "4000-7999": 155,
+            "8000-15999": 35,
+            ">=16000": 5
+          }
+        }
+      },
+      "text_verified": {
+        "questions": 283,
+        "papers": 233,
+        "yes": 192,
+        "no": 91,
+        "papers_with_multiple_questions": 41,
+        "tokens_per_question": {
+          "n": 283,
+          "mean": 5542.102473498233,
+          "min": 928,
+          "p50": 5189,
+          "p90": 8501,
+          "max": 28474,
+          "bins": {
+            "<4000": 96,
+            "4000-7999": 151,
+            "8000-15999": 33,
+            ">=16000": 3
+          }
+        },
+        "tokens_per_unique_paper": {
+          "n": 233,
+          "mean": 5559.1330472103,
+          "min": 928,
+          "p50": 5197,
+          "p90": 8417,
+          "max": 28474,
+          "bins": {
+            "<4000": 77,
+            "4000-7999": 127,
+            "8000-15999": 26,
+            ">=16000": 3
+          }
+        }
+      },
+      "evidence_status": {
+        "figure_or_table": 30,
+        "missing_evidence": 76,
+        "text_verified": 283
+      },
+      "eligible_questions": [
+        {
+          "paper_id": "2003.07723",
+          "question_id": "3a9d391d25cde8af3334ac62d478b36b30079d74",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 8610,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1805.02400",
+          "question_id": "98b11f70239ef0e22511a3ecf6e413ecb726f954",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 13928,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1805.02400",
+          "question_id": "cd1034c183edf630018f47ff70b48d74d2bb1649",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 13928,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.05664",
+          "question_id": "710c1f8d4c137c8dad9972f5ceacdbf8004db208",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3722,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.07433",
+          "question_id": "0bffc3d82d02910d4816c16b390125e5df55fd01",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6583,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2003.12218",
+          "question_id": "ce6201435cc1196ad72b742db92abd709e0f9e8d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2449,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.12218",
+          "question_id": "4f243056e63a74d1349488983dc1238228ca76a7",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2449,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "2003.06651",
+          "question_id": "d94ac550dfdb9e4bbe04392156065c072b9d75e1",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 7699,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.06651",
+          "question_id": "3c0eaa2e24c1442d988814318de5f25729696ef5",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 7699,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.04269",
+          "question_id": "dc1fe3359faa2d7daa891c1df33df85558bc461b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5025,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1912.13072",
+          "question_id": "2419b38624201d678c530eba877c0c016cccd49f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4744,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1712.09127",
+          "question_id": "4c4f76837d1329835df88b0921f4fe8bda26606f",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 8211,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.00137",
+          "question_id": "637aa32a34b20b4b0f1b5dfa08ef4e0e5ed33d52",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5737,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.00137",
+          "question_id": "abc5836c54fc2ac8465aee5a83b9c0f86c6fd6f5",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5737,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.00137",
+          "question_id": "4debd7926941f1a02266b1a7be2df8ba6e79311a",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5737,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.03042",
+          "question_id": "516626825e51ca1e8a3e0ac896c538c9d8a747c8",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3571,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.03042",
+          "question_id": "77af93200138f46bb178c02f710944a01ed86481",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3571,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.11189",
+          "question_id": "a2a66726a5dca53af58aafd8494c4de833a06f14",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 1918,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.08529",
+          "question_id": "b5c3787ab3784214fc35f230ac4926fe184d86ba",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5341,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1708.05873",
+          "question_id": "13b36644357870008d70e5601f394ec3c6c07048",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 4126,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1905.00563",
+          "question_id": "d427e3d41c4c9391192e249493be23926fc5d2e9",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 8187,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00542",
+          "question_id": "a7cb4f8e29fd2f3d1787df64cd981a6318b65896",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3595,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.06743",
+          "question_id": "e477e494fe15a978ff9c0a5f1c88712cdaec0c5c",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5310,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.06743",
+          "question_id": "04495845251b387335bf2e77e2c423130f43c7d9",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5310,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.02764",
+          "question_id": "f3d0e6452b8d24b7f9db1fd898d1fbe6cd23f166",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5653,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.13109",
+          "question_id": "cfd67b9eeb10e5ad028097d192475d21d0b6845b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3389,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.13109",
+          "question_id": "58d50567df71fa6c3792a0964160af390556757d",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3389,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03310",
+          "question_id": "222b2469eede9a0448e0226c6c742e8c91522af3",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2902,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.11471",
+          "question_id": "92240eeab107a4f636705b88f00cefc4f0782846",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2649,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.09886",
+          "question_id": "735f58e28d84ee92024a36bc348cfac2ee114409",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 8417,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1807.03367",
+          "question_id": "0cd0755ac458c3bafbc70e4268c1e37b87b9721b",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 10300,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.04601",
+          "question_id": "565d668947ffa6d52dad019af79289420505889b",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6222,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1610.00879",
+          "question_id": "45306b26447ea4b120655d6bb2e3636079d3d6e0",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2300,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1610.00879",
+          "question_id": "0c08af6e4feaf801185f2ec97c4da04c8b767ad6",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2300,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1610.00879",
+          "question_id": "368317b4fd049511e00b441c2e9550ded6607c37",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2300,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1610.00879",
+          "question_id": "387970ebc7ef99f302f318d047f708274c0e8f21",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2300,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.05572",
+          "question_id": "cd1792929b9fa5dd5b1df0ae06fc6aece4c97424",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3892,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.05572",
+          "question_id": "65d34041ffa4564385361979a08706b10b92ebc7",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3892,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.05572",
+          "question_id": "a8545f145d5ea2202cb321c8f93e75ad26fcf4aa",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3892,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.05572",
+          "question_id": "7917d44e952b58ea066dc0b485d605c9a1fe3dda",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3892,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.10686",
+          "question_id": "7d5ba230522df1890619dedcfb310160958223c1",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3272,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1603.07044",
+          "question_id": "a30958c7123d1ad4723dcfd19d8346ccedb136d5",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4379,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1603.07044",
+          "question_id": "942eb1f7b243cdcfd47f176bcc71de2ef48a17c4",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4379,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1902.09314",
+          "question_id": "9bffc9a9c527e938b2a95ba60c483a916dbd1f6b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3875,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1702.06378",
+          "question_id": "aecb485ea7d501094e50ad022ade4f0c93088d80",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4472,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00430",
+          "question_id": "47a30eb4d0d6f5f2ff4cdf6487265a25c1b18fd8",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5320,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1908.10449",
+          "question_id": "1ef5fc4473105f1c72b4d35cf93d312736833d3d",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6336,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.00871",
+          "question_id": "3f6610d1d68c62eddc2150c460bf1b48a064e5e6",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5074,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.00871",
+          "question_id": "163c15da1aa0ba370a00c5a09294cd2ccdb4b96d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5074,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03894",
+          "question_id": "dc49746fc98647445599da9d17bc004bafdc4579",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5750,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.01673",
+          "question_id": "18482658e0756d69e39a77f8fcb5912545a72b9b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3406,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.01673",
+          "question_id": "9d336c4c725e390b6eba8bb8fe148997135ee981",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3406,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.01673",
+          "question_id": "016b59daa84269a93ce821070f4f5c1a71752a8a",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3406,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.01673",
+          "question_id": "efb52bda7366d2b96545cf927f38de27de3b5b77",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3406,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1706.08032",
+          "question_id": "1ef8d1cb1199e1504b6b0daea52f2e4bd2ef7023",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3845,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.01399",
+          "question_id": "60cb756d382b3594d9e1f4a5e2366db407e378ae",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6504,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1811.01399",
+          "question_id": "352a1bf734b2d7f0618e9e2b0dbed4a3f1787160",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6504,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.00124",
+          "question_id": "89b9a2389166b992c42ca19939d750d88c5fa79b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4129,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00088",
+          "question_id": "dccc3b182861fd19ccce5bd00ce9c3f40451ed6e",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7283,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1909.00088",
+          "question_id": "98ba7a7aae388b1a77dd6cab890977251d906359",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7283,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.01799",
+          "question_id": "5699996a7a2bb62c68c1e62e730cabf1e3186eef",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3756,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1812.06705",
+          "question_id": "de2d33760dc05f9d28e9dabc13bab2b3264cadb7",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4805,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1812.06705",
+          "question_id": "63bb39fd098786a510147f8ebc02408de350cb7c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4805,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1812.06705",
+          "question_id": "6333845facb22f862ffc684293eccc03002a4830",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4805,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.08949",
+          "question_id": "a12a08099e8193ff2833f79ecf70acf132eda646",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6942,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1905.08949",
+          "question_id": "ca4b66ffa4581f9491442dcec78ca556253c8146",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6942,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.08949",
+          "question_id": "b3ff166bd480048e099d09ba4a96e2e32b42422b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6942,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1905.08949",
+          "question_id": "d42031893fd4ba5721c7d37e1acb1c8d229ffc21",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6942,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.00170",
+          "question_id": "f229069bcb05c2e811e4786c89b0208af90d9a25",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5580,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1603.01417",
+          "question_id": "1ce26783f0ff38925bfc07bbbb65d206e52c2d21",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 7453,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03385",
+          "question_id": "9213159f874b3bdd9b4de956a88c703aac988411",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6089,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.06512",
+          "question_id": "e21a8581cc858483a31c6133e53dd0cfda76ae4c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7214,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1905.06512",
+          "question_id": "9f6e877e3bde771595e8aee10c2656a0e7b9aeb2",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 7214,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.06512",
+          "question_id": "a3783e42c2bf616c8a07bd3b3d503886660e4344",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 7214,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.07209",
+          "question_id": "31ee92e521be110b6a5a8d08cc9e6f90a3a97aae",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4670,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1812.07023",
+          "question_id": "bd74452f8ea0d1d82bbd6911fbacea1bf6e08cab",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4247,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1610.04377",
+          "question_id": "29772ba04886bee2d26b7320e1c6d9b156078891",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3822,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1610.04377",
+          "question_id": "d27e3a099954e917b6491e81b2e907478d7f1233",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3822,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1906.06448",
+          "question_id": "c0a11ba0f6bbb4c69b5a0d4ae9d18e86a4a8f354",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6001,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.00758",
+          "question_id": "73d657d6faed0c11c65b1ab60e553db57f4971ca",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4623,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1907.00758",
+          "question_id": "f6f8054f327a2c084a73faca16cf24a180c094ae",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4623,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1904.05862",
+          "question_id": "828615a874512844ede9d7f7d92bdc48bb48b18d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3595,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.00069",
+          "question_id": "f6496b8d09911cdf3a9b72aec0b0be6232a6dba1",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6839,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.00663",
+          "question_id": "aa800b424db77e634e82680f804894bfa37f2a34",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6371,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.00663",
+          "question_id": "29bdd1fb20d013b23b3962a065de3a564b14f0fb",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6371,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.01589",
+          "question_id": "9d5153a7553b7113716420a6ddceb59f877eb617",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3640,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.10324",
+          "question_id": "35915166ab2fd3d39c0297c427d4ac00e8083066",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3794,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.05456",
+          "question_id": "fc29bb14f251f18862c100e0d3cd1396e8f2c3a1",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6471,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.05154",
+          "question_id": "b72264a73eea36c828e7de778a8b4599a5d02b39",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1650,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.05154",
+          "question_id": "24cc1586e5411a7f8574796d3c576b7c677d6e21",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1650,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1806.00722",
+          "question_id": "8c0621016e96d86a7063cb0c9ec20c76a2dba678",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5061,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1806.02847",
+          "question_id": "770aeff30846cd3d0d5963f527691f3685e8af02",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4565,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00324",
+          "question_id": "f9de9ddea0c70630b360167354004ab8cbfff041",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6121,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.04032",
+          "question_id": "58e65741184c81c9e7fe0ca15832df2d496beb6f",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6824,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.12618",
+          "question_id": "77f04cd553df691e8f4ecbe19da89bc32c7ac734",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 8501,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.04899",
+          "question_id": "40e3639b79e2051bf6bce300d06548e7793daee0",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 1169,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1809.10644",
+          "question_id": "50690b72dc61748e0159739a9a0243814d37f360",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3337,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.03467",
+          "question_id": "b367b823c5db4543ac421d0057b02f62ea16bf9f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4883,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.03467",
+          "question_id": "84737d871bde8058d8033e496179f7daec31c2d3",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4883,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1908.09156",
+          "question_id": "f80d89fb905b3e7e17af1fe179b6f441405ad79b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3789,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.09156",
+          "question_id": "5f6fac08c97c85d5f4f4d56d8b0691292696f8e6",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3789,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.00523",
+          "question_id": "eacd7e540cc34cb45770fcba463f4bf968681d59",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 8106,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.11949",
+          "question_id": "37d829cd42db9ae3d56ab30953a7cf9eda050841",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4805,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.01413",
+          "question_id": "abad9beb7295d809d7e5e1407cbf673c9ffffd19",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3847,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.01413",
+          "question_id": "11c5b12e675cfd8d1113724f019d8476275bd700",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3847,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.07816",
+          "question_id": "4d4b9ff2da51b9e0255e5fab0b41dfe49a0d9012",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5491,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1703.03097",
+          "question_id": "fb3687ea05d38b5e65fdbbbd1572eacd82f56c0b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 8441,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.05608",
+          "question_id": "284ea817fd79bc10b7a82c88d353e8f8a9d7e93c",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3019,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1906.07668",
+          "question_id": "8abb96b2450ebccfcc5c98772cec3d86cd0f53e0",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4628,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1805.00760",
+          "question_id": "ecfb2e75eb9a8eba8f640a039484874fa0d2fceb",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5189,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.09332",
+          "question_id": "12c6ca435f4fcd4ad5ea5c0d76d6ebb9d0be9177",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3298,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.09332",
+          "question_id": "32c149574edf07b1a96d7f6bc49b95081de1abd2",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3298,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1904.07342",
+          "question_id": "16fa6896cf4597154363a6c9a98deb49fffef15f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2653,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1904.07342",
+          "question_id": "0f60864503ecfd5b048258e21d548ab5e5e81772",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2653,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1603.04553",
+          "question_id": "80de3baf97a55ea33e0fe0cafa6f6221ba347d0a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4644,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.02262",
+          "question_id": "0117aa1266a37b0d2ef429f1b0653b9dde3677fe",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6560,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.02262",
+          "question_id": "6c80bc3ed6df228c8ca6e02c0a8a1c2889498688",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6560,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.12579",
+          "question_id": "a6717e334c53ebbb87e5ef878a77ef46866e3aed",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 10449,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.02929",
+          "question_id": "bbc58b193c08ccb2a1e8235a36273785a3b375fb",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5035,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.10408",
+          "question_id": "22c36082b00f677e054f0f0395ed685808965a02",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5795,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.10408",
+          "question_id": "d8bf4a29c7af213a9a176eb1503ec97d01cc8f51",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5795,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.00876",
+          "question_id": "1d9b953a324fe0cfbe8e59dcff7a44a2f93c568d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4033,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1605.08675",
+          "question_id": "63496705fff20c55d4b3d8cdf4786f93e742dd3d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 12987,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1907.08501",
+          "question_id": "412aff0b2113b7d61c914edf90b90f2994390088",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3845,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.00825",
+          "question_id": "14684ad200915ff1e3fc2a89cb614e472a1a2854",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4761,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03705",
+          "question_id": "c34a15f1d113083da431e4157aceb11266e9a1b2",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5246,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03705",
+          "question_id": "061682beb3dbd7c76cfa26f7ae650e548503d977",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5246,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03705",
+          "question_id": "3518d8eb84f6228407cfabaf509fd63d60351203",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5246,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1601.06068",
+          "question_id": "117aa7811ed60e84d40cd8f9cb3ca78781935a98",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5685,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1709.07916",
+          "question_id": "e5ae8ac51946db7475bb20b96e0a22083b366a6d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4397,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.05434",
+          "question_id": "43761478c26ad65bec4f0fd511ec3181a100681c",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6131,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1612.05310",
+          "question_id": "394cf73c0aac8ccb45ce1b133f4e765e8e175403",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6064,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1612.05310",
+          "question_id": "2c4003f25e8d95a3768204f52a7a5f5e17cb2102",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6064,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.00576",
+          "question_id": "be73a88d5b695200e2ead4c2c24e2a977692970e",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5735,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.00139",
+          "question_id": "7b47aa6ba247874eaa8ab74d7cb6205251c01eb5",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4608,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.08048",
+          "question_id": "31b631a8634f6180b20a72477040046d1e085494",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6312,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1904.10500",
+          "question_id": "e659ceb184777015c12db2da5ae396635192f0b0",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6263,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1711.11221",
+          "question_id": "9d016eb3913b41f7a18c6fa865897c12b5fe0212",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5454,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.06906",
+          "question_id": "df510c85c277afc67799abcb503caa248c448ad2",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4110,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.06906",
+          "question_id": "d95180d72d329a27ddf2fd5cc6919f469632a895",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4110,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.09795",
+          "question_id": "e196e2ce72eb8b2d50732c26e9bf346df6643f69",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2961,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1812.03593",
+          "question_id": "40a45d59a2ef7a67c8ab0f2b2d5b43fc85b85498",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5327,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1812.03593",
+          "question_id": "4040f5c9f365f9bc80b56dce944ada85bb8b4ab4",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5327,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.04006",
+          "question_id": "fd5412e2784acefb50afc3bfae1e087580b90ab9",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2711,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1904.11942",
+          "question_id": "191107cd112f7ee6d19c1dc43177e6899452a2c7",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2379,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.04917",
+          "question_id": "938688871913862c9f8a28b42165237b7324e0de",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 13155,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.04917",
+          "question_id": "fd08dc218effecbe5137a7e3b73d9e5e37ace9c1",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 13155,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.04917",
+          "question_id": "fa572f1f3f3ce6e1f9f4c9530456329ffc2677ca",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 13155,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.04917",
+          "question_id": "5e057e115f8976bf9fe70ab5321af72eb4b4c0fc",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 13155,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.06138",
+          "question_id": "8b43201e7e648c670c02e16ba189230820879228",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3607,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1801.09030",
+          "question_id": "5d5a571ff04a5fdd656ca87f6525a60e917d6558",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6624,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.03396",
+          "question_id": "4ce3a6632e7d86d29a42bd1fcf325114b3c11d46",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 8203,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.03396",
+          "question_id": "e7c0cdc05b48889905cc03215d1993ab94fb6eaa",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 8203,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.10179",
+          "question_id": "3604c4fba0a82d7139efd5ced47612c90bd10601",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2673,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1610.09516",
+          "question_id": "32a232310babb92991c4b1b75f7aa6b4670ec447",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7726,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1708.02267",
+          "question_id": "4d844c9453203069363173243e409698782bac3f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3481,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1708.02267",
+          "question_id": "5633d93ef356aca02592bae3dfc1b3ec8fce27dc",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3481,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.02076",
+          "question_id": "4bae74eb707ed71d5f438ddb3d9c2192ac490f66",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6378,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.05672",
+          "question_id": "7883a52f008f3c4aabfc9f71ce05d7c4107e79bb",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4392,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2001.05672",
+          "question_id": "cd9776d03fe48903e43e916385df12e1e798070a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4392,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.02711",
+          "question_id": "b2c8c90041064183159cc825847c142b1309a849",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5196,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1909.13362",
+          "question_id": "f6556d2a8b42b133eaa361f562745edbe56c0b51",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6089,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.06111",
+          "question_id": "d51069595f67a3a53c044c8a37bae23facbfa45d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6883,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.01060",
+          "question_id": "e6c163f80a11bd057bbd0b6e1451ac82edddc78d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3619,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1803.02839",
+          "question_id": "dee116df92f9f92d9a67ac4d30e32822c22158a6",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 9313,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.06670",
+          "question_id": "5fa464a158dc8abf7cef8ca7d42a7080670c1edd",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2842,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1905.11037",
+          "question_id": "19608e727b527562b750949e41e763908566b58e",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2414,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.10609",
+          "question_id": "3f7a7e81908a763e5ca720f90570c5f224ac64f6",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4584,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.10609",
+          "question_id": "49b38189b8336ce41d0f0b4c5c9459722736e15b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4584,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.05478",
+          "question_id": "aa7decee4e3006c2c99b1f331a5b32d44a565ef6",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5532,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.06006",
+          "question_id": "975085e3b6679cc644fdd6ad11b7c2d1261a2dc6",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6800,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1807.07961",
+          "question_id": "4a8bceb3b6d45f14c4749115d6aa83912f0b0a6e",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6268,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1909.02776",
+          "question_id": "7d841b98bcee29aaa9852ef7ceea1213d703deba",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6597,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.00133",
+          "question_id": "4e8233826f9e04f5763b307988298e73f841af74",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5460,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1709.05413",
+          "question_id": "b8cee4782e05afaeb9647efdb8858554490feba5",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 8833,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1704.00253",
+          "question_id": "45bd22f2cfb62a5f79ec3c771c8324b963567cc0",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5732,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.00153",
+          "question_id": "936878cff0e6e327b2554ee5d46686797ee92cf2",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 11726,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.00153",
+          "question_id": "58c1b162a4491d4a5ae0ff86cc8bd64e98739620",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 11726,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.02562",
+          "question_id": "df25dd9004a3b367202d7731ee912a8052a35780",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4538,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03154",
+          "question_id": "317a6f211ecf48c58f008c12fbd5d41901db3e36",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6104,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1805.09959",
+          "question_id": "bb8f62950acbd4051774f1bfc50e3d424dd33b7c",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6519,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.05360",
+          "question_id": "cfb5ab893ed77f9df7eeb4940b6bacdef5acccea",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6851,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.01088",
+          "question_id": "6992f8e5a33f0af0f2206769484c72fecc14700b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2176,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1811.01088",
+          "question_id": "a91abc7983fffa6b2e1e46133f559cec3d7d9438",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2176,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.12642",
+          "question_id": "c691b47c0380c9529e34e8ca6c1805f98288affa",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2276,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.12642",
+          "question_id": "892e42137b14d9fabd34084b3016cf3f12cac68a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2276,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.05238",
+          "question_id": "8de64483ae96c0a03a8e527950582f127b43dceb",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6531,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.11790",
+          "question_id": "c96a6b30d71c6669592504e4ee8001e9d1eb1fba",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 1908,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.01472",
+          "question_id": "90f80a94fabaab72833256572db1d449c2779beb",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4916,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.01472",
+          "question_id": "da55878d048e4dca3ca3cec192015317b0d630b1",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4916,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1806.02908",
+          "question_id": "d0c636fa9ef99c4f44ab39e837a680217b140269",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4478,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2001.02380",
+          "question_id": "99d7bef0ef395360b939a3f446eff67239551a9d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 22753,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.10167",
+          "question_id": "da1994421934082439e8fe5071a01d3d17b56601",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2394,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.10167",
+          "question_id": "30c6d34b878630736f819fd898319ac4e71ee50b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2394,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1805.11535",
+          "question_id": "af82043e7d046c2fb1ed86ef9b48c35492e6a48c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 9679,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.08094",
+          "question_id": "fbd094918b493122b3bba99cefe5da80cf88959c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2180,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2004.04228",
+          "question_id": "e09dcb6fc163bba7d704178e7edba2e630b573c2",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6417,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1903.07398",
+          "question_id": "fc69f5d9464cdba6db43a525cecde2bf6ddaaa57",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3075,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00161",
+          "question_id": "e1f5531ed04d0aae1dfcb0559f1512a43134c43a",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6726,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.03484",
+          "question_id": "9508e9ec675b6512854e830fa89fa6a747b520c5",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6768,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1808.10113",
+          "question_id": "e28a6e3d8f3aa303e1e0daff26b659a842aba97b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 8543,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1708.00111",
+          "question_id": "242f96142116cf9ff763e97aecd54e22cb1c8b5a",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6106,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1708.00111",
+          "question_id": "fcd0bd2db39898ee4f444ae970b80ea4d1d9b054",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6106,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03562",
+          "question_id": "6bff681f1f6743ef7aa6c29cc00eac26fafdabc2",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 12567,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1903.00058",
+          "question_id": "dba3d05c495e2c8ca476139e78f65059db2eb72d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4719,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.04181",
+          "question_id": "e9cfe3f15735e2b0d5c59a54c9940ed1d00401a2",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2399,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.04181",
+          "question_id": "52ed2eb6f4d1f74ebdc4dcddcae201786d4c0463",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2399,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.03438",
+          "question_id": "0716b481b78d80b012bca17c897c62efbe7f3731",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 12683,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1808.09920",
+          "question_id": "93e8ce62361b9f687d5200d2e26015723721a90f",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7257,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.08899",
+          "question_id": "8ec94313ea908b6462e1f5ee809a977a7b6bdf01",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5031,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.08899",
+          "question_id": "f052444f3b3bf61a3f226645278b780ebd7774db",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5031,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.08652",
+          "question_id": "790ed4458a23aa23e2b5399259e50083c86d9e14",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1302,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.08652",
+          "question_id": "d4e78d3205e98cafdf93ddaa95627ea00b7c4d55",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1302,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.08652",
+          "question_id": "8b51db1f7a6293b5bd8be49386cce45989b8079f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 1302,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.06053",
+          "question_id": "a45edc04277a458911086752af4f17405501230f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 11789,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.06053",
+          "question_id": "16646ee77975fed372b76ce639e2664ae2105dcf",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 11789,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1712.03547",
+          "question_id": "9c0cf1630804366f7a79a40934e7495ad9f32346",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3187,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1703.05916",
+          "question_id": "7aaaf7bff9947c6d3b954ae25be87e6e1c49db6d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2319,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.04453",
+          "question_id": "479d334b79c1eae3f2aa3701d28aa0d8dd46036a",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6672,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.04556",
+          "question_id": "70afd28b0ecc02eb8e404e7ff9f89879bf71a670",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6230,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.09637",
+          "question_id": "0bd992a6a218331aa771d922e3c7bb60b653949a",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5422,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.01001",
+          "question_id": "17988d65e46ff7d756076e9191890aec177b081e",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5778,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.02427",
+          "question_id": "212977344f4bf2ae8f060bdac0317db2d1801724",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3446,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.08396",
+          "question_id": "e8d1792fc56a32bd4c95f61c2ea4cf29088edd7c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2056,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1807.09671",
+          "question_id": "b1e90a546dc92e96b657fff5dad8e89f4ac6ed5e",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 10020,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1610.08597",
+          "question_id": "f8d32088d17b32b0c877d59965b35c4f51f0ceea",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5197,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.08386",
+          "question_id": "79b174d20ea5dd4f35e25c9425fb97f40e27cd6f",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3125,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1611.00514",
+          "question_id": "21a96b328b43a568f9ba74cbc6d4689dbc4a3d7b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4263,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1709.10445",
+          "question_id": "ae60079da9d3d039965368acbb23c6283bc3da94",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3651,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1709.10445",
+          "question_id": "83f567489da49966af3dc5df2d9d20232bb8cb1e",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3651,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.11933",
+          "question_id": "5a06f11aa75a8affde3d595c40fb03e06769e368",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3539,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.11933",
+          "question_id": "74fe054f5243c8593ddd2c0628f91657246b7dfa",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3539,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1611.09441",
+          "question_id": "eced6a6dffe43c28e6d06ab87eed98c135f285a3",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3711,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.04315",
+          "question_id": "fc33a09401d12f4fe2338b391301380d34a60e5f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 1217,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "2004.04315",
+          "question_id": "55fb92afa118450f09329764efe22612676c2d85",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 1217,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1901.00570",
+          "question_id": "524abe0ab77db168d5b2f0b68dba0982ac5c1d8e",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6612,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.00570",
+          "question_id": "7c9c73508da628d58aaadb258f3a9d4cc2a8a9b3",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6612,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "2002.05058",
+          "question_id": "7488855f09b97eb6a027212fb7ace1d338f36a2b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6583,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1906.06045",
+          "question_id": "199bdb3a6b1f7c89d95ea6c6ddbbb5eff484fa1f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5955,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.03329",
+          "question_id": "58819fd80c9fbe8674f147bd84a45a25f674a093",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1287,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1602.00812",
+          "question_id": "48fa2ccc236e217fcf0e5aab0e7a146faf439b02",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 14503,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.02686",
+          "question_id": "fb381a59732474dc71a413e25cac37e239547b55",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5183,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.02686",
+          "question_id": "05238d1fad2128403577822aa4822ef8ca9570ac",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5183,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1705.08142",
+          "question_id": "a1c5b95e407127c6bb2f9a19b7d9b1f1bcd4a7a5",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 1935,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1709.09119",
+          "question_id": "9c2de35d07f0d536bfdefe4828d66dd450de2b61",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 19768,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.03270",
+          "question_id": "1835f65694698a9153857e33cd9b86a96772fff5",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4731,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.03270",
+          "question_id": "994ac7aa662d16ea64b86510fcf9efa13d17b478",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4731,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1707.04913",
+          "question_id": "c3d50f1e6942c9894f9a344e7cbc411af01e419c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3122,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.05763",
+          "question_id": "8ea664a72e6d6eca73c1b3e1f75a72a677474ab1",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3326,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.08051",
+          "question_id": "2159062595f24ec29826d517429e1b809ba068b3",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5244,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.04225",
+          "question_id": "385dc96604e077611fbd877c7f39d3c17cd63bf2",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2905,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.04225",
+          "question_id": "551a17fc1d5b5c3d18bdc4923363cbbda7eb2516",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2905,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1612.07843",
+          "question_id": "defc17986d3c4aed9eccdbaebda5eb202fbcb6cf",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 11612,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1612.07843",
+          "question_id": "6bcff3ef61aad6bf1280ea26ed79585e1b838e64",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 11612,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.10044",
+          "question_id": "5871d258f66b00fb716065086f757ef745645bfe",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6718,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1808.02113",
+          "question_id": "c635dc8013e63505084b9daaa9ddb021a2d24543",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4719,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1702.06589",
+          "question_id": "07c9863e1e86c31b740b5b5a77fe8000be00c273",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3166,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1702.06589",
+          "question_id": "a6419207d2299f25e2688517d1580b7ba07c8e4b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3166,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.11154",
+          "question_id": "b34f6e2cf6b1984afdf18dda2a502db6c2c5224b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1562,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.10806",
+          "question_id": "5c0b8c1b649df1b07d9af3aa9154ac340ec8b81c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6093,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03912",
+          "question_id": "cac0119681f311b2efd14b3251a2a5b69ad5d0cd",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5725,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1607.00410",
+          "question_id": "0fc17e51a17efce17577e2db89a24abd6607bb2b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5824,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.08772",
+          "question_id": "ee27e5b56e439546d710ce113c9be76e1bfa1a3d",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6507,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1610.05243",
+          "question_id": "249f2a9bd9d59679cbe82b3fa01572fc7a04f81b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4582,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.11467",
+          "question_id": "fb1c2ff0872084241b9725b4f07750bd3e1df793",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1519,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.11467",
+          "question_id": "2cc63f42410eff3bcb15cfddc593d8aab9413eea",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1519,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.11467",
+          "question_id": "0a9ced54324e70973354978cccef1c70dee5a543",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1519,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1907.11062",
+          "question_id": "4ef3bfebabda83a6d5ca55d30de0e05893f241e3",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6549,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.11062",
+          "question_id": "db264e363f3b3aa83526952bef02f826dff70042",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6549,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.11062",
+          "question_id": "e8e6986365f899dead0768ecf7b1eca8a2699f2f",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6549,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.05438",
+          "question_id": "9c423e3b44e3acc2d4b0606688d4ac9d6285ed0f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4742,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00338",
+          "question_id": "4e468ce13b7f6ac05371c62c08c3cec1cd760517",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 9361,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00361",
+          "question_id": "a9acd1af4a869c17b95ec489cdb1ba7d76715ea4",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5677,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1906.01840",
+          "question_id": "d151327c93b67928313f8fad8079a4ff9ef89314",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5617,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.00455",
+          "question_id": "e98d331faacd50f8ec588d2466b5a85da1f37e6f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3645,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1906.01910",
+          "question_id": "4cab33c8dd46002e0ccafda3916b37366a24a394",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5082,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1910.11768",
+          "question_id": "6a566095e25cbb56330456d7a1f3471693817712",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3950,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.11768",
+          "question_id": "56c6ff65c64ca85951fdea54d6b096f28393c128",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3950,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1602.07618",
+          "question_id": "691cba5713c76a6870e35bc248ce1d29c0550bc7",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5399,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1602.07618",
+          "question_id": "4542a4e7eabb8006fb7bcff2ca6347cfb3fbc56b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5399,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03584",
+          "question_id": "2caa8726222237af482e170c51c88099cefef6fc",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7000,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1711.10124",
+          "question_id": "280f863cfd63b711980ca6c7f1409c0306473de7",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 11912,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1702.02363",
+          "question_id": "4670e1be9d6a260140d055c7685bce365781d82b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5405,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.00266",
+          "question_id": "013a8525dbf7a9e1e69acc1cff18bb7b8261cbad",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2989,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1606.08495",
+          "question_id": "5efed109940bf74ed0a9d4a5e97a535502b23d27",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 9421,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1606.08495",
+          "question_id": "38b527783330468bf6c4829f7d998e6f17c615f0",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 9421,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.03459",
+          "question_id": "093dd1e403eac146bcd19b51a2ace316b36c6264",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3218,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.06061",
+          "question_id": "b6a6bdca6dee70f8fe6dd1cfe3bb2c5ff03b1605",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3247,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.10254",
+          "question_id": "9257c578ee19a7d93e2fba866be7b0bf1142c393",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2840,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1808.03815",
+          "question_id": "06c340c7c2ad57d7621c3e8baba6a3d0ed9f4696",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6580,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1702.06777",
+          "question_id": "0d755ff58a7e22eb4d02fca45d4a7a3920f4e725",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3419,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.04152",
+          "question_id": "0153f563f5e2680c2de1a5f6d0e443454dc1ef2a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3738,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.04152",
+          "question_id": "94ec0e205790ec663a5353f3c68c8d77701573c7",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3738,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.01958",
+          "question_id": "48cf360a7753a23342f53f116eeccc2014bcc8eb",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 8012,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.11879",
+          "question_id": "80b9600e51a823f32bbce12fc52cba9700e2b8d2",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 1994,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.11879",
+          "question_id": "8aeaa3ccb8e062a01007c25a510b0dc1747ce66c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 1994,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1701.04653",
+          "question_id": "f981781021d4bacbaf3d076c895dc42d7fa108ba",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5817,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00153",
+          "question_id": "3b7798a6bce1a5faf411bb12e2e011dbab1e279d",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2657,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.03023",
+          "question_id": "9378b41f7e888e78d667e9763883dd64ddb48728",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3314,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.11297",
+          "question_id": "1afd550cbee15b753db45d7db2c969fc3d12a7d9",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5594,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.11297",
+          "question_id": "2a7c40a72b6380e76511e722b4b02b3a1e5078fd",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5594,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1810.07091",
+          "question_id": "d13efa7dee280c7c2f6dc451c4fbbf0240fc2efa",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2746,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.07091",
+          "question_id": "6cd01609c8afb425fbed941441a2528123352940",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2746,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1801.02243",
+          "question_id": "3d39e57e90903b776389f1b01ca238a6feb877f3",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3579,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1808.04614",
+          "question_id": "e8647f9dc0986048694c34ab9ce763b3167c3deb",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 8732,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1805.04033",
+          "question_id": "ddd6ba43c4e1138156dd2ef03c25a4c4a47adad0",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6402,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.08418",
+          "question_id": "f41c401a4c6e1be768f8e68f774af3661c890ffd",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5294,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.06785",
+          "question_id": "7835d8f578386834c02e2c9aba78a345059d56ca",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4775,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1602.01208",
+          "question_id": "1bdf7e9f3f804930b2933ebd9207a3e000b27742",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 9893,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.12260",
+          "question_id": "93b1b94b301a46251695db8194a2536639a22a88",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5075,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.11136",
+          "question_id": "1405824a6845082eae0458c94c4affd7456ad0f7",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2746,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.08845",
+          "question_id": "fc65f19a30150a0e981fb69c1f5720f0136325b0",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5951,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.02195",
+          "question_id": "6d0f2cce46bc962c6527f7b4a77721799f2455c6",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5796,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.08050",
+          "question_id": "948327d7aa9f85943aac59e3f8613765861f97ff",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2943,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.06424",
+          "question_id": "eae13c9693ace504eab1f96c91b16a0627cd1f75",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6396,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.02761",
+          "question_id": "2cc42d14c8c927939a6b8d06f4fdee0913042416",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2991,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.05246",
+          "question_id": "2ea382c676e418edd5327998e076a8c445d007a5",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5011,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.11118",
+          "question_id": "f011d6d5287339a35d00cd9ce1dfeabb1f3c0563",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6282,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1903.08237",
+          "question_id": "6a099dfe354a79936b59d651ba0887d9f586eaaf",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 28474,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.10826",
+          "question_id": "b1457feb6cdbf4fb19c8e87e1cd43981bc991c4c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3801,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1901.10826",
+          "question_id": "46bca122a87269b20e252838407a2f88f644ded8",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3801,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1810.01570",
+          "question_id": "0a050658d09f3c6e21e9ab828dc18e59b147cf7c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6172,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.12129",
+          "question_id": "88e9e5ad0e4c369b15d81a4e18f7d12ff8fa9f1b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4485,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1811.01786",
+          "question_id": "993ee7de848ab6adfe02fa728b3a2c896238859b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 11861,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1710.00341",
+          "question_id": "21f615bf19253fc27ea838012bc088f4d10cdafd",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5643,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1606.06361",
+          "question_id": "75773ee868c0429ccb913eceb367ff0782eeda8a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 13140,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1906.10551",
+          "question_id": "61b0db2b5718d409b07f83f912bad6a788bfee5a",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 10008,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.03925",
+          "question_id": "d0444cbf01efdcc247b313c7487120a2f047f421",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3201,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2004.03925",
+          "question_id": "a78a6fd6ca36413586836838e38f3fa9282646ee",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3201,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2004.03925",
+          "question_id": "c4a0c7b6f1a00f3233a5fe16240a98d9975701c0",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3201,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1708.01776",
+          "question_id": "41174d8b176cb8549c2d83429d94ba8218335c84",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3044,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1901.01911",
+          "question_id": "04a4b0c6c8bd4c170c93ea7ea1bf693965ef38f4",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4898,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.02800",
+          "question_id": "aa979aed5a454b6705d0085ba2777859feb6fc62",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6748,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1805.07513",
+          "question_id": "5c4a2a3d6e02bcbeae784e439441524535916e85",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6836,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.01670",
+          "question_id": "7b35593033e4c6b9dccba98f22a7eeaa3385df38",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 13990,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1710.09589",
+          "question_id": "97159b8b1ab360c34a1114cd81e8037474bd37db",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3019,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1705.01991",
+          "question_id": "4e2e19a58e1f2cc5a7b1bc666c1577922454d8c8",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3631,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1703.02507",
+          "question_id": "09a993756d2781a89f7ec5d7992f812d60e24232",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6547,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.05334",
+          "question_id": "1af4d56eeaf74460ca2c621a2ad8a5d8dbac491c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3691,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.09340",
+          "question_id": "07f5e360e91b99aa2ed0284d7d6688335ed53778",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3554,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2003.04967",
+          "question_id": "bcce5eef9ddc345177b3c39c469b4f8934700f80",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5811,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.02334",
+          "question_id": "12c7d79d2a26af2d445229d0c8ba3ba1aab3f5b5",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2545,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.05343",
+          "question_id": "983c2fe7bdbf471bb8b15db858fd2cbec86b96a5",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3393,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.01500",
+          "question_id": "9e9e9e0a52563b42e96b8c89ea12f5a916daa7f0",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 928,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.04539",
+          "question_id": "8fa7011e7beaa9fb4083bf7dd75d1216f9c7b2eb",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4653,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.11365",
+          "question_id": "3288a50701a80303fd71c8c5ede81cbee14fa2c7",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3784,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1911.08370",
+          "question_id": "0c78d2fe8bc5491b5fd8a2166190c59eba069ced",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3203,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.05960",
+          "question_id": "1ccc4f63268aa7841cc6fd23535c9cbe85791007",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5452,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.05960",
+          "question_id": "afe34e553c3c784dbf02add675b15c27638cdd45",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5452,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1805.11189",
+          "question_id": "63d9b12dc3ff3ceb1aed83ce11371bca8aac4e8f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4392,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2002.01861",
+          "question_id": "c309e87c9e08cf847f31e554577d6366faec1ea0",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3253,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.08090",
+          "question_id": "10045d7dac063013a8447b5a4bc3a3c2f18f9e82",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4473,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.10869",
+          "question_id": "c54de73b36ab86534d18a295f3711591ce9e1784",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4142,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1907.04380",
+          "question_id": "2fd8688c8f475ab43edaf5d189567f8799b018e1",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3183,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1904.09545",
+          "question_id": "7f5059b4b5e84b7705835887f02a51d4d016316a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2622,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.02322",
+          "question_id": "62afbf8b1090e56fdd2a2fa2bdb687c3995477f6",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3269,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.02086",
+          "question_id": "7f5ab9a53aef7ea1a1c2221967057ee71abb27cb",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3439,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1911.08829",
+          "question_id": "0fec9da2bc80a12a7a6d6600b9ecf3e122732b60",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 16755,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.09524",
+          "question_id": "191d4fe8a37611b2485e715bb55ff1a30038ad6a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6335,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.09524",
+          "question_id": "6e76f114209f59b027ec3b3c8c9cdfc3e682589f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6335,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.14443",
+          "question_id": "ad6415f4351c44ffae237524696a3f76f383bfd5",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3400,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1601.06738",
+          "question_id": "320d72a9cd19b52c29dda9ddecd520c9938a717f",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 19800,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1904.02815",
+          "question_id": "b3ac67232c8c7d5a759ae025aee85e9c838584eb",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3805,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.05890",
+          "question_id": "86be8241737dd8f7b656a3af2cd17c8d54bf1553",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6270,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.06927",
+          "question_id": "a4422019d19f9c3d95ce8dc1d529bf3da5edcfb1",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5197,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.01247",
+          "question_id": "bb169a0624aefe66d3b4b1116bbd152d54f9e31b",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6020,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1706.01723",
+          "question_id": "3fddd9f6707b9e40e35518dae7f6da7c4cb77d16",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2849,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.01299",
+          "question_id": "7ff48fe5b7bd6b56553caacc891ce3d7e0070440",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5431,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03514",
+          "question_id": "e70236c876c94dbecd9a665d9ba8cefe7301dcfd",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2410,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.03514",
+          "question_id": "aa1f605619b2487cc914fc2594c8efe2598d8555",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2410,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1705.00861",
+          "question_id": "76c8aac84152fc4bbc0d5faa7b46e40438353e77",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4141,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1902.00756",
+          "question_id": "6916596253d67f74dba9222f48b9e8799581bad9",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5633,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.09520",
+          "question_id": "8829f738bcdf05b615072724223dbd82463e5de6",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6264,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1807.09000",
+          "question_id": "4b624064332072102ea674254d7098038edad572",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 11134,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1807.09000",
+          "question_id": "65ba7304838eb960e3b3de7c8a367d2c2cd64c54",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 11134,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1702.06700",
+          "question_id": "40f87db3a8d1ac49b888ce3358200f7d52903ce7",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5978,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.02151",
+          "question_id": "1d941d390c0ee365aa7d7c58963e646eea74cbd6",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7270,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1606.00189",
+          "question_id": "66f0dee89f084fe0565539a73f5bbe65f3677814",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5421,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.03061",
+          "question_id": "1e59263f7aa7dd5acb53c8749f627cf68683adee",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7470,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.00574",
+          "question_id": "9595bf228c9e859b0dc745e6c74070be2468d2cf",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4930,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1711.06288",
+          "question_id": "0be0c8106df5fde4b544af766ec3d4a3d7a6c8a2",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4327,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1707.06878",
+          "question_id": "2a1069ae3629ae8ecc19d2305f23445c0231dc39",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2837,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.04207",
+          "question_id": "beda007307c76b8ce7ffcd159a8280d2e8c7c356",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 950,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1606.07298",
+          "question_id": "0b8d64d6cdcfc2ba66efa41a52e09241729a697c",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3738,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.11279",
+          "question_id": "de015276dcde4e7d1d648c6e31100ec80f61960f",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2603,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1702.03274",
+          "question_id": "ff814793387c8f3b61f09b88c73c00360a22a60e",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 7352,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1702.03274",
+          "question_id": "059acc270062921ad27ee40a77fd50de6f02840a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 7352,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1812.10860",
+          "question_id": "1d6c42e3f545d55daa86bea6fabf0b1c52a93bbb",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3210,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1712.02121",
+          "question_id": "480e10e5a1b9c0ae9f7763b7611eeae9e925096b",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4377,
+          "evidence_status": "text_verified"
+        }
+      ],
+      "provenance": {
+        "source_url": "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz",
+        "source_sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+        "archive_member": "qasper-train-v0.3.json",
+        "license": "CC BY 4.0",
+        "version": "0.3"
+      }
+    },
+    "dev": {
+      "all_papers": 281,
+      "all_questions": 1005,
+      "annotation_types": {
+        "extractive": 962,
+        "abstractive": 431,
+        "boolean": 208,
+        "unanswerable": 163
+      },
+      "exclusions": {
+        "no_boolean": 876,
+        "mixed_answer_types": 30,
+        "conflicting_boolean_labels": 10
+      },
+      "strict_boolean": {
+        "questions": 89,
+        "papers": 77,
+        "yes": 42,
+        "no": 47,
+        "papers_with_multiple_questions": 11,
+        "tokens_per_question": {
+          "n": 89,
+          "mean": 4970.314606741573,
+          "min": 1502,
+          "p50": 4336,
+          "p90": 6819,
+          "max": 20217,
+          "bins": {
+            "<4000": 40,
+            "4000-7999": 41,
+            "8000-15999": 5,
+            ">=16000": 3
+          }
+        },
+        "tokens_per_unique_paper": {
+          "n": 77,
+          "mean": 4891.207792207792,
+          "min": 1502,
+          "p50": 4261,
+          "p90": 6819,
+          "max": 20217,
+          "bins": {
+            "<4000": 36,
+            "4000-7999": 34,
+            "8000-15999": 5,
+            ">=16000": 2
+          }
+        }
+      },
+      "text_verified": {
+        "questions": 51,
+        "papers": 46,
+        "yes": 35,
+        "no": 16,
+        "papers_with_multiple_questions": 5,
+        "tokens_per_question": {
+          "n": 51,
+          "mean": 4862.764705882353,
+          "min": 1773,
+          "p50": 4195,
+          "p90": 6363,
+          "max": 20217,
+          "bins": {
+            "<4000": 25,
+            "4000-7999": 23,
+            "8000-15999": 1,
+            ">=16000": 2
+          }
+        },
+        "tokens_per_unique_paper": {
+          "n": 46,
+          "mean": 4795.521739130435,
+          "min": 1773,
+          "p50": 3728,
+          "p90": 6374,
+          "max": 20217,
+          "bins": {
+            "<4000": 25,
+            "4000-7999": 18,
+            "8000-15999": 1,
+            ">=16000": 2
+          }
+        }
+      },
+      "evidence_status": {
+        "text_verified": 51,
+        "missing_evidence": 28,
+        "figure_or_table": 10
+      },
+      "eligible_questions": [
+        {
+          "paper_id": "1810.08699",
+          "question_id": "1f085b9bb7bfd0d6c8cba1a9d73f08fcf2da7590",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 4261,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.03106",
+          "question_id": "c0bee6539eb6956a7347daa9d2419b367bd02064",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6363,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.03407",
+          "question_id": "10d450960907091f13e0be55f40bcb96f44dd074",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5209,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.03407",
+          "question_id": "b5608076d91450b0d295ad14c3e3a90d7e168d0e",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5209,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.05287",
+          "question_id": "d27438b11bc70e706431dda0af2b1c0b0d209f96",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2075,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1612.06685",
+          "question_id": "8d4ac4afbf5b14f412171729ceb5e822afcfa3f4",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2038,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.04961",
+          "question_id": "861187338c5ad445b9acddba8f2c7688785667b1",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6742,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.02284",
+          "question_id": "ee417fea65f9b1029455797671da0840c8c1abbe",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 8606,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1906.08593",
+          "question_id": "6236762b5631d9e395f81e1ebccc4bf3ab9b24ac",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3311,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.00540",
+          "question_id": "a99fdd34422f4231442c220c97eafc26c76508dd",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 4336,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1611.04798",
+          "question_id": "897ba53ef44f658c128125edd26abf605060fb13",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5864,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1912.13337",
+          "question_id": "e97186c51d4af490dba6faaf833d269c8256426c",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 9447,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.01541",
+          "question_id": "b9d168da5321a7d7b812c52bb102a05210fe45bd",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3230,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.09194",
+          "question_id": "45e9533586199bde19313cd43b3d0ecadcaf7a33",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2558,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.03804",
+          "question_id": "2ccc26e11df4eb26fcccdd1f446dc749aff5d572",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4851,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.08960",
+          "question_id": "50e80cfa84200717921840fddcf3b051a9216ad8",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4737,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1802.07862",
+          "question_id": "7cd22ca9e107d2b13a7cc94252aaa9007976b338",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5650,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1802.07862",
+          "question_id": "adbf33c6144b2f5c40d0c6a328a92687a476f371",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5650,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1706.08198",
+          "question_id": "8ce11515634236165cdb06ba80b9a36a8b9099a2",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3243,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1604.00727",
+          "question_id": "784ce5a983c5f2cc95a2c60ce66f2a8a50f3636f",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5454,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1608.01084",
+          "question_id": "1f07e837574519f2b696f3d6fa3230af0b931e5d",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6139,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.04433",
+          "question_id": "5f2bade0881c719ab026bc2e2962e2ada96cdb25",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 1857,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.11645",
+          "question_id": "c2d1387e08cf25cb6b1f482178cca58030e85b70",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3577,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "2001.03131",
+          "question_id": "133eb4aa4394758be5f41744c60c99901b2bc01c",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3584,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1701.08229",
+          "question_id": "00c57e45ac6afbdfa67350a57e81b4fad0ed2885",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3049,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1806.00738",
+          "question_id": "b08f88d1facefceb87e134ba2c1fa90035018e83",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 1897,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.00147",
+          "question_id": "b06512c17d99f9339ffdab12cedbc63501ff527e",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6374,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1806.04330",
+          "question_id": "8bf7f1f93d0a2816234d36395ab40c481be9a0e0",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5939,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1910.05603",
+          "question_id": "91bc8c0bc1634045177065536dd311f89134630b",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 1502,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.03405",
+          "question_id": "7b4fb6da74e6bd1baea556788a02969134cf0800",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5865,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.05828",
+          "question_id": "d8627ba08b7342e473b8a2b560baa8cdbae3c7fd",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 4414,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.05828",
+          "question_id": "1170e4ee76fa202cabac9f621e8fbeb4a6c5f094",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 4414,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2002.02070",
+          "question_id": "25c1c4a91f5dedd4e06d14121af3b5921db125e9",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2320,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1611.03599",
+          "question_id": "e330e162ec29722f5ec9f83853d129c9e0693d65",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6107,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.08904",
+          "question_id": "58ef2442450c392bfc55c4dc35f216542f5f2dbb",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2421,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1703.10344",
+          "question_id": "77c34f1033702278f7f044806c1eba0c6ecb8b04",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 10580,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "2003.13032",
+          "question_id": "8df35c24af9efc3348d3b8d746df116480dfe661",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3701,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.06592",
+          "question_id": "483a699563efcb8804e1861b18809279f21c7610",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 2958,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.07555",
+          "question_id": "c598028815066089cc1e131b96d6966d2610467a",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2700,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.07555",
+          "question_id": "307e8ab37b67202fe22aedd9a98d9d06aaa169c5",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2700,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1804.11346",
+          "question_id": "2ceced87af4c8fdebf2dc959aa700a5c95bd518f",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2835,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1909.00326",
+          "question_id": "384bf1f55c34b36cb03f916f50bbefade6c86a75",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5978,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.14599",
+          "question_id": "a69a59b6c0ab27bcee1a780d6867df21e30aec08",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6819,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1906.00790",
+          "question_id": "b249b60a8c94d0e40d65f1ffdfcac527dab57516",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5590,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1712.05608",
+          "question_id": "d667731ea20605580c398a1224a0094d1155ebbb",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4268,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1809.03449",
+          "question_id": "52f9cd05d8312ae3c7a43689804bac63f7cac34b",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5881,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1706.09673",
+          "question_id": "2c7494d47b2a69f182e83455fe4c75ae3b2893e9",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2634,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.05441",
+          "question_id": "49764eee7fb523a6a28375cc699f5e0220b81766",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 8193,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.03135",
+          "question_id": "5aa12b4063d6182a71870c98e4e1815ff3dc8a72",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4195,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.07789",
+          "question_id": "cb6a8c642575d3577d1840ca2f4cd2cc2c3397c5",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6183,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.11268",
+          "question_id": "6b367775a081f4d2423dc756c9b65b6eef350345",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 6094,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1603.01514",
+          "question_id": "111afb77cfbf4c98e0458606378fa63a0e965e36",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5430,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1603.01514",
+          "question_id": "6568a31241167f618ef5ede939053feaa2fb0d7e",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5430,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1601.02403",
+          "question_id": "2cd37743bcc7ea3bd405ce6d91e79e5339d7642e",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 20217,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1810.12085",
+          "question_id": "c2cb6c4500d9e02fc9a1bdffd22c3df69655189f",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4040,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1912.00903",
+          "question_id": "7438b6b146e41c08cf8f4c5e1d130c3b4cfc6d93",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 4840,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1703.04001",
+          "question_id": "4e1a67f8dc68b55a5ce18e6cd385ae9ab90d891f",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2207,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1703.04001",
+          "question_id": "9af3142630b350c93875441e1e1767312df76d17",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2207,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.09534",
+          "question_id": "f20a389ace2267aa61eddcc235535452ccdae0e6",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 1773,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1801.10293",
+          "question_id": "22b740cc3c8598247ee102279f96575bdb10d53f",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5523,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2003.03014",
+          "question_id": "cb384dc5366b693f28680374d31ff45356af0461",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 17968,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.03014",
+          "question_id": "0682bf049f96fa603d50f0fdad0b79a5c55f6c97",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 17968,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1604.08504",
+          "question_id": "dac087e1328e65ca08f66d8b5307d6624bf3943f",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3728,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.01320",
+          "question_id": "559c68802ee2bb8b11e2188127418ca3a6155ba7",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3766,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2002.01320",
+          "question_id": "8dc707a0daf7bff61a97d9d854283e65c0c85064",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3766,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.08385",
+          "question_id": "612c3675b6c55b60ae6d24265ed8e20f62cb117e",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5135,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.10133",
+          "question_id": "68cd8433a75eee7d100dbbfedebbf53873a21720",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 1599,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1901.10133",
+          "question_id": "0a01341ddca3fe4c8727be7cf5841091c6ca3d0b",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 1599,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1911.00841",
+          "question_id": "3c3807f226ba72fc41f59f0338f12a49a0c35605",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5444,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.00841",
+          "question_id": "c70bafc35e27be9d1efae60596bc0dd390c124c0",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5444,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1605.03481",
+          "question_id": "b85fc420eb2f77f6f14f375cc1fcc5155eb5c0a8",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3597,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1906.07701",
+          "question_id": "348886b4762db063711ef8b7a10952375fbdcb57",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2641,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.07306",
+          "question_id": "d571e0b0f402a3d36fb30d70cdcd2911df883bc7",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5464,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1805.01445",
+          "question_id": "22744c3bc68f120669fc69490f8e539b09e34b94",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2768,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1705.05437",
+          "question_id": "42084c41343e5a6ae58a22e5bfc5ce987b5173de",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3987,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.02249",
+          "question_id": "b637d6393ef3af7462917b81861531022b291933",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3471,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.11562",
+          "question_id": "fc4ae12576ea3a85ea6d150b46938890d63a7d18",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2854,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.01884",
+          "question_id": "7fa3c2c0cf7f559d43e84076a9113a390c5ba03a",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3414,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1705.01265",
+          "question_id": "92d1a6df3041667dc662376938bc65527a5a1c3c",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3655,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.01296",
+          "question_id": "ad08b215dca538930ef1f50b4e49cd25527028ad",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3980,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1909.05359",
+          "question_id": "8b0abc1907c2bf3e0256f8cf85e0ba66a839bd92",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3111,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1805.07133",
+          "question_id": "b9ea841b817ba23281c95c7a769873b840dee8d5",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 5696,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1709.05036",
+          "question_id": "50cb50657572e315fd452a89f3e0be465094b66f",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3421,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.04721",
+          "question_id": "88bf368491f9613767f696f84b4bb1f5a7d7cb48",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5674,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2004.04721",
+          "question_id": "0737954caf66f2b4c898b356d2a3c43748b9706b",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5674,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2004.04721",
+          "question_id": "664b3eadc12c8dde309e8bbd59e9af961a433cde",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 5674,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.04181",
+          "question_id": "1329280df5ee9e902b2742bde4a97bc3e6573ff3",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2331,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.03582",
+          "question_id": "1dac4bc5af239024566fcb0f43bb9ff1c248ecec",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6531,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1907.01468",
+          "question_id": "ba28ce9a2f7e8524243adf288cc3f11055e667bb",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 10729,
+          "evidence_status": "missing_evidence"
+        }
+      ],
+      "provenance": {
+        "source_url": "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz",
+        "source_sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+        "archive_member": "qasper-dev-v0.3.json",
+        "license": "CC BY 4.0",
+        "version": "0.3"
+      }
+    },
+    "test": {
+      "all_papers": 416,
+      "all_questions": 1451,
+      "annotation_types": {
+        "extractive": 1817,
+        "abstractive": 878,
+        "unanswerable": 366,
+        "boolean": 493
+      },
+      "exclusions": {
+        "no_boolean": 1212,
+        "mixed_answer_types": 74,
+        "conflicting_boolean_labels": 39
+      },
+      "strict_boolean": {
+        "questions": 126,
+        "papers": 109,
+        "yes": 73,
+        "no": 53,
+        "papers_with_multiple_questions": 15,
+        "tokens_per_question": {
+          "n": 126,
+          "mean": 5240.476190476191,
+          "min": 910,
+          "p50": 4877,
+          "p90": 8083,
+          "max": 14502,
+          "bins": {
+            "<4000": 42,
+            "4000-7999": 71,
+            "8000-15999": 13,
+            ">=16000": 0
+          }
+        },
+        "tokens_per_unique_paper": {
+          "n": 109,
+          "mean": 5071.642201834862,
+          "min": 910,
+          "p50": 4853,
+          "p90": 7345,
+          "max": 14502,
+          "bins": {
+            "<4000": 37,
+            "4000-7999": 63,
+            "8000-15999": 9,
+            ">=16000": 0
+          }
+        }
+      },
+      "text_verified": {
+        "questions": 88,
+        "papers": 75,
+        "yes": 64,
+        "no": 24,
+        "papers_with_multiple_questions": 11,
+        "tokens_per_question": {
+          "n": 88,
+          "mean": 5223.909090909091,
+          "min": 910,
+          "p50": 4877,
+          "p90": 7811,
+          "max": 14502,
+          "bins": {
+            "<4000": 29,
+            "4000-7999": 51,
+            "8000-15999": 8,
+            ">=16000": 0
+          }
+        },
+        "tokens_per_unique_paper": {
+          "n": 75,
+          "mean": 5049.946666666667,
+          "min": 910,
+          "p50": 4853,
+          "p90": 7321,
+          "max": 14502,
+          "bins": {
+            "<4000": 26,
+            "4000-7999": 44,
+            "8000-15999": 5,
+            ">=16000": 0
+          }
+        }
+      },
+      "evidence_status": {
+        "missing_evidence": 24,
+        "figure_or_table": 14,
+        "text_verified": 88
+      },
+      "eligible_questions": [
+        {
+          "paper_id": "1805.11937",
+          "question_id": "dc23006d67f20f430f1483398de4a89c0be4efe2",
+          "label": 1,
+          "annotations": 4,
+          "context_tokens": 4336,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2004.04124",
+          "question_id": "5ed02ae6c534cd49d405489990f0e4ba0330ff1b",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 6318,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1603.07252",
+          "question_id": "0f9c1586f1b4b531fa4fd113e767d06af90b1ae8",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 5782,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1812.00382",
+          "question_id": "60e6296ca2a697892bd67558a21a83ef01a38177",
+          "label": 1,
+          "annotations": 4,
+          "context_tokens": 3506,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1911.04873",
+          "question_id": "84765903b8c7234ca2919d0a40e3c6a5bcedf45d",
+          "label": 1,
+          "annotations": 4,
+          "context_tokens": 2373,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1606.07043",
+          "question_id": "1efaf3bcd66d1b6bdfb124f0cec0cfeee27e6124",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 3007,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2003.11687",
+          "question_id": "2abcff4fdedf9b17f76875cc338ba4ab8d1eccd3",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 2746,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1703.10152",
+          "question_id": "38b29b0dcb87868680f9934af71ef245ebb122e4",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 3403,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2004.01820",
+          "question_id": "8d14dd9c67d71494b4468000ff9683afdd11af7e",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 8556,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1907.05338",
+          "question_id": "79e61134a6e29141cd19252571ffc92a0b4bc97f",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 4485,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.11899",
+          "question_id": "0d42bd759c84cbf3a293ab58283a3d0d5e27d290",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 6634,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1906.04287",
+          "question_id": "a79a23573d74ec62cbed5d5457a51419a66f6296",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 2726,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.10162",
+          "question_id": "5d03a82a70f7b1ab9829891403ec31607828cbd5",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 3493,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "2003.07459",
+          "question_id": "5a90871856beeefaa69a1080e1b3c8b5d4b2b937",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 4842,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1803.08614",
+          "question_id": "211c242c028b35bb9cbd5e303bb6c750f859fd34",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 3026,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1612.03762",
+          "question_id": "95af7aaea3ce9dab4cf64e2229ce9b98381dd050",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 14502,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1612.03762",
+          "question_id": "ab37ae82e38f64d3fa95782f2c791488f26cd43f",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 14502,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1910.09362",
+          "question_id": "c7f43c95db3d0c870407cd0e7becdd802463683b",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 5835,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.06708",
+          "question_id": "e56c1f0e9eabda41f929d0dfd5cfa50edd69fa89",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 3376,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1606.02601",
+          "question_id": "d38745a3910c380e6df97c7056a5dd9643fd365b",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5241,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1808.09180",
+          "question_id": "c4b621f573bbb411bdaa84a7562c9c4795a7eb3a",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 6509,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.04251",
+          "question_id": "2dba0b83fc22995f83e7ac66cc8f68bcdcc70ee9",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 5868,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.11980",
+          "question_id": "99e514acc0109b7efa4e3860ce1e8c455f5bb790",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 6565,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1807.08089",
+          "question_id": "f40e23adc8245562c8677f0f86fa5175179b5422",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 6149,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1706.04206",
+          "question_id": "5c17559749810c67c50a7dbe34580d5e3b4f9acb",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 3286,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1610.03955",
+          "question_id": "dde29d9ea5859aa5a4bcd613dca80aec501ef03a",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 4092,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1610.03807",
+          "question_id": "6157567c5614e1954b801431fec680f044e102c6",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 2884,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1903.10548",
+          "question_id": "d976c22e9d068e4e31fb46e929023459f8290a63",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 910,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.06893",
+          "question_id": "3216dfc233be68206bd342407e2ba7da3843b31d",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 7107,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.06893",
+          "question_id": "4f57ac24f3f4689a2f885715cd84b7d867fe3f12",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 7107,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.01340",
+          "question_id": "c176eb1ccaa0e50fb7512153f0716e60bf74aa53",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 4937,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2003.09244",
+          "question_id": "3a25f82512d56d9e1ffba72f977f515ae3ba3cca",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 7811,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.07491",
+          "question_id": "acac0606aab83cae5d13047863c7af542d58e54c",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 2923,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.07491",
+          "question_id": "376e8ed6e039e07c892c77b7525778178d56acb7",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 2923,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1906.01076",
+          "question_id": "1002bd01372eba0f3078fb4a951505278ed45f2e",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 4426,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.06854",
+          "question_id": "713e1c7b0ab17759ba85d7cd2041e387831661df",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 4443,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1906.05506",
+          "question_id": "1edfe390828f02a2db9a88454421c7f3d4cdd611",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 4620,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1808.00957",
+          "question_id": "e9b6b14b8061b71d73a73d8138c8dab8eda4ba3f",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3162,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1712.02555",
+          "question_id": "ed7ce13cd95f7664a5e4fc530dcf72dc3808dced",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4854,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.03355",
+          "question_id": "b62b7ec5128219f04be41854247d5af992797937",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 3697,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1801.05617",
+          "question_id": "85ab5f773b297bcf48a274634d402a35e1d57446",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 9165,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1911.12722",
+          "question_id": "6d17dc00f7e5331128b6b585e78cac0b9082e13d",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6042,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.05807",
+          "question_id": "a51c680a63ee393792d885f66de75484dc6bc9bc",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5233,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2004.02214",
+          "question_id": "f7a27de3eb6447377eb48ef6d2201205ff943751",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 4880,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.06851",
+          "question_id": "b78bb6fe817c2d4bc69236df998f546e94c3ee21",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6788,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.03642",
+          "question_id": "fd8a8eb69f07c584a76633f8802c2746f7236d64",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 4840,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.01214",
+          "question_id": "753a187c1dd8d96353187fbb193b5f86293a796c",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 7321,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1902.08830",
+          "question_id": "6606160e210d05b94f7cbd9c5ff91947339f9d02",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 13342,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1902.08830",
+          "question_id": "0dc9050c832a6091bc9db3f7fa7be72139f51177",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 13342,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.07888",
+          "question_id": "29477c8e28a703cacb716a272055b49e2439a695",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6005,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "2004.03090",
+          "question_id": "369d7bc5351409910c7a5e05c0cbb5abab8e50ec",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 3426,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.10619",
+          "question_id": "d4cb704e93086a2246a8caa5c1035e8297b8f4c0",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5875,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1612.09535",
+          "question_id": "3614c1f1435b7c1fd1f7f0041219eebf5bcff473",
+          "label": 0,
+          "annotations": 3,
+          "context_tokens": 6909,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1912.00239",
+          "question_id": "9119fbfba84d298014d1b74e0e3d30330320002c",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5457,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.00239",
+          "question_id": "058b6e3fdbb607fa7dbfc688628b3e13e130c35a",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5457,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1706.02427",
+          "question_id": "9d6d17120c42a834b2b5d96f2120d646218ed4bb",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 7302,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1706.02427",
+          "question_id": "965e0ce975a0b8612a30cfc31bbfd4b8a57aa138",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 7302,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.02747",
+          "question_id": "da077b385d619305033785af5b204696d6145bd8",
+          "label": 1,
+          "annotations": 3,
+          "context_tokens": 3877,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.02747",
+          "question_id": "8ad5ebca2f69023b60ccfa3aac0ed426234437ac",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 3877,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1612.05202",
+          "question_id": "d5c393df758dec6ea6827ae5b887eb6c303a4f4d",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2816,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1612.05202",
+          "question_id": "11a3af3f056e0fb5559fe5cbff1640e022732735",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2816,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.12237",
+          "question_id": "894bbb1e42540894deb31c04cba0e6cfb10ea912",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5082,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.07873",
+          "question_id": "7f90e9390ad58b22b362a57330fff1c7c2da7985",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 7345,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1607.07514",
+          "question_id": "deb0c3524a3b3707e8b20abd27f54ad6188d6e4e",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3582,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1609.02075",
+          "question_id": "cdb211be0340bb18ba5a9ee988e9df0e2ba8b793",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 8664,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1708.09025",
+          "question_id": "949a2bc34176e47a4d895bcc3223f2a960f15a81",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6446,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1704.04451",
+          "question_id": "179bc57b7b5231ea6ad3e93993a6935dda679fa2",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4932,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1908.11053",
+          "question_id": "c4a3f270e942803dab9b40e5e871a2e8886ce444",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5596,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1901.02780",
+          "question_id": "89373db8ced1fe420eae0093b2736f06b565616e",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3751,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.01183",
+          "question_id": "5499440674f0e4a9d6912b9ac29fa1f7b7cd5253",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5352,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.03695",
+          "question_id": "cc8bcea4052bf92f249dda276acc5fd16cac6fb4",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 1762,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1711.11017",
+          "question_id": "3746aaa1a81d9c725bc7a4a67086634c11998d39",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2332,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1711.11118",
+          "question_id": "036c400424357457e42b22df477b7c3cdc2eefe9",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2655,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.05758",
+          "question_id": "a9eb8039431e2cb885cfcf96eb58c0675b36b3bd",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4589,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.05758",
+          "question_id": "998fa38634000f2d7b52d16518b9e18e898ce933",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 4589,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.00129",
+          "question_id": "9d80ad8cf4d5941a32d33273dc5678195ad1e0d2",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2725,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1710.11027",
+          "question_id": "a5df7361ae37b9512fb57cb93efbece9ded8cab1",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3451,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.10401",
+          "question_id": "61e96abdc924c34c6b82a587168ea3d14fe792d1",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 7013,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1608.01972",
+          "question_id": "a7e1b13cc42bfe78d37b9c943de6288e5f00f01b",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5559,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.06502",
+          "question_id": "0a3a7e412682ce951329c37b06343d2114acad9d",
+          "label": 0,
+          "annotations": 1,
+          "context_tokens": 2815,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1707.02892",
+          "question_id": "5752c8d333afc1e6c666b18d1477c8f669b7a602",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4234,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.11980",
+          "question_id": "b8bbdc3987bb456739544426c6037c78ede01b77",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2169,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.06024",
+          "question_id": "344238de7208902f7b3a46819cc6d83cc37448a0",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 8083,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.11334",
+          "question_id": "caebea05935cae1f5d88749a2fc748e62976eab7",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2891,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.11334",
+          "question_id": "d788076c0d19781ff3f6525bd9c05b0ef0ecd0f1",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2891,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1611.02378",
+          "question_id": "283d358606341c399e369f2ba7952cd955326f73",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4877,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.07695",
+          "question_id": "1e7e3f0f760cd628f698b73d82c0f946707855ca",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4769,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1605.05195",
+          "question_id": "3df6d18d7b25d1c814e9dcc8ba78b3cdfe15edcd",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5163,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1605.05195",
+          "question_id": "9aabcba3d44ee7d0bbf6a2c019ab9e0f02fab244",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5163,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1605.04278",
+          "question_id": "73c535a7b46f0c2408ea2b1da0a878b376a2bca5",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6657,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1806.09652",
+          "question_id": "1f053f338df6d238cb163af1a0b1b073e749ed8a",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2944,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00369",
+          "question_id": "361f330d3232681f1a13c6d59abb6c18246e7b35",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6455,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00369",
+          "question_id": "f7d61648ae4bd46c603a271185c3adfac5fc5114",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6455,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1909.00369",
+          "question_id": "c9a323c152c5d9bc2d244e0ed10afbdb0f93062a",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6455,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2002.00175",
+          "question_id": "b424ad7f9214076b963a0077d7345d7bb5a7a205",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4455,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1908.06493",
+          "question_id": "8675d39f1647958faab7fa40cdaab207d4fe5a29",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 4276,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1911.00202",
+          "question_id": "521a3e7300567f6e8e4c531f223dbc9fc306c393",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6254,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1610.07149",
+          "question_id": "97055ab0227ed6ac7a8eba558b94f01867bb9562",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5683,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.03253",
+          "question_id": "425d17465ff91019eb87c28ff3942f781ba1bbcb",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 8815,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.03253",
+          "question_id": "08561f6ba578ce8f8d284abf90f5b24eb1f804d3",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 8815,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1901.03253",
+          "question_id": "ec2045e0da92989642a5b5f2b1130c8bd765bcc5",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 8815,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1804.00982",
+          "question_id": "5da9e2eef741bd7efccec8e441b8e52e906b2d2d",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2219,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.06083",
+          "question_id": "80d6b9123a10358f57f259b8996a792cac08cb88",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 2033,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1809.06083",
+          "question_id": "5181aefb8a7272b4c83a1f7cb61f864ead6a1f1f",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2033,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1605.05166",
+          "question_id": "da0a2195bbf6736119ff32493898d2aadffcbcb8",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 6138,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1903.04329",
+          "question_id": "200c37060d037dee33f3b7c8b1a2aaa58376566e",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 4371,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1806.07042",
+          "question_id": "0b5bf00d2788c534c4c6c007b72290c48be21e16",
+          "label": 1,
+          "annotations": 1,
+          "context_tokens": 6587,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1910.09942",
+          "question_id": "7a60f29e28063f50c2a7afd1c2a7668fb615cd53",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5610,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1603.00957",
+          "question_id": "55bafa0f7394163f4afd1d73340aac94c2d9f36c",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 6943,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "2001.05540",
+          "question_id": "ed15a593d64a5ba58f63c021ae9fd8f50051a667",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2940,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1805.00195",
+          "question_id": "d206f2cbcc3d2a6bd0ccaa3b57fece396159f609",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3849,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1907.12984",
+          "question_id": "ea6edf45f094586caf4684463287254d44b00e95",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 9627,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1912.08084",
+          "question_id": "34b434825f0ca3225dc8914f9da865d2b4674f08",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5888,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1610.00479",
+          "question_id": "8c872236e4475d5d0969fb90d2df94589c7ab1c4",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 10976,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1905.01347",
+          "question_id": "1ce6c09cf886df41a3d3c52ce82f370c5a30334a",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 2572,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1710.01789",
+          "question_id": "64c45fdb536ae294cf06716ac20d08b5fdb7944d",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3760,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1611.01116",
+          "question_id": "65e26b15e087bedb6e8782d91596b35e7454b16b",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4853,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1811.00127",
+          "question_id": "b6dae03d56dff0db8ad2a1bff9c7dd3f87551cd1",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 3803,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1908.10001",
+          "question_id": "be632f0246c2e5f049d12e796812f496e083c33e",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 3168,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.06919",
+          "question_id": "9a6bf1d481e6896eef9f8fed835d9d29658ede36",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 5396,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1911.11025",
+          "question_id": "3e5162e6399c7d03ecc7007efd21d06c04cf2843",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4166,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1911.01940",
+          "question_id": "26e32f24fe0c31ef25de78935daa479534b9dd58",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4509,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1905.07894",
+          "question_id": "870358f28a520cb4f01e7f5f780d599dfec510b4",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 5257,
+          "evidence_status": "figure_or_table"
+        },
+        {
+          "paper_id": "1908.05925",
+          "question_id": "49474a3047fa3f35e1bcd63991e6f15e012ac10b",
+          "label": 0,
+          "annotations": 2,
+          "context_tokens": 4111,
+          "evidence_status": "missing_evidence"
+        },
+        {
+          "paper_id": "1709.06136",
+          "question_id": "5522a9eeb06221722052e3c38f9b0d0dbe7c13e6",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4949,
+          "evidence_status": "text_verified"
+        },
+        {
+          "paper_id": "1709.06136",
+          "question_id": "7ece07a84635269bb19796497847e4517d1e3e61",
+          "label": 1,
+          "annotations": 2,
+          "context_tokens": 4949,
+          "evidence_status": "text_verified"
+        }
+      ],
+      "provenance": {
+        "source_url": "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-test-and-evaluator-v0.3.tgz",
+        "source_sha256": "72a52a41193e2838b8074f80ac074b94f956b84886c36a61c58a7df4171bdd72",
+        "archive_member": "qasper-test-v0.3.json",
+        "license": "CC BY 4.0",
+        "version": "0.3"
+      }
+    }
+  }
+}

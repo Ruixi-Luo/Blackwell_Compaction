@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "samples": 30,
+  "forecasts": 120,
+  "unique_api_responses_checked": 120,
+  "infogap_cells_independently_checked": 16,
+  "local_compressions_checked": 60,
+  "checks": [
+    "pinned raw dataset and sampling",
+    "sample identities",
+    "actual query-blind compression messages",
+    "raw probabilities",
+    "actual token counts",
+    "two-action payoff verification"
+  ],
+  "new_api_calls": 0
+}
