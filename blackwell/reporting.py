@@ -40,6 +40,8 @@ def scatter(rows, method):
 
 def write_report(run_dir, rows, metrics, config):
     methods = list(metrics["scores"])
+    dataset = read_json(run_dir / "manifest.json")["identity"]["dataset"]
+    dataset_name = html.escape(dataset["name"])
     ledger_path = run_dir / "api_attempts.json"
     ledger = read_json(ledger_path) if ledger_path.exists() else []
     usage = {key: sum(entry.get("usage", {}).get(key, 0) for entry in ledger) for key in ("prompt_tokens", "completion_tokens", "total_tokens")}
@@ -47,14 +49,20 @@ def write_report(run_dir, rows, metrics, config):
     sections.append('<section><h2>' + bi('Experiment at a glance', '实验设置') + '</h2>' +
         table([bi('Item','项目'),bi('Value','取值')], [
             ['Model', html.escape(config['model']) + ' · SiliconFlow · thinking off · temperature 0'],
-            ['Dataset', f"BoolQ {config['dataset_split']} · n={len(rows)} · Yes={metrics['positive_labels']} · seed={config['sample_seed']}"],
+            ['Dataset', f"{dataset_name} {config['dataset_split']} · n={len(rows)} · Yes={metrics['positive_labels']} · seed={config['sample_seed']}"],
             [bi('Compaction budget','压缩预算'), bi('50% of original context tokens; original Qwen tokenizer; marker included.', '原文上下文 token 的 50%；使用 Qwen 官方 tokenizer；截断标记计入预算。') if config['retained_ratio']==0.5 else str(config['retained_ratio'])],
             [bi('API accounting','API 记录'), f"{len(ledger)} attempts · {usage['prompt_tokens']:,} input + {usage['completion_tokens']:,} output tokens"],
         ]) + '<p>' + bi('The scalar p_yes represents Bernoulli(p_yes). These are verbalized probability forecasts, not verified Bayesian posteriors or answer-token log probabilities.', '标量 p_yes 表示 Bernoulli(p_yes)。这里是模型直接报告的概率预测，不预设为真实贝叶斯后验，也不是答案 token 的 log probability。') + '</p></section>')
+    if config.get("dataset") == "hotpotqa_yesno":
+        sections.append('<section><h2>' + bi('HotpotQA input protocol', 'HotpotQA 输入协议') + '</h2><p>' +
+            bi('Native yes/no questions from distractor dev. Every context includes all supplied paragraph titles and texts (usually 10) in the supplied order. Supporting facts are never used to select or reorder paragraphs. Compression receives no question or label. The supplied context itself was retrieved for the question; query-blind compression does not make this dataset query-independent.',
+               '使用 distractor dev 的原生 yes/no 题。保留全部所提供段落的标题和正文（通常为 10 段）及其原始顺序，不用 supporting facts 筛选或重排。压缩器看不到问题和标签。数据集提供的上下文本身按题目检索，因此只能说压缩器 query-blind，不能说整个数据生成过程与 query 无关。') + '</p><p>' +
+            bi('We evaluate binary probability forecasts with InfoGap, Brier and log loss. Accuracy is auxiliary. Official HotpotQA also evaluates answer EM/F1, supporting-fact EM/F1 and joint scores; this subset run is not a full official benchmark submission.',
+               '本实验用 InfoGap、Brier 与 log loss 评估二元概率，Accuracy 为辅助。官方 HotpotQA 还评估答案 EM/F1、证据 EM/F1 及联合指标；这里的子集实验不等于完整官方 benchmark 成绩。') + '</p><a href="https://hotpotqa.github.io/">HotpotQA · CC BY-SA 4.0</a></section>')
     if "llmlingua2" in methods or "selective_context" in methods:
         sections.append('<section><h2>' + bi('Local compression methods', '本地压缩方法') + '</h2><p>' +
-            bi('Selective Context: official GPT-2 / phrase filtering. LLMLingua-2: official XLM-R-large MeetingBank token classifier. Both run on CPU using frozen local weights; only the reader calls the API. Both receive the passage and a retained ratio, never the question or label.',
-               'Selective Context 使用官方 GPT-2 及短语筛选；LLMLingua-2 使用官方 XLM-R-large MeetingBank 分类器。两者以固定本地权重在 CPU 上运行，只有 reader 调用 API。输入仅有 passage 与保留率，不含问题和标签。') + '</p><p>' +
+            bi('Selective Context: official GPT-2 / phrase filtering. LLMLingua-2: official XLM-R-large MeetingBank token classifier. Both run on CPU using frozen local weights; only the reader calls the API. Both receive only the context and a retained ratio, never the question or label.',
+               'Selective Context 使用官方 GPT-2 及短语筛选；LLMLingua-2 使用官方 XLM-R-large MeetingBank 分类器。两者以固定本地权重在 CPU 上运行，只有 reader 调用 API。输入仅有上下文与保留率，不含问题和标签。') + '</p><p>' +
             bi('The native ratio applies to different lexical units. It is not an exact Qwen-token budget. We make one native compression call and report the actual Qwen-token count without post-truncation. This is a nominal-rate comparison, not a strictly matched-length comparison.',
                '两个方法的原生比例作用于不同词法单位，不等于精确的 Qwen token 预算。每条文本只调用一次原生压缩，保留原输出并报告实际长度。本实验比较相同名义保留率，不是严格等长对比。') + '</p><p><a href="https://github.com/liyucheng09/Selective_Context">Selective Context · official code</a> · <a href="https://github.com/microsoft/LLMLingua">LLMLingua-2 · official code</a></p></section>')
     receipt = run_dir / 'cache_import.json'
@@ -87,5 +95,5 @@ def write_report(run_dir, rows, metrics, config):
             body += f'<h3>{method}</h3><pre>{html.escape(row["conditions"][method]["text"])}</pre>'
         details.append(f'<details><summary>{html.escape(row["id"])} · {html.escape(row["question"])}</summary>{body}</details>')
     sections.append('<section><h2>' + bi('Inspect every sample', '逐条审计样本') + '</h2>' + ''.join(details) + '</section>')
-    html_text = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackwell Compaction · Pilot results</title><style>'+STYLE+'</style><body><header><div class="toolbar"><button onclick="language(\'en\')">English</button><button onclick="language(\'zh\')">中文</button></div><h1>'+bi('Blackwell Compaction · Pilot results','Blackwell Compaction · 基础实验结果')+'</h1><p>'+bi('Query-blind compressors · One reader · Paired probability forecasts','不看 query 的压缩器 · 同一个 reader · 配对概率预测')+'</p><div class="note">'+bi('A working experiment, not a method leaderboard. BoolQ is a short-context pilot; broader compaction evaluation remains future work.', '这是跑通流程的基础实验，不是方法排行榜。BoolQ 是短上下文 pilot；更广泛的 compaction 评测留待后续。')+'</div></header>'+''.join(sections)+'<script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}</script></body></html>'
+    html_text = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackwell Compaction · Pilot results</title><style>'+STYLE+'</style><body><header><div class="toolbar"><button onclick="language(\'en\')">English</button><button onclick="language(\'zh\')">中文</button></div><h1>'+bi('Blackwell Compaction · Pilot results','Blackwell Compaction · 基础实验结果')+'</h1><p>'+bi('Query-blind compressors · One reader · Paired probability forecasts','不看 query 的压缩器 · 同一个 reader · 配对概率预测')+'</p><div class="note">'+bi('A small paired pilot; these results do not establish a general ranking or Blackwell dominance.', '这是小规模配对实验，结果不能确立方法的普遍排名或 Blackwell 支配关系。')+'</div></header>'+''.join(sections)+'<script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}</script></body></html>'
     (run_dir / 'report.html').write_text(html_text, encoding='utf-8')

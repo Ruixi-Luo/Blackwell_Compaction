@@ -15,7 +15,7 @@ from blackwell.client import CachedChatClient, parse_probability
 from blackwell.compression import Compactor
 from blackwell.compressors import LOCAL_METHODS
 from blackwell.cache_reuse import import_api_cache
-from blackwell.data import load_boolq
+from blackwell.data import load_dataset
 from blackwell.metrics import bootstrap_gaps, forecast_scores, infogap
 from blackwell.prompts import prediction_messages
 from blackwell.storage import ROOT, file_hash, fingerprint, read_json, write_json
@@ -74,11 +74,11 @@ def code_provenance():
             "git_commit_at_run": result.stdout.strip() if result.returncode == 0 else None}
 
 
-def prepare_run(config, run_dir):
+def prepare_run(config, run_dir, offline=False):
     # 延迟导入：离线重算报告不需要 tokenizer 或下载。
     from blackwell.tokenization import ContextTokenizer, TOKENIZER_REVISION, TOKENIZER_SHA256
     tokenizer = ContextTokenizer()
-    examples, provenance = load_boolq(config["dataset_split"], config["sample_size"], config["sample_seed"])
+    examples, provenance = load_dataset(config, offline)
     identity = {"config": config, "dataset": provenance, "examples_sha256": fingerprint(examples),
                 "tokenizer_revision": TOKENIZER_REVISION, "tokenizer_sha256": TOKENIZER_SHA256,
                 "code": code_provenance()}
@@ -222,11 +222,11 @@ def main():
     if args.offline:
         # 离线重放必须已准备好数据，不允许触发 download() 的网络分支。
         required = [ROOT / "data" / "tokenizer" / "qwen3-30b-a3b-instruct-2507.json",
-                    ROOT / "data" / "boolq" / "BoolQ.zip", run_dir / "manifest.json"]
+                    run_dir / "manifest.json"]
         if not all(p.exists() for p in required):
             raise RuntimeError("Offline replay needs the previously prepared local files.")
-    tokenizer, examples, manifest = prepare_run(config, run_dir)
-    print(f"{len(examples)} BoolQ {config['dataset_split']} samples; {len(selected_methods(config))} paired conditions.")
+    tokenizer, examples, manifest = prepare_run(config, run_dir, args.offline)
+    print(f"{len(examples)} {manifest['identity']['dataset']['name']} {config['dataset_split']} samples; {len(selected_methods(config))} paired conditions.")
     if args.prepare_only:
         print("Prepared. No LLM API calls were made.")
         return

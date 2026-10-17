@@ -32,10 +32,12 @@ def write_json(path, value):
     os.replace(temporary, path)
 
 
-def download(url, path, expected_sha256=None):
+def download(url, path, expected_sha256=None, offline=False):
     """只下载明确指定的公开数据或 tokenizer；不下载模型权重。"""
     path = Path(path)
     if not path.exists():
+        if offline:
+            raise RuntimeError(f"Offline dataset cache miss: {path.name}")
         path.parent.mkdir(parents=True, exist_ok=True)
         request = Request(url, headers={"User-Agent": "Blackwell-Compaction/0.1"})
         with urlopen(request, timeout=90) as response:

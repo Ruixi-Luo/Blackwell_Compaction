@@ -1,0 +1,2 @@
+# Optional: read the pinned HotpotQA Parquet mirror. BoolQ/QASPER use only stdlib.
+pyarrow==21.0.0
