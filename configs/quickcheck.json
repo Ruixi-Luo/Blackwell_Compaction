@@ -1,5 +1,5 @@
 {
-  "run_name": "boolq_train2_dataset_refactor_seed20261017",
+  "run_name": "boolq_train2_quickcheck_20261018",
   "dataset_split": "train",
   "sample_size": 2,
   "sample_seed": 20261017,

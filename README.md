@@ -55,12 +55,10 @@ $env:TEMP = "$PWD/.cache/tmp"
 $env:TMP = $env:TEMP
 .\.venv\Scripts\python.exe -m pip install -r requirements-data.txt
 
-# HotpotQA 的两个本地压缩器需要一次性安装依赖及下载固定权重。
-# 权重约 2.8 GB；已在本机安装好，无需重复下载。
-.\setup-local.ps1
-
-# NVIDIA GPU：安装同版本 CUDA 12.8 构建（初次下载约 3.5 GB）。
+# 两个本地压缩器：本机使用 NVIDIA GPU，安装 CUDA 12.8 构建。
+# CUDA 包初次下载约 3.5 GB，模型权重约 2.8 GB；本机已安装，无需重装。
 .\setup-local.ps1 -Device cuda
+# 没有 NVIDIA GPU 的电脑才改用：.\setup-local.ps1 -Device cpu
 
 # 免费检查代码，再准备数据（只下载公开数据/tokenizer，不调用 LLM）。
 .\run.ps1 -Mode Test
@@ -79,7 +77,7 @@ $env:TMP = $env:TEMP
 .\.venv\Scripts\python.exe tools/preflight_inputs.py --config configs/qasper_train.json
 .\.venv\Scripts\python.exe tools/preflight_inputs.py --config configs/longbench_binary.json
 
-# 会产生 API 费用。GPU 顺序压缩；已压缩数据的 reader 可并行等待 API。
+# 会产生 API 费用。各数据集串行执行，避免同时调用 reader 触发共享限流。
 # 458×4 + 283×4 + 52×4 = 3172 次名义调用；每组另有限额，重试计入。
 .\.venv\Scripts\python.exe tools/run_current_suite.py
 
@@ -87,7 +85,7 @@ $env:TMP = $env:TEMP
 .\.venv\Scripts\python.exe tools/build_suite_docs.py
 ```
 
-每个数据集仍可单独用 `run.ps1 -Mode Run -Config ...` 执行。`tools/run_current_suite.py` 只组织现有步骤，不另建实验框架。完整结果与缓存保存在 `runs/<run_name>/`；报告、CSV 和指标快照在 `docs/Experiments_20261018/`。默认英文，可切换中文。CUDA 切换前中止的 CPU 试运行单独保留，不混入结果。
+每个数据集仍可单独用 `run.ps1 -Mode Run -Config ...` 执行。`tools/run_current_suite.py` 只组织现有步骤，不另建实验框架。完整结果与缓存保存在 `runs/<run_name>/`；报告、CSV 和指标快照在 `docs/Experiments_20261018/`。默认英文，可切换中文。CUDA 切换前中止的 CPU 试运行单独保留，不混入结果。最初并行调用 reader 触发了共享 HTTP 429 限流，后续改为串行并从缓存继续，失败尝试在账本中保留。
 
 密钥从 `SILICONFLOW_API_KEY` 环境变量读取，也支持本地 `.env`，不要写进代码或配置。新运行的 BoolQ 快速检查名义上 6 次 reader 调用，HotpotQA 为 30 × 4 = 120 次，配置分别限制最多 20 / 150 次尝试（包括重试）。完全相同的请求会复用缓存。ChatGPT 订阅与 OpenAI API 计费独立，本项目当前不会调用 OpenAI。
 
