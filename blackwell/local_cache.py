@@ -25,9 +25,14 @@ class LocalCompressionCache:
         if self.offline:
             raise RuntimeError("Offline local compression cache miss; inference is disabled.")
         if method not in self.engines:
-            self.engines[method] = create_compressor(method)
+            self.engines[method] = create_compressor(method, device=self.identity.get('device', 'cpu'))
+        if self.identity.get('device') == 'cuda':
+            import torch
+            torch.cuda.synchronize()
         start = time.perf_counter()
         text = self.engines[method].compress(context, retained_ratio)
+        if self.identity.get('device') == 'cuda':
+            torch.cuda.synchronize()
         if not isinstance(text, str):
             raise TypeError("Local compressor must return text.")
         result = {"text": text, "compression_seconds": time.perf_counter() - start,

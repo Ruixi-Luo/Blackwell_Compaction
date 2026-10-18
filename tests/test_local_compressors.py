@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 
 from blackwell.compressors import validate_input
 from blackwell.compressors.llmlingua2 import LLMLingua2Compressor
-from blackwell.compressors.selective_context import SelectiveContextCompressor
+from blackwell.compressors.selective_context import SelectiveContextCompressor, length_safe_sentences
 from blackwell.local_cache import LocalCompressionCache
 from blackwell.storage import ROOT, read_json, write_json
 from run_experiment import selected_methods
@@ -41,16 +41,14 @@ class LocalCompressorTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             llm.compress('context', question='secret')
 
-    def test_long_selective_context_sentence_fails_instead_of_truncating(self):
-        sc = SelectiveContextCompressor.__new__(SelectiveContextCompressor)
-        sc.engine = Mock()
-        sc.engine.beautify_context.return_value = 'long sentence'
-        sc.engine.sent_tokenize_pattern = r'\n'
-        sc.engine.tokenizer.encode.return_value = list(range(1025))
-        sc.engine.max_token_length = 1024
-        with self.assertRaisesRegex(ValueError, '1024'):
-            sc.compress('long sentence')
-        sc.engine.assert_not_called()
+    def test_long_selective_context_sentence_is_split_without_losing_words(self):
+        tokenizer = Mock()
+        tokenizer.encode.side_effect = lambda text, **kwargs: [0] + text.removeprefix('<|endoftext|>').split()
+        sentences = ['short sentence', 'word ' * 2100]
+        parts = length_safe_sentences(sentences, tokenizer, 1024)
+        self.assertEqual(parts[0], 'short sentence')
+        self.assertEqual(' '.join(parts).split(), ' '.join(sentences).split())
+        self.assertTrue(all(len(tokenizer.encode('<|endoftext|>'+p))<=1024 for p in parts))
 
     def test_local_cache_replays_without_loading_models_and_detects_changes(self):
         with tempfile.TemporaryDirectory(dir=ROOT / '.cache') as temporary:

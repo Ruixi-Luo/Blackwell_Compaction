@@ -16,7 +16,7 @@ from blackwell.compression import Compactor
 from blackwell.compressors import LOCAL_METHODS
 from blackwell.cache_reuse import import_api_cache
 from blackwell.data import load_dataset
-from blackwell.metrics import bootstrap_gaps, forecast_scores, infogap
+from blackwell.metrics import bootstrap_gaps, forecast_scores, infogap, payoff_curve
 from blackwell.prompts import prediction_messages
 from blackwell.storage import ROOT, file_hash, fingerprint, read_json, write_json
 
@@ -63,6 +63,8 @@ def load_config(path):
     if config["min_interval_seconds"] < 0 or config["timeout_seconds"] <= 0:
         raise ValueError("Invalid timing setting.")
     selected_methods(config)
+    if config.get('compression_device', 'cpu') not in {'cpu', 'cuda'}:
+        raise ValueError('compression_device must be cpu or cuda.')
     return config
 
 
@@ -87,7 +89,7 @@ def prepare_run(config, run_dir, offline=False):
         from blackwell.compressors.runtime import configure_cache, runtime_identity, verify_assets
         configure_cache()
         verify_assets(local_methods)
-        identity["local_compressors"] = runtime_identity(local_methods)
+        identity["local_compressors"] = runtime_identity(local_methods, config.get('compression_device', 'cpu'))
     manifest_path = run_dir / "manifest.json"
     if manifest_path.exists():
         manifest = read_json(manifest_path)
@@ -161,19 +163,40 @@ def analyze(rows, config):
     scores = {}
     for method in methods:
         conditions = [r["conditions"][method] for r in rows]
+        # 论文的多个问题复用同一压缩结果；耗时不能按题目重复累计。
+        unique_compressions = {c['local_compression_hash']: c['compression_seconds']
+                               for c in conditions if 'local_compression_hash' in c}
         scores[method] = {
             **forecast_scores(probabilities[method], labels),
             "mean_context_tokens": sum(c["tokens"] for c in conditions) / len(rows),
             "pooled_retained_ratio": sum(c["tokens"] for c in conditions) / sum(r["original_tokens"] for r in rows),
             "over_budget_samples": sum(c["budget_met"] is False for c in conditions),
             "length_repairs": sum(c["length_repair_used"] for c in conditions),
+            "unique_compressions": len(unique_compressions),
+            "compression_seconds_unique_total": sum(unique_compressions.values()),
         }
+    for method in methods:
+        for metric in ('accuracy', 'brier', 'log_loss'):
+            scores[method][metric + '_delta_vs_full'] = scores[method][metric] - scores['full'][metric]
     matrix = {a: {b: infogap(probabilities[a], probabilities[b], labels) for b in methods} for a in methods}
     uncertainty = {method: bootstrap_gaps(
         probabilities["full"], probabilities[method], labels, groups,
         config["bootstrap_repetitions"], config["bootstrap_seed"],
     ) for method in methods if method != "full"}
+    curves = {m: payoff_curve(probabilities['full'], probabilities[m], labels)
+              for m in methods if m != 'full'}
+    subsets = {}
+    for task in sorted({r['source_task'] for r in rows if 'source_task' in r}):
+        indices = [i for i, r in enumerate(rows) if r.get('source_task') == task]
+        y = [labels[i] for i in indices]
+        p = {m: [probabilities[m][i] for i in indices] for m in methods}
+        subsets[task] = {'n': len(indices), 'positive_labels': sum(y),
+                         'scores': {m: forecast_scores(p[m], y) for m in methods},
+                         'infogap_vs_full': {m: {'full_over_method': infogap(p['full'], p[m], y),
+                                                'method_over_full': infogap(p[m], p['full'], y)}
+                                             for m in methods if m != 'full'}}
     return {"n": len(rows), "positive_labels": sum(labels), "scores": scores,
+            "context_clusters": len(set(groups)), "payoff_curves_vs_full": curves, "source_tasks": subsets,
             "infogap": matrix, "bootstrap_vs_full": uncertainty,
             "normalization": "2 * sup_t mean[(t-y)(1[p_A<=t]-1[p_B<=t])]; also save unscaled.",
             "scope": "Small pilot of verbalized probabilities, not true-posterior recovery or a dominance test."}

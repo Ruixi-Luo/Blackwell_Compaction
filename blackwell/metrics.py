@@ -64,6 +64,30 @@ def forecast_scores(probabilities, labels):
     }
 
 
+def payoff_curve(a, b, labels):
+    """两动作决策的收益差曲线；保留断点左极限和断点值，不平滑跳跃。"""
+    _validate(a, labels)
+    _validate(b, labels)
+    events = defaultdict(lambda: [0, 0])
+    for pa, pb, y in zip(a, b, labels):
+        events[pa][0] += 1
+        events[pa][1] -= y
+        events[pb][0] -= 1
+        events[pb][1] += y
+    events[0.0]
+    events[1.0]
+    slope, intercept, points = 0, 0, []
+    for threshold in sorted(events):
+        if threshold > 0:
+            points.append({'threshold': threshold, 'side': 'left_limit',
+                           'payoff_gap': 2 * (slope * threshold + intercept) / len(labels)})
+        slope += events[threshold][0]
+        intercept += events[threshold][1]
+        points.append({'threshold': threshold, 'side': 'at_threshold',
+                       'payoff_gap': 2 * (slope * threshold + intercept) / len(labels)})
+    return points
+
+
 def bootstrap_gaps(a, b, labels, groups, repetitions=500, seed=20261017):
     """按上下文成组、两方法配对重采样；区间仅描述 pilot 波动，不证明支配。"""
     _validate(a, labels)

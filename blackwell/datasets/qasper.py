@@ -1,8 +1,10 @@
-"""QASPER v0.3 可用规模核验。只做 census，尚不接入付费实验。"""
+"""QASPER v0.3：全文输入、严格一致的二元标签、可选文本证据筛选。"""
 import json
+import random
 import tarfile
+from collections import Counter
 
-from ..storage import ROOT, download
+from ..storage import ROOT, download, fingerprint
 
 SOURCES = {
     "train_dev": ("https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz",
@@ -73,3 +75,49 @@ def text_evidence_status(question, paper):
     if any(not e.strip() or " ".join(e.split()) not in text for items in evidence_lists for e in items):
         return "evidence_not_in_text"
     return "text_verified"
+
+
+def convert_papers(papers, split, require_text_evidence=True):
+    """证据只用于定义评测子集，不用于选择、标记或裁剪输入正文。"""
+    examples, excluded = [], Counter()
+    for paper_id, paper in papers.items():
+        has_body = any(p.strip() for s in paper['full_text'] for p in s['paragraphs'])
+        context = build_context(paper)
+        for question in paper['qas']:
+            status, label = classify_question(question)
+            if status == 'eligible' and not has_body:
+                status = 'missing_full_text'
+            if status != 'eligible':
+                excluded[status] += 1
+                continue
+            evidence = text_evidence_status(question, paper)
+            if require_text_evidence and evidence != 'text_verified':
+                excluded[evidence] += 1
+                continue
+            examples.append({
+                'id': f"qasper-{split}-{question['question_id']}",
+                'paper_id': paper_id, 'context': context,
+                'context_group': fingerprint(context),
+                'question': question['question'], 'label': label,
+                'evidence_status': evidence,
+            })
+    if len({e['id'] for e in examples}) != len(examples):
+        raise ValueError('Duplicate QASPER question IDs.')
+    return examples, dict(excluded)
+
+
+def load_qasper(split, sample_size, seed, offline=False):
+    papers, source = load_papers(split, offline)
+    pool, excluded = convert_papers(papers, split, require_text_evidence=True)
+    if not 1 <= sample_size <= len(pool):
+        raise ValueError('sample_size exceeds the eligible QASPER text-evidence pool.')
+    indices = random.Random(seed).sample(range(len(pool)), sample_size)
+    provenance = {
+        **source, 'name': 'QASPER yes/no (text evidence)', 'split': split,
+        'dataset_home': 'https://allenai.org/data/qasper',
+        'available_rows': len(pool), 'excluded': excluded, 'sample_seed': seed,
+        'selection_rule': 'Nonempty body; all annotations boolean and consistent; every annotation has nonempty evidence found in the text; no figure/table evidence.',
+        'context_definition': 'Title, abstract and all sections/paragraphs in order. No questions, answers or evidence markers appended.',
+        'scope': 'Exploratory use of train; dev/test untouched. Evidence filtering changes label and task distribution. Each paper is compressed once and reused across its questions.',
+    }
+    return [pool[i] for i in indices], provenance

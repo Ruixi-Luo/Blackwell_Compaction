@@ -1,5 +1,5 @@
 # Optional local compressors. Base API-only experiment does not need these.
-# CPU torch is installed separately from https://download.pytorch.org/whl/cpu.
+# Torch is installed separately: setup-local.ps1 -Device cpu|cuda (CUDA 12.8).
 transformers==4.57.1
 tokenizers==0.22.1
 accelerate==1.10.1

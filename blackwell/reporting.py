@@ -38,9 +38,26 @@ def scatter(rows, method):
     return '<svg viewBox="0 0 300 295" role="img" aria-label="Probability comparison">' + '<path d="M42 35V245H252" stroke="#789" fill="none"/><path d="M42 245L252 35" stroke="#aab" stroke-dasharray="4 4"/>' + ''.join(points) + f'<text x="130" y="281" font-size="12">Full p(Yes)</text><text x="42" y="20" font-size="12">{method} p(Yes)</text><text x="32" y="262" font-size="11">0</text><text x="249" y="262" font-size="11">1</text><text x="26" y="39" font-size="11">1</text></svg>'
 
 
+def decision_curve(points, method):
+    extent = max(.05, max(abs(p['payoff_gap']) for p in points)) * 1.15
+    coordinates = [(45 + 450*p['threshold'], 130 - 90*p['payoff_gap']/extent) for p in points]
+    polyline = ' '.join(f'{x:.3f},{y:.3f}' for x, y in coordinates)
+    dots = ''.join(f'<circle cx="{x:.3f}" cy="{y:.3f}" r="2" fill="#267c92"><title>t={p["threshold"]:.4f}; {p["side"]}; Full minus {method}={p["payoff_gap"]:.5f}</title></circle>' for (x,y),p in zip(coordinates,points))
+    return (f'<svg viewBox="0 0 530 265" role="img" aria-label="Decision payoff gap">'
+            '<path d="M45 30V225H495 M45 130H495" stroke="#9aa" fill="none"/>'
+            f'<polyline points="{polyline}" stroke="#267c92" stroke-width="2" fill="none"/>{dots}'
+            f'<text x="45" y="20" font-size="13">Full minus {method}</text>'
+            f'<text x="0" y="44" font-size="11">+{extent:.2f}</text><text x="23" y="134" font-size="11">0</text>'
+            f'<text x="0" y="224" font-size="11">−{extent:.2f}</text>'
+            '<text x="43" y="245" font-size="11">0</text><text x="490" y="245" font-size="11">1</text>'
+            '<text x="190" y="260" font-size="12">Decision threshold t</text></svg>')
+
+
 def write_report(run_dir, rows, metrics, config):
     methods = list(metrics["scores"])
-    dataset = read_json(run_dir / "manifest.json")["identity"]["dataset"]
+    identity = read_json(run_dir / "manifest.json")["identity"]
+    dataset = identity['dataset']
+    device = identity.get('local_compressors', {}).get('device', 'cpu')
     dataset_name = html.escape(dataset["name"])
     ledger_path = run_dir / "api_attempts.json"
     ledger = read_json(ledger_path) if ledger_path.exists() else []
@@ -49,10 +66,19 @@ def write_report(run_dir, rows, metrics, config):
     sections.append('<section><h2>' + bi('Experiment at a glance', '实验设置') + '</h2>' +
         table([bi('Item','项目'),bi('Value','取值')], [
             ['Model', html.escape(config['model']) + ' · SiliconFlow · thinking off · temperature 0'],
+            [bi('Compression device','压缩设备'), html.escape(device + ' · ' + identity.get('local_compressors', {}).get('hardware', {}).get('gpu_name', 'CPU'))],
             ['Dataset', f"{dataset_name} {config['dataset_split']} · n={len(rows)} · Yes={metrics['positive_labels']} · seed={config['sample_seed']}"],
-            [bi('Compaction budget','压缩预算'), bi('50% of original context tokens; original Qwen tokenizer; marker included.', '原文上下文 token 的 50%；使用 Qwen 官方 tokenizer；截断标记计入预算。') if config['retained_ratio']==0.5 else str(config['retained_ratio'])],
+            [bi('Compaction budget','压缩预算'), bi('Nominal 50% retained; actual lengths measured with the Qwen tokenizer.', '目标保留率 50%；实际长度用 Qwen tokenizer 统计。') if config['retained_ratio']==0.5 else str(config['retained_ratio'])],
             [bi('API accounting','API 记录'), f"{len(ledger)} attempts · {usage['prompt_tokens']:,} input + {usage['completion_tokens']:,} output tokens"],
         ]) + '<p>' + bi('The scalar p_yes represents Bernoulli(p_yes). These are verbalized probability forecasts, not verified Bayesian posteriors or answer-token log probabilities.', '标量 p_yes 表示 Bernoulli(p_yes)。这里是模型直接报告的概率预测，不预设为真实贝叶斯后验，也不是答案 token 的 log probability。') + '</p></section>')
+    if config.get('dataset') in {'qasper_yesno_text', 'longbench_yesno'}:
+        explanation = (
+            bi('Full paper text (title, abstract, all sections). All annotations must agree on yes/no, and every annotation must have textual evidence present in the input. Evidence is used only for eligibility; it never selects or highlights text for the compressor. This conservative filter changes the label distribution. This run explores train; dev/test remain reserved.',
+               '输入为论文标题、摘要及全部章节。所有标注必须是相同的 yes/no，且每份标注的文字证据均在输入中。证据仅用于筛选评测子集，不用于裁剪或标记压缩器的输入。保守筛选改变了标签分布。本次探索 train，dev/test 保留。')
+            if config['dataset'] == 'qasper_yesno_text' else
+            bi('Standard LongBench v1 English tasks only. Keep questions whose reference answers are all the same yes/no; preserve the original context and question. This is a binary probability subset protocol, not the official full benchmark score. Source-task results below are descriptive because their sample sizes are small.',
+               '仅使用 LongBench v1 标准版英文任务，保留所有参考答案均为一致 yes/no 的题目；上下文和问题原样保留。这是二元概率子集协议，不是官方完整 benchmark 分数。各来源任务样本较少，分项结果仅供描述。'))
+        sections.append('<section><h2>' + bi('Dataset protocol', '数据协议') + '</h2><p>' + explanation + '</p></section>')
     if config.get("dataset") == "hotpotqa_yesno":
         sections.append('<section><h2>' + bi('HotpotQA input protocol', 'HotpotQA 输入协议') + '</h2><p>' +
             bi('Native yes/no questions from distractor dev. Every context includes all supplied paragraph titles and texts (usually 10) in the supplied order. Supporting facts are never used to select or reorder paragraphs. Compression receives no question or label. The supplied context itself was retrieved for the question; query-blind compression does not make this dataset query-independent.',
@@ -61,8 +87,8 @@ def write_report(run_dir, rows, metrics, config):
                '本实验用 InfoGap、Brier 与 log loss 评估二元概率，Accuracy 为辅助。官方 HotpotQA 还评估答案 EM/F1、证据 EM/F1 及联合指标；这里的子集实验不等于完整官方 benchmark 成绩。') + '</p><a href="https://hotpotqa.github.io/">HotpotQA · CC BY-SA 4.0</a></section>')
     if "llmlingua2" in methods or "selective_context" in methods:
         sections.append('<section><h2>' + bi('Local compression methods', '本地压缩方法') + '</h2><p>' +
-            bi('Selective Context: official GPT-2 / phrase filtering. LLMLingua-2: official XLM-R-large MeetingBank token classifier. Both run on CPU using frozen local weights; only the reader calls the API. Both receive only the context and a retained ratio, never the question or label.',
-               'Selective Context 使用官方 GPT-2 及短语筛选；LLMLingua-2 使用官方 XLM-R-large MeetingBank 分类器。两者以固定本地权重在 CPU 上运行，只有 reader 调用 API。输入仅有上下文与保留率，不含问题和标签。') + '</p><p>' +
+            bi(f'Selective Context: official GPT-2 / phrase filtering. LLMLingua-2: official XLM-R-large MeetingBank token classifier. Both run locally on {device}, in float32 with frozen weights; only the reader calls the API. Both receive only the context and a retained ratio, never the question or label.',
+               f'Selective Context 使用官方 GPT-2 及短语筛选；LLMLingua-2 使用官方 XLM-R-large MeetingBank 分类器。两者以固定本地权重在 {device} 上采用 float32 运行，只有 reader 调用 API。输入仅有上下文与保留率，不含问题和标签。') + '</p><p>' +
             bi('The native ratio applies to different lexical units. It is not an exact Qwen-token budget. We make one native compression call and report the actual Qwen-token count without post-truncation. This is a nominal-rate comparison, not a strictly matched-length comparison.',
                '两个方法的原生比例作用于不同词法单位，不等于精确的 Qwen token 预算。每条文本只调用一次原生压缩，保留原输出并报告实际长度。本实验比较相同名义保留率，不是严格等长对比。') + '</p><p><a href="https://github.com/liyucheng09/Selective_Context">Selective Context · official code</a> · <a href="https://github.com/microsoft/LLMLingua">LLMLingua-2 · official code</a></p></section>')
     receipt = run_dir / 'cache_import.json'
@@ -76,6 +102,13 @@ def write_report(run_dir, rows, metrics, config):
         s = metrics['scores'][method]
         score_rows.append([method, f"{s['accuracy']:.3f}",f"{s['brier']:.4f}",f"{s['log_loss']:.4f}",f"{s['mean_context_tokens']:.1f}",f"{s['pooled_retained_ratio']:.1%}",s['over_budget_samples']])
     sections.append('<section><h2>' + bi('Forecasts and compression', '概率预测与压缩长度') + '</h2>' + table(['Method','Accuracy ↑','Brier ↓','Log loss ↓',bi('Context tokens','上下文 token'),bi('Actual retained','实际保留率'),bi('Over budget','超预算样本')],score_rows) + '<p class="muted">' + bi('Retained ratio is pooled compressed tokens / pooled original tokens. Accuracy uses p_yes ≥ 0.5. Over-budget outputs are flagged and remain in the table; they are not silently truncated.', '保留率＝全部压缩 token 之和／全部原文 token 之和。Accuracy 使用 p_yes ≥ 0.5。超预算输出会标记并保留，不偷偷截断。') + '</p></section>')
+    delta_rows = [[m, f"{s['accuracy_delta_vs_full']:+.4f}", f"{s['brier_delta_vs_full']:+.4f}",
+                   f"{s['log_loss_delta_vs_full']:+.4f}", s['unique_compressions'],
+                   f"{s['compression_seconds_unique_total']/60:.2f}"] for m,s in metrics['scores'].items()]
+    sections.append('<section><h2>'+bi('Changes relative to full context','相对原文的变化')+'</h2>'+table(
+        ['Method','Δ Accuracy ↑','Δ Brier ↓','Δ Log loss ↓',bi('Unique compressions','独立压缩次数'),bi('Compression minutes','压缩分钟数')],delta_rows)+
+        '<p>'+bi('Δ = method − full, paired on the same questions. Compression time counts each unique cached compression once and excludes model initialization. A repeated question about the same paper reuses its compressed text.',
+                 'Δ＝该方法减去原文，在相同题目上配对比较。压缩耗时对每份独立压缩缓存只累计一次，不含模型初始化；同篇论文的不同问题复用压缩文本。')+'</p></section>')
     matrix_rows = [[a] + [f"{metrics['infogap'][a][b]['value']:.4f}" for b in methods] for a in methods]
     sections.append('<section><h2>' + bi('Directional InfoGap', '有方向的 InfoGap') + '</h2><p>' + bi('Cell (row A, column B) is the estimated maximum payoff advantage of A over B. Read both directions. A larger cell is not a universal ranking or evidence of statistical significance.', '第 A 行、第 B 列＝A 相对 B 的最大决策收益优势估计。必须双向阅读；单个较大数值不是整体排名，也不代表统计显著。') + '</p>' + table(['A over B'] + methods, matrix_rows) +
         '<div class="note">' + bi('Normalization: G(A,B) = 2 supₜ mean[(t − y)(1[pA ≤ t] − 1[pB ≤ t])]. The factor 2 follows Theorem 4.1 and the proof of Theorem 5.1 in arXiv v2; the displayed estimator in Theorem 5.1 omits it. The JSON also preserves the unscaled value. This is our explicit implementation convention, not an author-confirmed correction.', '归一化：G(A,B) = 2 supₜ mean[(t − y)(1[pA ≤ t] − 1[pB ≤ t])]。系数 2 按 arXiv v2 定理 4.1 及定理 5.1 的证明；定理 5.1 展示的估计式未写该系数。JSON 同时保存未乘 2 的数值。这是本项目明确记录的实现约定，并非作者确认的勘误。') + '</div>' +
@@ -84,6 +117,24 @@ def write_report(run_dir, rows, metrics, config):
     for method, b in metrics['bootstrap_vs_full'].items():
         intervals.append([method, f"{b['a_over_b'][0]:.3f}–{b['a_over_b'][1]:.3f}", f"{b['b_over_a'][0]:.3f}–{b['b_over_a'][1]:.3f}"])
     sections.append('<section><h2>' + bi('Pilot uncertainty', '小样本波动') + '</h2>' + table(['Method','G(Full, method)','G(method, Full)'],intervals) + '<p>' + bi(f"Descriptive 95% percentile ranges from {config['bootstrap_repetitions']} paired bootstrap draws, clustered by identical passage. The supremum statistic and small sample make these exploratory ranges; they are not a validated dominance test. This run does not support a general conclusion about which compressor is better.", f"按相同 passage 成组配对重采样 {config['bootstrap_repetitions']} 次，展示描述性 95% 百分位范围。由于 supremum 统计量与小样本的限制，这不是经过验证的支配检验。本次运行不能支持某种压缩方法普遍更好的结论。") + '</p></section>')
+    sections.append('<section><h2>'+bi('Decision payoff across thresholds','不同阈值下的决策收益差')+'</h2><p>'+bi(
+        'Positive: full context has higher empirical payoff at this threshold. Negative: the compared method has higher payoff. The positive maximum gives G(Full, method); the negative minimum gives −G(method, Full). Vertical segments display jumps; hover points to distinguish left limits from values at the threshold. Panels use different vertical scales.',
+        '正值表示该阈值下原文的经验收益更高，负值表示对比方法更高。正向最大值对应 G(原文,方法)，负向最小值对应 −G(方法,原文)。竖线表示跳跃；悬停区分左极限与断点值。各图纵轴刻度不同。')+'</p><div class="grid">'+''.join(
+        '<div class="card">'+decision_curve(points,m)+'</div>' for m,points in metrics['payoff_curves_vs_full'].items())+'</div></section>')
+    if metrics['source_tasks']:
+        task_rows = []
+        for task, values in metrics['source_tasks'].items():
+            for m, gaps in values['infogap_vs_full'].items():
+                task_rows.append([task, values['n'], m, f"{values['scores'][m]['brier']:.4f}",
+                                  f"{gaps['full_over_method']['value']:.4f}", f"{gaps['method_over_full']['value']:.4f}"])
+        sections.append('<section><h2>'+bi('LongBench source tasks','LongBench 来源任务')+'</h2>'+table(
+            ['Task','n','Method','Brier','G(Full, method)','G(method, Full)'],task_rows)+'</section>')
+    preflight = run_dir/'input_preflight.json'
+    if preflight.exists():
+        check = read_json(preflight)
+        sections.append('<section><h2>'+bi('Input length handling','输入长度处理')+'</h2><p>'+bi(
+            f"{check['unique_contexts']} unique contexts checked; {check['contexts_with_length_adapter']} required length adaptation. Only oversized SC sentences are split before scoring; the global phrase threshold is retained. Only LLMLingua-2 native chunks exceeding 511 body tokens are split. The adapter preserves every character of each input segment. These are explicit length-safe wrappers around the official implementations.",
+            f"检查了 {check['unique_contexts']} 份独立上下文，其中 {check['contexts_with_length_adapter']} 份需要长度适配。SC 仅拆分超长句后评分，保留全文统一的短语阈值；LLMLingua-2 仅拆分超过 511 正文 token 的原生块。适配器保留每个输入段的全部字符。这是对官方实现明确记录的长度适配。")+'</p></section>')
     sections.append('<section><h2>' + bi('Probability changes', '概率怎样变化') + '</h2><p>' + bi('Each dot is one item; diagonal = unchanged probability. Teal: gold Yes. Orange: gold No. Hover a dot for its sample ID.', '每个点是一道题；对角线表示概率未变化。青色是真实 Yes，橙色是真实 No。悬停查看样本编号。') + '</p><div class="grid">' + ''.join('<div class="card"><h3>'+m+'</h3>'+scatter(rows,m)+'</div>' for m in methods if m!='full') + '</div></section>')
     details = []
     for row in rows:

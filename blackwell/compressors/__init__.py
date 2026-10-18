@@ -3,14 +3,14 @@
 LOCAL_METHODS = ("selective_context", "llmlingua2")
 
 
-def create_compressor(method):
+def create_compressor(method, device='cpu'):
     """只创建所选方法。返回对象的 compress(context, retained_ratio) 输出字符串。"""
     if method == "selective_context":
         from .selective_context import SelectiveContextCompressor
-        return SelectiveContextCompressor()
+        return SelectiveContextCompressor(device=device)
     if method == "llmlingua2":
         from .llmlingua2 import LLMLingua2Compressor
-        return LLMLingua2Compressor()
+        return LLMLingua2Compressor(device=device)
     raise ValueError(f"Unknown local compressor: {method}")
 
 

@@ -12,6 +12,7 @@
 
 ## 先看结果与导读
 
+- **[三数据集实验与代码导读](docs/Experiments_20261018/Experiment_Overview.html)**：HotpotQA 458 题、QASPER 283 题、LongBench 52 题；四组输入、双向 InfoGap、收益差曲线、概率评分与逐题审计。
 - **[数据集与代码导读](docs/Datasets_and_Experiment_Guide.html)**：HotpotQA 输入规则、QASPER 的真实可用规模、代码阅读顺序，中英文切换，默认英文。
 - **[HotpotQA 30 条配对实验](docs/HotpotQA_Results.html)**：原文、空上下文、Selective Context、LLMLingua-2；可逐条检查原文、压缩文本与概率。
 - [本地压缩器模块导读](docs/Local_Compressors.html)：官方算法封装、安装兼容性与调用示例。
@@ -26,12 +27,19 @@ GitHub 文件预览不直接执行 HTML；下载后用浏览器打开。HTML 自
 | 快速检查 | `configs/quickcheck.json` | BoolQ train 2 条；full、no_context、head_tail；不加载压缩模型 |
 | 较长上下文 pilot | `configs/hotpotqa.json` | HotpotQA distractor dev 原生 yes/no 30 条；full、no_context、Selective Context、LLMLingua-2 |
 | 全文数据可用性核验 | `tools/inspect_datasets.py` | QASPER v0.3 全部 train/dev/test；只统计，不调用 LLM |
+| 多段落探索实验 | `configs/hotpotqa_full.json` | HotpotQA dev 全部 458 道 yes/no |
+| 全文探索实验 | `configs/qasper_train.json` | QASPER train 的 283 道文字证据可核验 yes/no；233 篇论文 |
+| 长上下文补充 | `configs/longbench_binary.json` | LongBench v1 标准英文版的 52 道一致 yes/no；不含 E/v2 |
 
-Reader 继续固定为硅基流动 `Qwen/Qwen3-30B-A3B-Instruct-2507`，关闭思考、temperature=0。SC 使用官方 GPT-2 / phrase 算法；LLMLingua-2 使用官方 XLM-R-large MeetingBank 权重，在本机 CPU 上运行。没有训练模型。
+Reader 固定为硅基流动 `Qwen/Qwen3-30B-A3B-Instruct-2507`，关闭思考、temperature=0。SC 使用官方 GPT-2 / phrase 算法；LLMLingua-2 使用官方 XLM-R-large MeetingBank 权重。新实验设置 `compression_device: cuda`，在 RTX 5070 Laptop GPU 上以 float32 运行；旧配置省略该字段时默认 CPU。没有训练模型。设备不可用会明确报错，不偷偷切换。
 
 HotpotQA：7,405 个 dev 样本中有 **458 道原生 yes/no**（225 Yes / 233 No），全是 comparison 类型。保留全部提供段落及标题，不用 supporting facts 筛选；447 道有 10 段，另外 11 道只有 2–9 段。平均上下文约 **1,234 Qwen token**，是从 BoolQ 过渡到更长上下文的测试，还不是 4k–16k benchmark。原数据检索依赖问题，只有我们的压缩步骤与 query 隔离。
 
-QASPER：要求正文非空、所有标注都是一致的 boolean 后，train/dev/test 分别为 **389 / 89 / 126** 题；再要求每份标注的文字证据都出现在全文输入中，剩 **283 / 51 / 88** 题。全文平均约 5k token。保守筛选会排除许多没有 evidence 的 No 题，改变标签比例；两种口径均保留，详见导读和 `docs/dataset_inventory.json`。尚未接入 QASPER 的付费预测。
+QASPER：要求正文非空、所有标注都是一致的 boolean 后，train/dev/test 分别为 **389 / 89 / 126** 题；再要求每份标注的文字证据都出现在全文输入中，剩 **283 / 51 / 88** 题。此次只用 train 的 283 题探索，dev/test 保留。证据仅用于子集资格判断，输入仍是完整标题、摘要、章节和段落；不按证据裁剪。保守筛选改变了标签比例（192 Yes / 91 No），不能代表全部 QASPER。相同全文共用压缩缓存，bootstrap 按全文成组。
+
+LongBench：从固定 SHA-256 的官方标准 v1 归档筛选所有参考答案均为同一英文 yes/no 的题，得到 HotpotQA 14、2WikiMQA 19、QASPER 18、MultiFieldQA-en 1，共 52 题。原样保留 `context` 和 `input`。这不是官方完整 benchmark 的评测协议；不同数据集不合并算一个总排名。
+
+长度适配：仅对超过 GPT-2 1024-token 上限的 SC 长句进行保留全部字符的分段，再使用全文统一短语阈值；仅对 LLMLingua-2 原生分块重新分词后超过 511 正文 token 的块进行同类分段。正常输入保留原生分块。QASPER 的 233 篇论文中 4 篇需要适配，HotpotQA/LongBench 均不需要。适配规则、GPU 型号、CUDA/PyTorch 版本都写入运行清单。GPU 耗时经过同步，不把异步提交时间当成实际推理时间。
 
 ## 第一次运行
 
@@ -51,6 +59,9 @@ $env:TMP = $env:TEMP
 # 权重约 2.8 GB；已在本机安装好，无需重复下载。
 .\setup-local.ps1
 
+# NVIDIA GPU：安装同版本 CUDA 12.8 构建（初次下载约 3.5 GB）。
+.\setup-local.ps1 -Device cuda
+
 # 免费检查代码，再准备数据（只下载公开数据/tokenizer，不调用 LLM）。
 .\run.ps1 -Mode Test
 .\run.ps1 -Mode Prepare -Config configs/hotpotqa.json
@@ -59,6 +70,24 @@ $env:TMP = $env:TEMP
 .\run.ps1 -Mode Run -Config configs/quickcheck.json
 .\run.ps1 -Mode Run -Config configs/hotpotqa.json
 ```
+
+新一轮三数据集实验（已安装 CUDA 环境后）：
+
+```powershell
+# 不花 API 费用，先检查全部模型输入长度。
+.\.venv\Scripts\python.exe tools/preflight_inputs.py --config configs/hotpotqa_full.json
+.\.venv\Scripts\python.exe tools/preflight_inputs.py --config configs/qasper_train.json
+.\.venv\Scripts\python.exe tools/preflight_inputs.py --config configs/longbench_binary.json
+
+# 会产生 API 费用。GPU 顺序压缩；已压缩数据的 reader 可并行等待 API。
+# 458×4 + 283×4 + 52×4 = 3172 次名义调用；每组另有限额，重试计入。
+.\.venv\Scripts\python.exe tools/run_current_suite.py
+
+# 全部完成、审计及断网重放通过后，生成可分享报告。
+.\.venv\Scripts\python.exe tools/build_suite_docs.py
+```
+
+每个数据集仍可单独用 `run.ps1 -Mode Run -Config ...` 执行。`tools/run_current_suite.py` 只组织现有步骤，不另建实验框架。完整结果与缓存保存在 `runs/<run_name>/`；报告、CSV 和指标快照在 `docs/Experiments_20261018/`。默认英文，可切换中文。CUDA 切换前中止的 CPU 试运行单独保留，不混入结果。
 
 密钥从 `SILICONFLOW_API_KEY` 环境变量读取，也支持本地 `.env`，不要写进代码或配置。新运行的 BoolQ 快速检查名义上 6 次 reader 调用，HotpotQA 为 30 × 4 = 120 次，配置分别限制最多 20 / 150 次尝试（包括重试）。完全相同的请求会复用缓存。ChatGPT 订阅与 OpenAI API 计费独立，本项目当前不会调用 OpenAI。
 
@@ -88,7 +117,7 @@ $env:TMP = $env:TEMP
 ## 学习代码的阅读顺序
 
 1. **`configs/hotpotqa.json`**：先看实验中哪些量固定、哪些量允许改变。
-2. **`blackwell/data.py` → `blackwell/datasets/hotpotqa.py`**：原始资料如何变成统一样本。每种数据集一个文件，BoolQ 的原有抽样逻辑保留；QASPER 暂时只提供核验函数。
+2. **`blackwell/data.py` → `blackwell/datasets/`**：原始资料如何变成统一样本。每种数据集一个文件，BoolQ 的原有抽样逻辑保留；新增 QASPER 和 LongBench 沿用相同接口。
 3. **`run_experiment.py`**：`prepare_run` → `generate_predictions` → `analyze`，串起整个实验。
 4. **`blackwell/compression.py` → `blackwell/compressors/`**：不同算法怎样遵守同一个文本输入/输出边界。
 5. **`blackwell/prompts.py` 与 `blackwell/client.py`**：reader 看到什么，以及 API 缓存、重试、限额如何实现。
@@ -101,7 +130,7 @@ $env:TMP = $env:TEMP
 ```python
 from blackwell.compressors import create_compressor
 
-compressor = create_compressor("llmlingua2")  # 或 selective_context
+compressor = create_compressor("llmlingua2", device="cuda")  # 或 selective_context；CPU 用 device="cpu"
 compressed_text = compressor.compress(context_text, retained_ratio=0.5)
 ```
 
@@ -116,6 +145,8 @@ G(A,B) = 2 × sup over t∈[0,1] of mean[(t-y)(1[p_A≤t] − 1[p_B≤t])]
 ```
 
 必须同时看 `G(A,B)` 与 `G(B,A)`。实现扫描全部概率断点和单侧极限，保存带系数 2 与未缩放的结果。arXiv v2 的定理 4.1 和定理 5.1 证明含系数 2，但定理 5.1 展示式未写；这是我们明确选择的实现约定，不是作者确认的勘误。小样本 bootstrap 只作描述性波动范围，不是已验证的支配检验。
+
+新报告另给出阈值收益差曲线（含左右极限）、Brier / log loss / accuracy 及相对原文的变化量。耗时按独立压缩结果累计，不把同篇论文多道题复用的耗时重复相加。InfoGap 在各数据集分别计算；LongBench 同时给出各来源任务的小样本描述。
 
 SC 0.1.4 的旧 spaCy / click 依赖约束不兼容当前环境，安装时显式绕过，使用已经验证的 spaCy 3.8.7 / click 8.5.0；`pip check` 会显示这两项已知偏差。模型版本、官方源码及权重校验值均有记录，详见本地压缩器导读。
 

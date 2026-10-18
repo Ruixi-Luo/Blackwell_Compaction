@@ -53,7 +53,14 @@ def verify_assets(methods):
                 raise RuntimeError(f"Missing or changed local asset: {method}/{name}")
 
 
-def runtime_identity(methods):
+def runtime_identity(methods, device='cpu'):
+    if device not in {'cpu', 'cuda'}:
+        raise ValueError('compression_device must be cpu or cuda.')
+    hardware = {}
+    if device == 'cuda':
+        torch = prepare_torch(device)
+        hardware = {'gpu_name': torch.cuda.get_device_name(0), 'cuda_build': torch.version.cuda,
+                    'compute_capability': list(torch.cuda.get_device_capability(0)), 'tf32': False}
     try:
         versions = {name: importlib.metadata.version(name) for name in PACKAGES}
     except importlib.metadata.PackageNotFoundError as error:
@@ -64,19 +71,27 @@ def runtime_identity(methods):
                                    ("llmlingua", "llmlingua/utils.py")]:
         path = importlib.metadata.distribution(distribution).locate_file(relative)
         upstream_files[relative] = file_digest(path)
-    return {"device": "cpu", "dtype": "float32", "torch_threads": 4,
+    return {"device": device, "hardware": hardware, "dtype": "float32", "torch_threads": 4,
             "upstream_files_sha256": upstream_files,
             "packages": versions, "assets": {m: asset_spec(m) for m in methods},
-            "selective_context": {"language": "en", "reduce_level": "phrase", "model_type": "gpt2"},
+            "selective_context": {"language": "en", "reduce_level": "phrase", "model_type": "gpt2",
+                                  "overlong_sentence_policy": "lossless whitespace-first split to <=1024 tokens including BOS; one global phrase threshold"},
             "llmlingua2": {"use_context_level_filter": False, "token_to_word": "mean",
                            "force_tokens": [], "force_reserve_digit": False,
-                           "drop_consecutive": False, "max_batch_size": 1},
+                           "drop_consecutive": False, "max_batch_size": 1,
+                           "overlong_chunk_policy": "lossless whitespace-first split only if native chunk exceeds 511 body tokens"},
             "budget_policy": "one native call at requested retained_ratio; no post-truncation"}
 
 
-def prepare_torch():
+def prepare_torch(device='cpu'):
     configure_cache()
     import torch
+    if device not in {'cpu', 'cuda'}:
+        raise ValueError('compression_device must be cpu or cuda.')
+    if device == 'cuda' and not torch.cuda.is_available():
+        raise RuntimeError('CUDA requested but unavailable. Install CUDA PyTorch with setup-local.ps1 -Device cuda.')
     torch.set_num_threads(4)
     torch.manual_seed(42)
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
     return torch
