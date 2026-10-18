@@ -1,0 +1,928 @@
+{
+  "n": 283,
+  "positive_labels": 192,
+  "scores": {
+    "full": {
+      "accuracy": 0.7597173144876325,
+      "brier": 0.19251696113074204,
+      "log_loss": 0.580000608341445,
+      "mean_context_tokens": 5542.102473498233,
+      "pooled_retained_ratio": 1.0,
+      "over_budget_samples": 0,
+      "length_repairs": 0,
+      "unique_compressions": 0,
+      "compression_seconds_unique_total": 0,
+      "accuracy_delta_vs_full": 0.0,
+      "brier_delta_vs_full": 0.0,
+      "log_loss_delta_vs_full": 0.0
+    },
+    "no_context": {
+      "accuracy": 0.6855123674911661,
+      "brier": 0.2511925795053004,
+      "log_loss": 0.7875413087003315,
+      "mean_context_tokens": 0.0,
+      "pooled_retained_ratio": 0.0,
+      "over_budget_samples": 0,
+      "length_repairs": 0,
+      "unique_compressions": 0,
+      "compression_seconds_unique_total": 0,
+      "accuracy_delta_vs_full": -0.0742049469964664,
+      "brier_delta_vs_full": 0.05867561837455834,
+      "log_loss_delta_vs_full": 0.2075407003588865
+    },
+    "selective_context": {
+      "accuracy": 0.7385159010600707,
+      "brier": 0.2029424028268551,
+      "log_loss": 0.6058030473911254,
+      "mean_context_tokens": 3198.0989399293285,
+      "pooled_retained_ratio": 0.5770551799109291,
+      "over_budget_samples": 282,
+      "length_repairs": 0,
+      "unique_compressions": 233,
+      "compression_seconds_unique_total": 606.179836299445,
+      "accuracy_delta_vs_full": -0.021201413427561766,
+      "brier_delta_vs_full": 0.010425441696113064,
+      "log_loss_delta_vs_full": 0.025802439049680492
+    },
+    "llmlingua2": {
+      "accuracy": 0.7420494699646644,
+      "brier": 0.19895194346289752,
+      "log_loss": 0.5963108870066963,
+      "mean_context_tokens": 2741.3392226148408,
+      "pooled_retained_ratio": 0.4946388551499444,
+      "over_budget_samples": 77,
+      "length_repairs": 0,
+      "unique_compressions": 233,
+      "compression_seconds_unique_total": 163.79080839978997,
+      "accuracy_delta_vs_full": -0.0176678445229681,
+      "brier_delta_vs_full": 0.0064349823321554755,
+      "log_loss_delta_vs_full": 0.016310278665251365
+    }
+  },
+  "context_clusters": 233,
+  "payoff_curves_vs_full": {
+    "no_context": [
+      {
+        "threshold": 0.0,
+        "side": "at_threshold",
+        "payoff_gap": 0.007067137809187279
+      },
+      {
+        "threshold": 0.01,
+        "side": "left_limit",
+        "payoff_gap": 0.006925795053003533
+      },
+      {
+        "threshold": 0.01,
+        "side": "at_threshold",
+        "payoff_gap": 0.0069964664310954066
+      },
+      {
+        "threshold": 0.02,
+        "side": "left_limit",
+        "payoff_gap": 0.006925795053003533
+      },
+      {
+        "threshold": 0.02,
+        "side": "at_threshold",
+        "payoff_gap": 0.007067137809187279
+      },
+      {
+        "threshold": 0.05,
+        "side": "left_limit",
+        "payoff_gap": 0.007067137809187279
+      },
+      {
+        "threshold": 0.05,
+        "side": "at_threshold",
+        "payoff_gap": 0.000353356890459364
+      },
+      {
+        "threshold": 0.12,
+        "side": "left_limit",
+        "payoff_gap": 0.0008480565371024734
+      },
+      {
+        "threshold": 0.12,
+        "side": "at_threshold",
+        "payoff_gap": -0.016678445229681982
+      },
+      {
+        "threshold": 0.15,
+        "side": "left_limit",
+        "payoff_gap": -0.012014134275618376
+      },
+      {
+        "threshold": 0.15,
+        "side": "at_threshold",
+        "payoff_gap": -0.009893992932862193
+      },
+      {
+        "threshold": 0.21,
+        "side": "left_limit",
+        "payoff_gap": 0.0002826855123674914
+      },
+      {
+        "threshold": 0.21,
+        "side": "at_threshold",
+        "payoff_gap": 0.0017667844522968198
+      },
+      {
+        "threshold": 0.32,
+        "side": "left_limit",
+        "payoff_gap": 0.02120141342756184
+      },
+      {
+        "threshold": 0.32,
+        "side": "at_threshold",
+        "payoff_gap": 0.01639575971731449
+      },
+      {
+        "threshold": 0.34,
+        "side": "left_limit",
+        "payoff_gap": 0.020070671378091872
+      },
+      {
+        "threshold": 0.34,
+        "side": "at_threshold",
+        "payoff_gap": 0.024876325088339233
+      },
+      {
+        "threshold": 0.35,
+        "side": "left_limit",
+        "payoff_gap": 0.026855123674911652
+      },
+      {
+        "threshold": 0.35,
+        "side": "at_threshold",
+        "payoff_gap": 0.03180212014134275
+      },
+      {
+        "threshold": 0.42,
+        "side": "left_limit",
+        "payoff_gap": 0.04664310954063604
+      },
+      {
+        "threshold": 0.42,
+        "side": "at_threshold",
+        "payoff_gap": 0.049611307420494695
+      },
+      {
+        "threshold": 0.45,
+        "side": "left_limit",
+        "payoff_gap": 0.056183745583038874
+      },
+      {
+        "threshold": 0.45,
+        "side": "at_threshold",
+        "payoff_gap": 0.059363957597173146
+      },
+      {
+        "threshold": 0.46,
+        "side": "left_limit",
+        "payoff_gap": 0.06162544169611308
+      },
+      {
+        "threshold": 0.46,
+        "side": "at_threshold",
+        "payoff_gap": 0.06487632508833924
+      },
+      {
+        "threshold": 0.5,
+        "side": "left_limit",
+        "payoff_gap": 0.07420494699646643
+      },
+      {
+        "threshold": 0.5,
+        "side": "at_threshold",
+        "payoff_gap": 0.4275618374558304
+      },
+      {
+        "threshold": 0.65,
+        "side": "left_limit",
+        "payoff_gap": 0.17632508833922253
+      },
+      {
+        "threshold": 0.65,
+        "side": "at_threshold",
+        "payoff_gap": 0.1710247349823321
+      },
+      {
+        "threshold": 0.82,
+        "side": "left_limit",
+        "payoff_gap": -0.107703180212014
+      },
+      {
+        "threshold": 0.82,
+        "side": "at_threshold",
+        "payoff_gap": -0.0812720848056537
+      },
+      {
+        "threshold": 0.85,
+        "side": "left_limit",
+        "payoff_gap": -0.12897526501766785
+      },
+      {
+        "threshold": 0.85,
+        "side": "at_threshold",
+        "payoff_gap": 0.02932862190812725
+      },
+      {
+        "threshold": 0.87,
+        "side": "left_limit",
+        "payoff_gap": 0.0065724381625442176
+      },
+      {
+        "threshold": 0.87,
+        "side": "at_threshold",
+        "payoff_gap": 0.03830388692579507
+      },
+      {
+        "threshold": 0.92,
+        "side": "left_limit",
+        "payoff_gap": -0.009045936395759725
+      },
+      {
+        "threshold": 0.92,
+        "side": "at_threshold",
+        "payoff_gap": 0.03392226148409892
+      },
+      {
+        "threshold": 0.95,
+        "side": "left_limit",
+        "payoff_gap": 0.015901060070671377
+      },
+      {
+        "threshold": 0.95,
+        "side": "at_threshold",
+        "payoff_gap": 0.0017667844522968198
+      },
+      {
+        "threshold": 0.98,
+        "side": "left_limit",
+        "payoff_gap": 0.0007067137809187254
+      },
+      {
+        "threshold": 0.98,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 1.0,
+        "side": "left_limit",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 1.0,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      }
+    ],
+    "selective_context": [
+      {
+        "threshold": 0.0,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.01,
+        "side": "left_limit",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.01,
+        "side": "at_threshold",
+        "payoff_gap": 7.06713780918728e-05
+      },
+      {
+        "threshold": 0.02,
+        "side": "left_limit",
+        "payoff_gap": 0.0001413427561837456
+      },
+      {
+        "threshold": 0.02,
+        "side": "at_threshold",
+        "payoff_gap": 0.0001413427561837456
+      },
+      {
+        "threshold": 0.05,
+        "side": "left_limit",
+        "payoff_gap": 0.000353356890459364
+      },
+      {
+        "threshold": 0.05,
+        "side": "at_threshold",
+        "payoff_gap": 0.000706713780918728
+      },
+      {
+        "threshold": 0.12,
+        "side": "left_limit",
+        "payoff_gap": 0.0016961130742049468
+      },
+      {
+        "threshold": 0.12,
+        "side": "at_threshold",
+        "payoff_gap": 0.007915194346289754
+      },
+      {
+        "threshold": 0.15,
+        "side": "left_limit",
+        "payoff_gap": 0.00812720848056537
+      },
+      {
+        "threshold": 0.15,
+        "side": "at_threshold",
+        "payoff_gap": 0.00812720848056537
+      },
+      {
+        "threshold": 0.21,
+        "side": "left_limit",
+        "payoff_gap": 0.008551236749116608
+      },
+      {
+        "threshold": 0.21,
+        "side": "at_threshold",
+        "payoff_gap": 0.010035335689045936
+      },
+      {
+        "threshold": 0.32,
+        "side": "left_limit",
+        "payoff_gap": 0.011590106007067138
+      },
+      {
+        "threshold": 0.32,
+        "side": "at_threshold",
+        "payoff_gap": 0.006784452296819787
+      },
+      {
+        "threshold": 0.34,
+        "side": "left_limit",
+        "payoff_gap": 0.007208480565371025
+      },
+      {
+        "threshold": 0.34,
+        "side": "at_threshold",
+        "payoff_gap": 0.0048056537102473505
+      },
+      {
+        "threshold": 0.35,
+        "side": "left_limit",
+        "payoff_gap": 0.0049469964664310955
+      },
+      {
+        "threshold": 0.35,
+        "side": "at_threshold",
+        "payoff_gap": 0.012367491166077738
+      },
+      {
+        "threshold": 0.42,
+        "side": "left_limit",
+        "payoff_gap": 0.014840989399293287
+      },
+      {
+        "threshold": 0.42,
+        "side": "at_threshold",
+        "payoff_gap": 0.011872791519434628
+      },
+      {
+        "threshold": 0.45,
+        "side": "left_limit",
+        "payoff_gap": 0.012720848056537103
+      },
+      {
+        "threshold": 0.45,
+        "side": "at_threshold",
+        "payoff_gap": 0.015901060070671377
+      },
+      {
+        "threshold": 0.46,
+        "side": "left_limit",
+        "payoff_gap": 0.016254416961130745
+      },
+      {
+        "threshold": 0.46,
+        "side": "at_threshold",
+        "payoff_gap": 0.019505300353356892
+      },
+      {
+        "threshold": 0.62,
+        "side": "left_limit",
+        "payoff_gap": 0.026289752650176676
+      },
+      {
+        "threshold": 0.62,
+        "side": "at_threshold",
+        "payoff_gap": 0.022897526501766786
+      },
+      {
+        "threshold": 0.65,
+        "side": "left_limit",
+        "payoff_gap": 0.02332155477031802
+      },
+      {
+        "threshold": 0.65,
+        "side": "at_threshold",
+        "payoff_gap": 0.01166077738515901
+      },
+      {
+        "threshold": 0.82,
+        "side": "left_limit",
+        "payoff_gap": 0.012862190812720846
+      },
+      {
+        "threshold": 0.82,
+        "side": "at_threshold",
+        "payoff_gap": 0.014134275618374558
+      },
+      {
+        "threshold": 0.85,
+        "side": "left_limit",
+        "payoff_gap": 0.014134275618374558
+      },
+      {
+        "threshold": 0.85,
+        "side": "at_threshold",
+        "payoff_gap": 0.0021201413427561887
+      },
+      {
+        "threshold": 0.87,
+        "side": "left_limit",
+        "payoff_gap": -0.0009893992932862232
+      },
+      {
+        "threshold": 0.87,
+        "side": "at_threshold",
+        "payoff_gap": -0.0016254416961130772
+      },
+      {
+        "threshold": 0.92,
+        "side": "left_limit",
+        "payoff_gap": -0.011872791519434626
+      },
+      {
+        "threshold": 0.92,
+        "side": "at_threshold",
+        "payoff_gap": 0.008763250883392215
+      },
+      {
+        "threshold": 0.94,
+        "side": "left_limit",
+        "payoff_gap": 0.004805653710247348
+      },
+      {
+        "threshold": 0.94,
+        "side": "at_threshold",
+        "payoff_gap": 0.0052296819787986
+      },
+      {
+        "threshold": 0.95,
+        "side": "left_limit",
+        "payoff_gap": 0.0031802120141342957
+      },
+      {
+        "threshold": 0.95,
+        "side": "at_threshold",
+        "payoff_gap": 0.0007067137809187285
+      },
+      {
+        "threshold": 0.98,
+        "side": "left_limit",
+        "payoff_gap": 0.0002826855123674914
+      },
+      {
+        "threshold": 0.98,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 1.0,
+        "side": "left_limit",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 1.0,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      }
+    ],
+    "llmlingua2": [
+      {
+        "threshold": 0.0,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.01,
+        "side": "left_limit",
+        "payoff_gap": -7.06713780918728e-05
+      },
+      {
+        "threshold": 0.01,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.02,
+        "side": "left_limit",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.02,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.05,
+        "side": "left_limit",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.05,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.12,
+        "side": "left_limit",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 0.12,
+        "side": "at_threshold",
+        "payoff_gap": 0.01696113074204947
+      },
+      {
+        "threshold": 0.15,
+        "side": "left_limit",
+        "payoff_gap": 0.015901060070671377
+      },
+      {
+        "threshold": 0.15,
+        "side": "at_threshold",
+        "payoff_gap": 0.020848056537102474
+      },
+      {
+        "threshold": 0.21,
+        "side": "left_limit",
+        "payoff_gap": 0.017879858657243817
+      },
+      {
+        "threshold": 0.21,
+        "side": "at_threshold",
+        "payoff_gap": 0.017879858657243817
+      },
+      {
+        "threshold": 0.31,
+        "side": "left_limit",
+        "payoff_gap": 0.012932862190812721
+      },
+      {
+        "threshold": 0.31,
+        "side": "at_threshold",
+        "payoff_gap": 0.010742049469964664
+      },
+      {
+        "threshold": 0.32,
+        "side": "left_limit",
+        "payoff_gap": 0.010176678445229681
+      },
+      {
+        "threshold": 0.32,
+        "side": "at_threshold",
+        "payoff_gap": 0.0053710247349823305
+      },
+      {
+        "threshold": 0.34,
+        "side": "left_limit",
+        "payoff_gap": 0.00438162544169611
+      },
+      {
+        "threshold": 0.34,
+        "side": "at_threshold",
+        "payoff_gap": 0.013851590106007066
+      },
+      {
+        "threshold": 0.35,
+        "side": "left_limit",
+        "payoff_gap": 0.013427561837455833
+      },
+      {
+        "threshold": 0.35,
+        "side": "at_threshold",
+        "payoff_gap": 0.020848056537102474
+      },
+      {
+        "threshold": 0.42,
+        "side": "left_limit",
+        "payoff_gap": 0.019363957597173145
+      },
+      {
+        "threshold": 0.42,
+        "side": "at_threshold",
+        "payoff_gap": 0.019363957597173145
+      },
+      {
+        "threshold": 0.45,
+        "side": "left_limit",
+        "payoff_gap": 0.01872791519434629
+      },
+      {
+        "threshold": 0.45,
+        "side": "at_threshold",
+        "payoff_gap": 0.015547703180212015
+      },
+      {
+        "threshold": 0.46,
+        "side": "left_limit",
+        "payoff_gap": 0.015265017667844523
+      },
+      {
+        "threshold": 0.46,
+        "side": "at_threshold",
+        "payoff_gap": 0.018515901060070672
+      },
+      {
+        "threshold": 0.62,
+        "side": "left_limit",
+        "payoff_gap": 0.015123674911660778
+      },
+      {
+        "threshold": 0.62,
+        "side": "at_threshold",
+        "payoff_gap": 0.005653710247349822
+      },
+      {
+        "threshold": 0.65,
+        "side": "left_limit",
+        "payoff_gap": 0.0035335689045936395
+      },
+      {
+        "threshold": 0.65,
+        "side": "at_threshold",
+        "payoff_gap": -0.001413427561837457
+      },
+      {
+        "threshold": 0.67,
+        "side": "left_limit",
+        "payoff_gap": -0.002544169611307423
+      },
+      {
+        "threshold": 0.67,
+        "side": "at_threshold",
+        "payoff_gap": -0.007279151943462899
+      },
+      {
+        "threshold": 0.82,
+        "side": "left_limit",
+        "payoff_gap": -0.016819787985865725
+      },
+      {
+        "threshold": 0.82,
+        "side": "at_threshold",
+        "payoff_gap": -0.005229681978798582
+      },
+      {
+        "threshold": 0.85,
+        "side": "left_limit",
+        "payoff_gap": -0.006713780918727917
+      },
+      {
+        "threshold": 0.85,
+        "side": "at_threshold",
+        "payoff_gap": 0.009540636042402836
+      },
+      {
+        "threshold": 0.87,
+        "side": "left_limit",
+        "payoff_gap": 0.005441696113074202
+      },
+      {
+        "threshold": 0.87,
+        "side": "at_threshold",
+        "payoff_gap": -0.007773851590106017
+      },
+      {
+        "threshold": 0.92,
+        "side": "left_limit",
+        "payoff_gap": -0.018374558303886936
+      },
+      {
+        "threshold": 0.92,
+        "side": "at_threshold",
+        "payoff_gap": 0.018657243816254394
+      },
+      {
+        "threshold": 0.95,
+        "side": "left_limit",
+        "payoff_gap": 0.011660777385159025
+      },
+      {
+        "threshold": 0.95,
+        "side": "at_threshold",
+        "payoff_gap": 0.0007067137809187285
+      },
+      {
+        "threshold": 0.98,
+        "side": "left_limit",
+        "payoff_gap": 0.0002826855123674914
+      },
+      {
+        "threshold": 0.98,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 1.0,
+        "side": "left_limit",
+        "payoff_gap": 0.0
+      },
+      {
+        "threshold": 1.0,
+        "side": "at_threshold",
+        "payoff_gap": 0.0
+      }
+    ]
+  },
+  "source_tasks": {},
+  "infogap": {
+    "full": {
+      "full": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "no_context": {
+        "value": 0.4275618374558304,
+        "unscaled": 0.2137809187279152,
+        "threshold": 0.5,
+        "side": "at_threshold",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "selective_context": {
+        "value": 0.026289752650176676,
+        "unscaled": 0.013144876325088338,
+        "threshold": 0.62,
+        "side": "left_limit",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "llmlingua2": {
+        "value": 0.020848056537102474,
+        "unscaled": 0.010424028268551237,
+        "threshold": 0.15,
+        "side": "at_threshold",
+        "n": 283,
+        "normalization_factor": 2
+      }
+    },
+    "no_context": {
+      "full": {
+        "value": 0.12897526501766785,
+        "unscaled": 0.06448763250883392,
+        "threshold": 0.85,
+        "side": "left_limit",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "no_context": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "selective_context": {
+        "value": 0.1431095406360424,
+        "unscaled": 0.0715547703180212,
+        "threshold": 0.85,
+        "side": "left_limit",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "llmlingua2": {
+        "value": 0.1222614840989398,
+        "unscaled": 0.0611307420494699,
+        "threshold": 0.85,
+        "side": "left_limit",
+        "n": 283,
+        "normalization_factor": 2
+      }
+    },
+    "selective_context": {
+      "full": {
+        "value": 0.011872791519434626,
+        "unscaled": 0.005936395759717313,
+        "threshold": 0.92,
+        "side": "left_limit",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "no_context": {
+        "value": 0.40636042402826855,
+        "unscaled": 0.20318021201413428,
+        "threshold": 0.5,
+        "side": "at_threshold",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "selective_context": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "llmlingua2": {
+        "value": 0.012720848056537103,
+        "unscaled": 0.0063604240282685515,
+        "threshold": 0.15,
+        "side": "at_threshold",
+        "n": 283,
+        "normalization_factor": 2
+      }
+    },
+    "llmlingua2": {
+      "full": {
+        "value": 0.018374558303886936,
+        "unscaled": 0.009187279151943468,
+        "threshold": 0.92,
+        "side": "left_limit",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "no_context": {
+        "value": 0.4098939929328622,
+        "unscaled": 0.2049469964664311,
+        "threshold": 0.5,
+        "side": "at_threshold",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "selective_context": {
+        "value": 0.029681978798586566,
+        "unscaled": 0.014840989399293283,
+        "threshold": 0.82,
+        "side": "left_limit",
+        "n": 283,
+        "normalization_factor": 2
+      },
+      "llmlingua2": {
+        "value": 0.0,
+        "unscaled": 0.0,
+        "threshold": 0.0,
+        "side": "constant_action",
+        "n": 283,
+        "normalization_factor": 2
+      }
+    }
+  },
+  "bootstrap_vs_full": {
+    "no_context": {
+      "a_over_b": [
+        0.3253424657534247,
+        0.5179856115107914
+      ],
+      "b_over_a": [
+        0.04128113879003546,
+        0.2239130434782609
+      ],
+      "repetitions": 500,
+      "context_clusters": 233,
+      "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+    },
+    "selective_context": {
+      "a_over_b": [
+        0.010238907849829351,
+        0.06346863468634686
+      ],
+      "b_over_a": [
+        0.0,
+        0.058625429553264614
+      ],
+      "repetitions": 500,
+      "context_clusters": 233,
+      "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+    },
+    "llmlingua2": {
+      "a_over_b": [
+        0.013594771241830067,
+        0.0617857142857143
+      ],
+      "b_over_a": [
+        0.0005755395683453371,
+        0.06842105263157895
+      ],
+      "repetitions": 500,
+      "context_clusters": 233,
+      "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+    }
+  },
+  "normalization": "2 * sup_t mean[(t-y)(1[p_A<=t]-1[p_B<=t])]; also save unscaled.",
+  "scope": "Small pilot of verbalized probabilities, not true-posterior recovery or a dominance test."
+}

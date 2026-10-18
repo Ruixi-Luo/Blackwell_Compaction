@@ -87,6 +87,10 @@ $env:TMP = $env:TEMP
 
 每个数据集仍可单独用 `run.ps1 -Mode Run -Config ...` 执行。`tools/run_current_suite.py` 只组织现有步骤，不另建实验框架。完整结果与缓存保存在 `runs/<run_name>/`；报告、CSV 和指标快照在 `docs/Experiments_20261018/`。默认英文，可切换中文。CUDA 切换前中止的 CPU 试运行单独保留，不混入结果。最初并行调用 reader 触发了共享 HTTP 429 限流，后续改为串行并从缓存继续，失败尝试在账本中保留。
 
+QASPER 在完成 282/283 题后因限流重试达到 1,350 次尝试上限；LongBench 在 49/52 题后达到 250 次。续跑分别另建运行名，将上限小幅提高到 1,380 / 280，逐文件验证并保留原 API 响应、压缩缓存和整份账本，仅补齐剩余题目。数据、模型、提示词和压缩设置均未改变；转移及前后结果一致性核验保存在续跑目录的 `continuation_receipt.json`，原运行保留。
+
+辅助工具 `tools/continue_after_limit.py` 整理了这一续跑过程，`--help` 可查看参数。它只接受已达到尝试上限、已有本地压缩预检的运行；复制过程禁止网络，并要求数据、核心源码和压缩环境保持一致。
+
 密钥从 `SILICONFLOW_API_KEY` 环境变量读取，也支持本地 `.env`，不要写进代码或配置。新运行的 BoolQ 快速检查名义上 6 次 reader 调用，HotpotQA 为 30 × 4 = 120 次，配置分别限制最多 20 / 150 次尝试（包括重试）。完全相同的请求会复用缓存。ChatGPT 订阅与 OpenAI API 计费独立，本项目当前不会调用 OpenAI。
 
 如 Windows 阻止 `.ps1`，可用 `powershell -ExecutionPolicy Bypass -File .\run.ps1 -Mode Test`。`setup.ps1` 可用 `-PythonPath` 指定 Python；当前本地压缩环境验证于 Python 3.12。
@@ -110,7 +114,7 @@ $env:TMP = $env:TEMP
 .\.venv\Scripts\python.exe tools/build_dataset_docs.py
 ```
 
-配置、源码或数据改变后必须换 `run_name`，避免混用实验；旧运行保留。历史报告可用 `Report` 重算，但严格 `Replay` 需要匹配该运行的源码。HotpotQA 本次核心源码在提交 `47c5b29`；BoolQ 六组历史运行对应 `1c3c58a`，初始四组对应 `fb641ef`。需要复跑历史源码时使用独立 checkout，不覆盖当前工作目录。
+配置、源码或数据改变后必须换 `run_name`，避免混用实验；旧运行保留。历史报告可用 `Report` 重算，但严格 `Replay` 需要匹配该运行的源码、依赖版本和设备设置。本轮三数据集的核心源码保存在提交 `87391df`；历史 HotpotQA 30 题对应 `47c5b29`，BoolQ 六组对应 `1c3c58a`，初始四组对应 `fb641ef`。运行清单中的 `files_sha256` 记录实际执行文件的哈希；`git_commit_at_run` 记录准备运行时的 HEAD，代码当时可能尚未提交。需要复跑历史源码时使用独立 checkout，不覆盖当前工作目录。
 
 ## 学习代码的阅读顺序
 

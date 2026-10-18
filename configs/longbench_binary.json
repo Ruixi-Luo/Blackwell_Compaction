@@ -1,5 +1,5 @@
 {
-  "run_name": "longbench_binary_sc_llmlingua2_r50_cuda_20261018",
+  "run_name": "longbench_binary_sc_llmlingua2_r50_cuda_resume_20261018",
   "dataset_split": "test",
   "sample_size": 52,
   "sample_seed": 20261018,
@@ -13,7 +13,7 @@
   "prediction_max_tokens": 128,
   "timeout_seconds": 90,
   "min_interval_seconds": 1.0,
-  "max_api_attempts": 250,
+  "max_api_attempts": 280,
   "bootstrap_repetitions": 500,
   "bootstrap_seed": 20261018,
   "methods": [

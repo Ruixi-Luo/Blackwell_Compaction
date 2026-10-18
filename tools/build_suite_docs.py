@@ -1,6 +1,5 @@
 """从已完成、审计通过的运行生成可分享双语总览；不调用 API。"""
 import html
-import shutil
 import sys
 from collections import Counter
 from pathlib import Path
@@ -10,6 +9,11 @@ sys.path.insert(0, str(ROOT))
 from blackwell.reporting import STYLE, bi, table, decision_curve
 from blackwell.storage import read_json, write_json, file_hash
 from tools.run_current_suite import DEFAULT_CONFIGS
+
+
+def publish_text(source, target):
+    """报告副本统一为 LF，避免 Git 的行尾规范化改变已记录的校验值。"""
+    target.write_text(source.read_text(encoding='utf-8'), encoding='utf-8', newline='\n')
 
 
 def main():
@@ -39,13 +43,19 @@ def main():
                                ('metrics.json','_metrics.json'), ('audit.json','_audit.json'),
                                ('replay_verification.json','_replay.json')]:
             target = destination / (name + suffix)
-            shutil.copyfile(run / source, target)
+            publish_text(run / source, target)
             copied[target.name] = file_hash(target)
         records[name] = {'run_name':config['run_name'], 'metrics':metrics, 'api_usage':usage,
                          'api_attempts':len(ledger), 'api_statuses':dict(Counter(e['status'] for e in ledger)),
                          'audit':audit, 'replay':replay,
                          'dataset':manifest['identity']['dataset'], 'config':config,
                          'runtime':manifest['identity']['local_compressors'], 'files_sha256':copied}
+        receipt = run / 'continuation_receipt.json'
+        if receipt.exists():
+            target = destination / (name + '_continuation.json')
+            publish_text(receipt, target)
+            records[name]['continuation'] = read_json(receipt)
+            copied[target.name] = file_hash(target)
         overview.append([html.escape(title),metrics['n'],metrics['context_clusters'],
                          f"{metrics['scores']['full']['mean_context_tokens']:,.0f}",
                          f"{metrics['positive_labels']} / {metrics['n']-metrics['positive_labels']}",len(ledger)])
@@ -59,9 +69,22 @@ def main():
         interval_rows = [[m, f"{b['a_over_b'][0]:.4f}–{b['a_over_b'][1]:.4f}",
                           f"{b['b_over_a'][0]:.4f}–{b['b_over_a'][1]:.4f}"]
                          for m,b in metrics['bootstrap_vs_full'].items()]
+        diagnostics = {}
+        for method in metrics['scores']:
+            probabilities = [r['conditions'][method]['p_yes'] for r in rows]
+            diagnostics[method] = {
+                'p_zero_or_one':sum(p in (0,1) for p in probabilities),
+                'wrong_at_zero_or_one':sum(p == 1-r['label'] for p,r in zip(probabilities,rows)),
+                'p_half':probabilities.count(.5), 'distinct_probabilities':len(set(probabilities))}
+        records[name]['forecast_diagnostics'] = diagnostics
+        diagnostic_html = '<details><summary>'+bi('Inspect probability granularity and extreme forecasts','检查概率粒度与极端预测')+'</summary>'+table(
+            ['Method','p = 0 or 1',bi('Wrong at 0 or 1','0/1 概率且答错'),'p = 0.5',bi('Distinct values','不同概率值')],
+            [[m,*d.values()] for m,d in diagnostics.items()])+'<p>'+bi(
+                'These are verbalized probabilities with a finite observed granularity. Log loss is particularly sensitive to wrong 0/1 forecasts and the stated clipping convention. A value of 0.5 is counted as reported, not automatically interpreted as abstention.',
+                '这些是模型直接报告的概率，在样本中呈有限粒度。Log loss 对答错的 0/1 预测及前述截断约定尤其敏感。0.5 按原始数值统计，不自动解释为拒答。')+'</p></details>'
         timing = sum(s['compression_seconds_unique_total'] for s in metrics['scores'].values())
         panels.append(f'<section class="dataset" id="d{index}"'+(' hidden' if index else '')+'><h2>'+html.escape(title)+'</h2>'+table(
-            ['Method','Accuracy ↑','Brier ↓','Δ Brier ↓','Log loss ↓','G(Full, method)','G(method, Full)',bi('Retained','保留率')],score_rows)+
+            ['Method','Accuracy ↑','Brier ↓','Δ Brier ↓','Log loss ↓','G(Full, method)','G(method, Full)',bi('Retained','保留率')],score_rows)+diagnostic_html+
             '<p>'+bi(f"API: {usage['prompt_tokens']:,} input + {usage['completion_tokens']:,} output tokens. Unique local compression: {timing/60:.1f} minutes, excluding initialization. {preflight['contexts_with_length_adapter']} contexts needed the recorded length adapter.",
                      f"API：输入 {usage['prompt_tokens']:,}、输出 {usage['completion_tokens']:,} tokens。独立本地压缩累计 {timing/60:.1f} 分钟，不含初始化。{preflight['contexts_with_length_adapter']} 份上下文使用了已记录的长度适配。")+'</p><h3>'+bi('Directional InfoGap and descriptive uncertainty','双向 InfoGap 与描述性波动')+'</h3>'+table(
                          ['Method','G(Full, method): 95%','G(method, Full): 95%'],interval_rows)+
@@ -74,6 +97,7 @@ def main():
                 for a in questions for b in questions if a<b]
     write_json(destination / 'summary.json', {'runs':records,'cross_dataset_question_overlap':overlaps,
                'overlap_rule':'Lowercase and whitespace-normalized exact question matching only; not exhaustive semantic deduplication.'})
+    publish_text(destination / 'summary.json', destination / 'summary.json')
     options=''.join(f'<option value="d{i}">{html.escape(records[Path(c).stem]["dataset"]["name"])}</option>' for i,c in enumerate(DEFAULT_CONFIGS))
     first = next(iter(records.values()))
     runtime = first['runtime']
@@ -112,9 +136,15 @@ def main():
         ['7','tools/audit_run.py / verify_offline_replay.py',bi('Inspect actual requests and replay cached results with network/model loading blocked.','核验实际请求，并在禁止网络和加载模型的情况下重放缓存。')]])+'<p>'+bi(
         'Full local records live in runs/&lt;run_name&gt;/. Shareable reports and probability tables live in docs/Experiments_20261018/. Old runs are preserved. CPU startup runs were interrupted for the CUDA migration and are not part of these result tables. Initial overlapping API readers triggered HTTP 429; execution was serialized while preserving caches. The API ledger retains failed and interrupted attempts; all reported forecasts have validated responses.',
         '完整本地记录位于 runs/&lt;run_name&gt;/，可分享报告和概率表位于 docs/Experiments_20261018/。旧实验保留。切换 CUDA 前中止的 CPU 试运行不计入这些结果表。最初并行 reader 触发 HTTP 429，随后保留缓存改为串行。API 账本保留失败和中断尝试，所有用于指标的预测均有核验通过的响应。')+'</p></section>'
+    for name, record in records.items():
+        if 'continuation' in record:
+            c = record['continuation']
+            guide += '<section><details><summary>'+bi('Continuation audit: ','续跑审计：')+html.escape(name)+'</summary><p>'+bi(
+                f"Rate-limit retries exhausted the original attempt cap. A separate run preserved {c['source_complete_questions']} completed questions, {c['copied_api_responses']} API responses and the entire ledger. Only the run name and attempt cap changed ({c['source_config']['max_api_attempts']} → {c['continuation_config']['max_api_attempts']}); data, code, prompts, model and compression outputs stayed fixed.",
+                f"限流重试耗尽原尝试上限后，单独建立续跑记录，保留 {c['source_complete_questions']} 道已完成题目、{c['copied_api_responses']} 份 API 响应和全部账本。仅运行名和尝试上限改变（{c['source_config']['max_api_attempts']} → {c['continuation_config']['max_api_attempts']}）；数据、代码、提示词、模型和压缩输出保持一致。")+f'</p><a href="{name}_continuation.json">'+bi('Verified cache transfer receipt','已核验的缓存转移记录')+'</a></details></section>'
     page = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackwell Compaction · Three-dataset experiment</title><style>'+STYLE+'[hidden]{display:none!important}</style><body><header><div class="toolbar"><button onclick="language(\'en\')">English</button><button onclick="language(\'zh\')">中文</button></div><h1>'+bi('Compaction and decision informativeness','上下文压缩与决策信息性')+'</h1><p>'+bi('Three datasets · Four paired conditions · Nominal 50% retention · CUDA compression','三个数据集 · 四组配对输入 · 名义保留率 50% · CUDA 压缩')+'</p></header><section>'+table(
         ['Dataset','Questions','Contexts',bi('Mean context tokens','平均上下文 token'),'Yes / No','API attempts'],overview)+'<p><label>'+bi('Inspect dataset: ','查看数据集：')+'<select onchange="selectDataset(this.value)">'+options+'</select></label></p></section>'+''.join(panels)+setup+explanation+guide+'<section><h2>'+bi('Sources','来源')+'</h2><p><a href="https://hotpotqa.github.io/">HotpotQA · CC BY-SA 4.0</a> · <a href="https://aclanthology.org/2021.naacl-main.365/">QASPER · CC BY 4.0</a> · <a href="https://github.com/THUDM/LongBench">LongBench</a> · <a href="https://arxiv.org/html/2507.12094v2">InfoGap</a></p></section><script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}function selectDataset(x){document.querySelectorAll(".dataset").forEach(el=>el.hidden=el.id!==x)}</script></body></html>'
-    (destination / 'Experiment_Overview.html').write_text(page, encoding='utf-8')
+    (destination / 'Experiment_Overview.html').write_text(page, encoding='utf-8', newline='\n')
     print(destination / 'Experiment_Overview.html')
 
 

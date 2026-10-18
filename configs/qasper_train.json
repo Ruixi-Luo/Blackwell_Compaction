@@ -1,5 +1,5 @@
 {
-  "run_name": "qasper_train_sc_llmlingua2_r50_cuda_20261018",
+  "run_name": "qasper_train_sc_llmlingua2_r50_cuda_resume_20261018",
   "dataset_split": "train",
   "sample_size": 283,
   "sample_seed": 20261018,
@@ -13,7 +13,7 @@
   "prediction_max_tokens": 128,
   "timeout_seconds": 90,
   "min_interval_seconds": 1.0,
-  "max_api_attempts": 1350,
+  "max_api_attempts": 1380,
   "bootstrap_repetitions": 500,
   "bootstrap_seed": 20261018,
   "methods": [
