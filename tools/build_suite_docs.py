@@ -11,6 +11,67 @@ from blackwell.storage import read_json, write_json, file_hash
 from tools.run_current_suite import DEFAULT_CONFIGS
 
 
+MATRIX_STYLE = """
+.gap-matrix{max-width:850px;border-collapse:separate;border-spacing:5px}
+.gap-matrix caption{text-align:left;margin:8px 0;color:#5b6c7e}
+.gap-matrix th{white-space:normal;line-height:1.4;font-size:14px}
+.gap-matrix td{text-align:center;min-width:95px;padding:20px 12px;border:0;border-radius:7px;
+font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.gap-matrix td:focus{outline:3px solid #b66818;outline-offset:1px}
+.gap-legend{max-width:420px;margin:12px 0 20px;font-size:13px;color:#5b6c7e}
+.gap-gradient{height:13px;border-radius:4px;background:linear-gradient(to right,rgb(243,247,252),rgb(22,75,131))}
+.gap-ticks{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+"""
+
+
+def infogap_matrix(metrics, scale_max):
+    """用统一线性色阶展示 G(行, 列)，只读取指标，不重新计算实验结果。"""
+    labels = {'full': bi('Full context', '原始上下文'),
+              'no_context': bi('No context', '无上下文'),
+              'selective_context': 'Selective Context', 'llmlingua2': 'LLMLingua-2'}
+    methods = list(metrics['scores'])
+    rows = []
+    for a in methods:
+        cells = []
+        for b in methods:
+            value = metrics['infogap'][a][b]['value']
+            fraction = value / scale_max if scale_max else 0
+            rgb = tuple(round(light + fraction * (dark - light))
+                        for light, dark in zip((243, 247, 252), (22, 75, 131)))
+            ink = '#ffffff' if fraction >= .6 else '#172c42'
+            tooltip = html.escape(f'G({a}, {b}) = {value:.8f}')
+            cells.append(f'<td data-row="{a}" data-column="{b}" data-gap="{value}" '
+                         f'title="{tooltip}" aria-label="{tooltip}" tabindex="0" '
+                         f'style="background:rgb{rgb};color:{ink}">{value:.4f}</td>')
+        rows.append('<tr><th scope="row">' + labels[a] + '</th>' + ''.join(cells) + '</tr>')
+    return ('<p>' + bi(
+        'Row A, column B = G(A,B): the largest empirical decision-payoff advantage of A over B. '
+        'Read the opposite cell for the reverse direction; both can be positive. Darker means a larger gap, not universal dominance.',
+        '第 A 行、第 B 列＝G(A,B)：A 相对 B 的最大经验决策收益优势。反方向看对称位置，两者可同时为正。颜色越深代表 gap 越大，不代表在所有决策中都更优。') +
+        '</p><div class="tablewrap"><table class="gap-matrix" data-scale-max="' + str(scale_max) + '"><caption>' +
+        bi('Directional InfoGap · same methods on both axes', '双向 InfoGap · 横纵轴为同一组方法') +
+        '</caption><thead><tr><th scope="col">' + bi('A (rows) / B (columns)', 'A（行）/ B（列）') +
+        '</th>' + ''.join('<th scope="col">' + labels[m] + '</th>' for m in methods) +
+        '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div><div class="gap-legend">' +
+        '<div class="gap-gradient"></div><div class="gap-ticks"><span>0.0000</span>' +
+        f'<span>{scale_max/2:.4f}</span><span>{scale_max:.4f}</span></div>' + bi(
+        'Linear color scale shared across all three datasets (0 to observed maximum). Values are payoff gaps, not percentages.',
+        '三个数据集共用线性色阶（0 至观测最大值）。数值为收益差，不是百分比。') + '</div>')
+
+
+def publish_detail_report(source, target, metrics, scale_max):
+    """只替换分享副本中的矩阵；保留原运行报告与代码身份记录。"""
+    methods = list(metrics['scores'])
+    old_rows = [[a] + [f"{metrics['infogap'][a][b]['value']:.4f}" for b in methods] for a in methods]
+    old_matrix = table(['A over B'] + methods, old_rows)
+    page = source.read_text(encoding='utf-8')
+    if page.count(old_matrix) != 1:
+        raise ValueError('Expected exactly one directional InfoGap table in the detail report.')
+    page = page.replace(old_matrix, infogap_matrix(metrics, scale_max))
+    page = page.replace('</style>', MATRIX_STYLE + '</style>', 1)
+    target.write_text(page, encoding='utf-8', newline='\n')
+
+
 def publish_text(source, target):
     """报告副本统一为 LF，避免 Git 的行尾规范化改变已记录的校验值。"""
     target.write_text(source.read_text(encoding='utf-8'), encoding='utf-8', newline='\n')
@@ -21,6 +82,11 @@ def main():
     destination.mkdir(parents=True, exist_ok=True)
     panels, records, overview = [], {}, []
     questions = {}
+    # 所有数据集共用观测最大值，避免相同颜色在不同页面表示不同的 gap。
+    all_metrics = [read_json(ROOT / 'runs' / read_json(ROOT / c)['run_name'] / 'metrics.json')
+                   for c in DEFAULT_CONFIGS]
+    scale_max = max(gap['value'] for metrics in all_metrics
+                    for row in metrics['infogap'].values() for gap in row.values())
     for index, config_path in enumerate(DEFAULT_CONFIGS):
         config = read_json(ROOT / config_path)
         name = Path(config_path).stem
@@ -43,7 +109,10 @@ def main():
                                ('metrics.json','_metrics.json'), ('audit.json','_audit.json'),
                                ('replay_verification.json','_replay.json')]:
             target = destination / (name + suffix)
-            publish_text(run / source, target)
+            if source == 'report.html':
+                publish_detail_report(run / source, target, metrics, scale_max)
+            else:
+                publish_text(run / source, target)
             copied[target.name] = file_hash(target)
         records[name] = {'run_name':config['run_name'], 'metrics':metrics, 'api_usage':usage,
                          'api_attempts':len(ledger), 'api_statuses':dict(Counter(e['status'] for e in ledger)),
@@ -63,8 +132,6 @@ def main():
         for method,s in metrics['scores'].items():
             score_rows.append([method, f"{s['accuracy']:.3f}", f"{s['brier']:.4f}",
                                f"{s['brier_delta_vs_full']:+.4f}",f"{s['log_loss']:.4f}",
-                               f"{metrics['infogap']['full'][method]['value']:.4f}",
-                               f"{metrics['infogap'][method]['full']['value']:.4f}",
                                f"{s['pooled_retained_ratio']:.1%}"])
         interval_rows = [[m, f"{b['a_over_b'][0]:.4f}–{b['a_over_b'][1]:.4f}",
                           f"{b['b_over_a'][0]:.4f}–{b['b_over_a'][1]:.4f}"]
@@ -84,9 +151,9 @@ def main():
                 '这些是模型直接报告的概率，在样本中呈有限粒度。Log loss 对答错的 0/1 预测及前述截断约定尤其敏感。0.5 按原始数值统计，不自动解释为拒答。')+'</p></details>'
         timing = sum(s['compression_seconds_unique_total'] for s in metrics['scores'].values())
         panels.append(f'<section class="dataset" id="d{index}"'+(' hidden' if index else '')+'><h2>'+html.escape(title)+'</h2>'+table(
-            ['Method','Accuracy ↑','Brier ↓','Δ Brier ↓','Log loss ↓','G(Full, method)','G(method, Full)',bi('Retained','保留率')],score_rows)+diagnostic_html+
+            ['Method','Accuracy ↑','Brier ↓','Δ Brier ↓','Log loss ↓',bi('Retained','保留率')],score_rows)+diagnostic_html+
             '<p>'+bi(f"API: {usage['prompt_tokens']:,} input + {usage['completion_tokens']:,} output tokens. Unique local compression: {timing/60:.1f} minutes, excluding initialization. {preflight['contexts_with_length_adapter']} contexts needed the recorded length adapter.",
-                     f"API：输入 {usage['prompt_tokens']:,}、输出 {usage['completion_tokens']:,} tokens。独立本地压缩累计 {timing/60:.1f} 分钟，不含初始化。{preflight['contexts_with_length_adapter']} 份上下文使用了已记录的长度适配。")+'</p><h3>'+bi('Directional InfoGap and descriptive uncertainty','双向 InfoGap 与描述性波动')+'</h3>'+table(
+                     f"API：输入 {usage['prompt_tokens']:,}、输出 {usage['completion_tokens']:,} tokens。独立本地压缩累计 {timing/60:.1f} 分钟，不含初始化。{preflight['contexts_with_length_adapter']} 份上下文使用了已记录的长度适配。")+'</p><h3>'+bi('Directional InfoGap matrix','双向 InfoGap 矩阵')+'</h3>'+infogap_matrix(metrics, scale_max)+'<h3>'+bi('Descriptive uncertainty','描述性波动')+'</h3>'+table(
                          ['Method','G(Full, method): 95%','G(method, Full): 95%'],interval_rows)+
             '<p>'+bi('Paired context-cluster bootstrap, 500 repetitions. These percentile intervals describe pilot variability; they are not a validated dominance test.',
                      '按上下文成组的配对 bootstrap，500 次。百分位区间描述探索实验的波动，不是经过验证的支配检验。')+'</p><div class="grid">'+''.join(
@@ -142,7 +209,7 @@ def main():
             guide += '<section><details><summary>'+bi('Continuation audit: ','续跑审计：')+html.escape(name)+'</summary><p>'+bi(
                 f"Rate-limit retries exhausted the original attempt cap. A separate run preserved {c['source_complete_questions']} completed questions, {c['copied_api_responses']} API responses and the entire ledger. Only the run name and attempt cap changed ({c['source_config']['max_api_attempts']} → {c['continuation_config']['max_api_attempts']}); data, code, prompts, model and compression outputs stayed fixed.",
                 f"限流重试耗尽原尝试上限后，单独建立续跑记录，保留 {c['source_complete_questions']} 道已完成题目、{c['copied_api_responses']} 份 API 响应和全部账本。仅运行名和尝试上限改变（{c['source_config']['max_api_attempts']} → {c['continuation_config']['max_api_attempts']}）；数据、代码、提示词、模型和压缩输出保持一致。")+f'</p><a href="{name}_continuation.json">'+bi('Verified cache transfer receipt','已核验的缓存转移记录')+'</a></details></section>'
-    page = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackwell Compaction · Three-dataset experiment</title><style>'+STYLE+'[hidden]{display:none!important}</style><body><header><div class="toolbar"><button onclick="language(\'en\')">English</button><button onclick="language(\'zh\')">中文</button></div><h1>'+bi('Compaction and decision informativeness','上下文压缩与决策信息性')+'</h1><p>'+bi('Three datasets · Four paired conditions · Nominal 50% retention · CUDA compression','三个数据集 · 四组配对输入 · 名义保留率 50% · CUDA 压缩')+'</p></header><section>'+table(
+    page = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackwell Compaction · Three-dataset experiment</title><style>'+STYLE+MATRIX_STYLE+'[hidden]{display:none!important}</style><body><header><div class="toolbar"><button onclick="language(\'en\')">English</button><button onclick="language(\'zh\')">中文</button></div><h1>'+bi('Compaction and decision informativeness','上下文压缩与决策信息性')+'</h1><p>'+bi('Three datasets · Four paired conditions · Nominal 50% retention · CUDA compression','三个数据集 · 四组配对输入 · 名义保留率 50% · CUDA 压缩')+'</p></header><section>'+table(
         ['Dataset','Questions','Contexts',bi('Mean context tokens','平均上下文 token'),'Yes / No','API attempts'],overview)+'<p><label>'+bi('Inspect dataset: ','查看数据集：')+'<select onchange="selectDataset(this.value)">'+options+'</select></label></p></section>'+''.join(panels)+setup+explanation+guide+'<section><h2>'+bi('Sources','来源')+'</h2><p><a href="https://hotpotqa.github.io/">HotpotQA · CC BY-SA 4.0</a> · <a href="https://aclanthology.org/2021.naacl-main.365/">QASPER · CC BY 4.0</a> · <a href="https://github.com/THUDM/LongBench">LongBench</a> · <a href="https://arxiv.org/html/2507.12094v2">InfoGap</a></p></section><script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}function selectDataset(x){document.querySelectorAll(".dataset").forEach(el=>el.hidden=el.id!==x)}</script></body></html>'
     (destination / 'Experiment_Overview.html').write_text(page, encoding='utf-8', newline='\n')
     print(destination / 'Experiment_Overview.html')

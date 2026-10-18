@@ -1082,7 +1082,7 @@
         "budget_policy": "one native call at requested retained_ratio; no post-truncation"
       },
       "files_sha256": {
-        "hotpotqa_full.html": "158c41fd1dd6d1597bf3030c7951c41151cf7d2692f59d898ed0e3d09e7136f7",
+        "hotpotqa_full.html": "3f3015a077096b78c0d98d1adf30406f5ab3c77db0ab5890eb40ad96bc9cba59",
         "hotpotqa_full_predictions.csv": "b63a974aed04bbbe3d859f762c91ec21dd69270ae9b1a7cf1a10ccda13a5bbb9",
         "hotpotqa_full_metrics.json": "5686bf15e4af751faa1d83b982c7216537c38942e61304c90a4b155188be8665",
         "hotpotqa_full_audit.json": "0a5eb0d7ca8da58a5f78f4ed9312da0d517a1ed804d6905f2b9d11d715535a9f",
@@ -2264,7 +2264,7 @@
         "budget_policy": "one native call at requested retained_ratio; no post-truncation"
       },
       "files_sha256": {
-        "qasper_train.html": "0c1f2bb25b6cfde88243744012141b53027aff734961d922a43f7fae58a16df7",
+        "qasper_train.html": "158e92f5077c4580a8f9651c6278091ca66c6045abe134293289fc13eb1cb7be",
         "qasper_train_predictions.csv": "088b361c6c6bdf094d23d02398d3ab268aca2ab573e02578413f164e1e37680f",
         "qasper_train_metrics.json": "c76283a115098e81164b6abb7811542d75351a45d5fe96b4eabd2529b3397a09",
         "qasper_train_audit.json": "51b28283dabb3bab54cc570325bf4628f2fdfe0d11fc755396fbf88c154c907f",
@@ -5264,7 +5264,7 @@
         "budget_policy": "one native call at requested retained_ratio; no post-truncation"
       },
       "files_sha256": {
-        "longbench_binary.html": "a9d13981c4cedcbfffcc86aee316de04c399a5cea60768a06e2494e3c515a8b3",
+        "longbench_binary.html": "7cd541e7f862d1b87ff22c020f7c112f61b4756dd2cc4cec2a14fb1c2e66bc47",
         "longbench_binary_predictions.csv": "668c545acb08f9524464a2e461685cc2329233fd4da181dfc50954d1d6898909",
         "longbench_binary_metrics.json": "4f15426a8e0db5d813acbdd41352477fb4a65ab10b33876750a4577c9bf8c7ba",
         "longbench_binary_audit.json": "eb8e86f0a60642da265f7a113606ce74ba3767cce9cc802d94cbb3130910c6a9",
