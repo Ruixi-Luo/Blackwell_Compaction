@@ -1,0 +1,49 @@
+{
+  "source_run": "longbench_binary_sc_llmlingua2_r50_cuda_resume_20261018",
+  "old_methods": [
+    "full",
+    "no_context",
+    "selective_context",
+    "llmlingua2"
+  ],
+  "new_method": "salt_summary",
+  "source_files_sha256": {
+    "manifest.json": "9596f27fa80d4aa3da2ec9c01d9347ded7da1b1052276077a162ab2fb952462d",
+    "examples.json": "5a0430a21816b5491cb4e198a2128f00501af4b791f2b5cc815fa31e7f994409",
+    "predictions.json": "e98ec940fb7428b3e5cac9bac7c1c22d6effd75b79a074fc53efd8f8c3cb5042",
+    "metrics.json": "11e4686004b42cbee86a98ac8329ed7b64e765cb2e33578a1a519f52c2ffebb5",
+    "audit.json": "567cc3c4d1a17bfb35fb19a343c051b24d17115976ec44ae240faca004d156e1",
+    "replay_verification.json": "3bb4daca54862bb8274d7cc66863579067fd7a9d62421f37d977b17efe5ffc6e",
+    "api_attempts.json": "176792af9cbb013998e328d29611579fa2fa55818d233573d3a4ea708e128edf"
+  },
+  "selection": "first N rows of frozen source order",
+  "selected_samples": 52,
+  "source_samples": 52,
+  "source_reader_files_sha256": {
+    "blackwell/client.py": "4d55336d72bdc5f9a15c87926d61d660fb1e68974dbae665613b7801baf312a0",
+    "blackwell/prompts.py": "9f726955a5b8b65a5f68e78cfdee20ab5c57e2392fb0c2fd8d0da3feb93943dc",
+    "blackwell/tokenization.py": "740d6287166e22af0f6ee0ef9c8fb4d26fb2d01b2e59678a381801bcc3a17ce3",
+    "blackwell/metrics.py": "8485f58739ee8e47b3edc4ef97a084d3e48faf70981448590c4fa474a156effb",
+    "blackwell/data.py": "3c4eaf58b3f8ce574d2a5dae04356bcaf599e733327fa626065cc4dbeeb3246c",
+    "run_experiment.py": "5335ef7aa952048e337b142215a069914d63dd76eca648000f005bb36c769fc0"
+  },
+  "verification": {
+    "status": "passed",
+    "samples": 52,
+    "forecasts": 260,
+    "unchanged_forecasts_from_previous_run": 208,
+    "source_run": "longbench_binary_sc_llmlingua2_r50_cuda_resume_20261018",
+    "unique_api_responses_checked": 260,
+    "local_compressions_checked": 156,
+    "infogap_cells_independently_checked": 25,
+    "new_api_calls": 0,
+    "checks": [
+      "source immutable files and raw dataset",
+      "complete request identity and raw probability",
+      "query-blind compression cache inputs",
+      "identical historical conditions",
+      "actual Qwen token counts",
+      "independent two-action payoff verification"
+    ]
+  }
+}

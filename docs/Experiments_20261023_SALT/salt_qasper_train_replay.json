@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "new_api_attempts": 0,
+  "socket_connections_blocked": true,
+  "local_model_loading_blocked": true,
+  "cache_hits": 283,
+  "byte_identical_files_sha256": {
+    "predictions.json": "5872201a746ebfc0a2aa358d7481fc4304634cf5b9135586ac679d9f8ac29769",
+    "metrics.json": "42c9540d0639c4422c47693d3a571fab1c8fe8cde1f11920d250e9a5075d7892",
+    "api_attempts.json": "6861f99bf7001d017c46a2799bd94e9fbf7b5cbed8523f6ac4bf9a23a80de048"
+  }
+}

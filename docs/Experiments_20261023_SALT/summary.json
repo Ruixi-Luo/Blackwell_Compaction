@@ -1,0 +1,4907 @@
+{
+  "runs": {
+    "salt_hotpotqa_full": {
+      "run_name": "salt_summary_hotpotqa_full_20261023",
+      "metrics": {
+        "n": 458,
+        "positive_labels": 225,
+        "scores": {
+          "full": {
+            "accuracy": 0.8493449781659389,
+            "brier": 0.13087423580786026,
+            "log_loss": 0.64634701606672,
+            "mean_context_tokens": 1234.1572052401746,
+            "pooled_retained_ratio": 1.0,
+            "over_budget_samples": 0,
+            "length_repairs": 0,
+            "unique_compressions": 0,
+            "compression_seconds_unique_total": 0,
+            "accuracy_delta_vs_full": 0.0,
+            "brier_delta_vs_full": 0.0,
+            "log_loss_delta_vs_full": 0.0
+          },
+          "no_context": {
+            "accuracy": 0.7620087336244541,
+            "brier": 0.17497423580786026,
+            "log_loss": 1.5083076427830748,
+            "mean_context_tokens": 0.0,
+            "pooled_retained_ratio": 0.0,
+            "over_budget_samples": 0,
+            "length_repairs": 0,
+            "unique_compressions": 0,
+            "compression_seconds_unique_total": 0,
+            "accuracy_delta_vs_full": -0.08733624454148481,
+            "brier_delta_vs_full": 0.0441,
+            "log_loss_delta_vs_full": 0.8619606267163549
+          },
+          "selective_context": {
+            "accuracy": 0.7838427947598253,
+            "brier": 0.1817720524017467,
+            "log_loss": 0.6937180274206826,
+            "mean_context_tokens": 758.9803493449782,
+            "pooled_retained_ratio": 0.6149786640813525,
+            "over_budget_samples": 458,
+            "length_repairs": 0,
+            "unique_compressions": 458,
+            "compression_seconds_unique_total": 233.77789040014613,
+            "accuracy_delta_vs_full": -0.06550218340611358,
+            "brier_delta_vs_full": 0.05089781659388645,
+            "log_loss_delta_vs_full": 0.0473710113539626
+          },
+          "llmlingua2": {
+            "accuracy": 0.8187772925764192,
+            "brier": 0.15162947598253274,
+            "log_loss": 0.5981003764779995,
+            "mean_context_tokens": 625.6244541484716,
+            "pooled_retained_ratio": 0.506924443249287,
+            "over_budget_samples": 298,
+            "length_repairs": 0,
+            "unique_compressions": 458,
+            "compression_seconds_unique_total": 74.04078139964258,
+            "accuracy_delta_vs_full": -0.030567685589519722,
+            "brier_delta_vs_full": 0.02075524017467248,
+            "log_loss_delta_vs_full": -0.04824663958872044
+          },
+          "salt_summary": {
+            "accuracy": 0.7794759825327511,
+            "brier": 0.19525152838427948,
+            "log_loss": 2.127349895218537,
+            "mean_context_tokens": 599.3275109170306,
+            "pooled_retained_ratio": 0.48561683096149627,
+            "over_budget_samples": 104,
+            "length_repairs": 0,
+            "unique_compressions": 458,
+            "compression_seconds_unique_total": 55.9944440999825,
+            "accuracy_delta_vs_full": -0.06986899563318782,
+            "brier_delta_vs_full": 0.06437729257641922,
+            "log_loss_delta_vs_full": 1.4810028791518168
+          }
+        },
+        "context_clusters": 458,
+        "payoff_curves_vs_full": {
+          "no_context": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0611353711790393
+            },
+            {
+              "threshold": 0.01,
+              "side": "left_limit",
+              "payoff_gap": 0.060218340611353706
+            },
+            {
+              "threshold": 0.01,
+              "side": "at_threshold",
+              "payoff_gap": 0.0603056768558952
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": 0.05947598253275109
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": 0.05956331877729258
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": 0.05720524017467249
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.061790393013100436
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.06270742358078603
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.06882096069868995
+            },
+            {
+              "threshold": 0.15,
+              "side": "left_limit",
+              "payoff_gap": 0.07183406113537118
+            },
+            {
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "payoff_gap": 0.06550218340611354
+            },
+            {
+              "threshold": 0.21,
+              "side": "left_limit",
+              "payoff_gap": 0.06550218340611354
+            },
+            {
+              "threshold": 0.21,
+              "side": "at_threshold",
+              "payoff_gap": 0.06641921397379913
+            },
+            {
+              "threshold": 0.25,
+              "side": "left_limit",
+              "payoff_gap": 0.0665938864628821
+            },
+            {
+              "threshold": 0.25,
+              "side": "at_threshold",
+              "payoff_gap": 0.07314410480349345
+            },
+            {
+              "threshold": 0.27,
+              "side": "left_limit",
+              "payoff_gap": 0.07375545851528384
+            },
+            {
+              "threshold": 0.27,
+              "side": "at_threshold",
+              "payoff_gap": 0.07493449781659389
+            },
+            {
+              "threshold": 0.34,
+              "side": "left_limit",
+              "payoff_gap": 0.07737991266375545
+            },
+            {
+              "threshold": 0.34,
+              "side": "at_threshold",
+              "payoff_gap": 0.08034934497816593
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.08078602620087336
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.0794759825327511
+            },
+            {
+              "threshold": 0.5,
+              "side": "left_limit",
+              "payoff_gap": 0.08733624454148471
+            },
+            {
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "payoff_gap": 0.09170305676855896
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.03668122270742358
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.03668122270742358
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": -0.03668122270742354
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": -0.0030567685589519777
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": -0.02812227074235807
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": -0.012401746724890845
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": -0.022489082969432278
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.0024017467248908485
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": -0.004279475982532737
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": -0.001746724890829688
+            },
+            {
+              "threshold": 0.99,
+              "side": "left_limit",
+              "payoff_gap": -0.000873362445414844
+            },
+            {
+              "threshold": 0.99,
+              "side": "at_threshold",
+              "payoff_gap": -0.000873362445414844
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "selective_context": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": -0.008733624454148471
+            },
+            {
+              "threshold": 0.01,
+              "side": "left_limit",
+              "payoff_gap": -0.006375545851528384
+            },
+            {
+              "threshold": 0.01,
+              "side": "at_threshold",
+              "payoff_gap": -0.006331877729257642
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": -0.0039301310043668115
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": -0.003842794759825327
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": 0.00349344978165939
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.006331877729257643
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.0274235807860262
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.025676855895196506
+            },
+            {
+              "threshold": 0.15,
+              "side": "left_limit",
+              "payoff_gap": 0.028820960698689956
+            },
+            {
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "payoff_gap": 0.037554585152838424
+            },
+            {
+              "threshold": 0.21,
+              "side": "left_limit",
+              "payoff_gap": 0.043842794759825325
+            },
+            {
+              "threshold": 0.21,
+              "side": "at_threshold",
+              "payoff_gap": 0.045458515283842794
+            },
+            {
+              "threshold": 0.25,
+              "side": "left_limit",
+              "payoff_gap": 0.04912663755458515
+            },
+            {
+              "threshold": 0.25,
+              "side": "at_threshold",
+              "payoff_gap": 0.05349344978165939
+            },
+            {
+              "threshold": 0.27,
+              "side": "left_limit",
+              "payoff_gap": 0.055676855895196505
+            },
+            {
+              "threshold": 0.27,
+              "side": "at_threshold",
+              "payoff_gap": 0.05685589519650655
+            },
+            {
+              "threshold": 0.34,
+              "side": "left_limit",
+              "payoff_gap": 0.06480349344978166
+            },
+            {
+              "threshold": 0.34,
+              "side": "at_threshold",
+              "payoff_gap": 0.05877729257641922
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.05960698689956331
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.058296943231441044
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.06746724890829695
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.06157205240174672
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.07493449781659389
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.0772052401746725
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.07903930131004368
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.0648471615720524
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": 0.07152838427947598
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": 0.06873362445414846
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": 0.06965065502183405
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.05502183406113538
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": 0.04768558951965065
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.038777292576419195
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.03406113537117906
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.008733624454148471
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.0008733624454148595
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.0022707423580786007
+            },
+            {
+              "threshold": 0.99,
+              "side": "left_limit",
+              "payoff_gap": 0.0011353711790393082
+            },
+            {
+              "threshold": 0.99,
+              "side": "at_threshold",
+              "payoff_gap": 0.0009170305676855933
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "llmlingua2": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": -0.008733624454148471
+            },
+            {
+              "threshold": 0.01,
+              "side": "left_limit",
+              "payoff_gap": -0.007074235807860262
+            },
+            {
+              "threshold": 0.01,
+              "side": "at_threshold",
+              "payoff_gap": -0.007030567685589519
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": -0.0053275109170305675
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": -0.005414847161572052
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": -0.000436681222707423
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.001528384279475983
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.015895196506550215
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.005764192139737991
+            },
+            {
+              "threshold": 0.15,
+              "side": "left_limit",
+              "payoff_gap": 0.007205240174672489
+            },
+            {
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "payoff_gap": 0.008078602620087336
+            },
+            {
+              "threshold": 0.21,
+              "side": "left_limit",
+              "payoff_gap": 0.013056768558951964
+            },
+            {
+              "threshold": 0.21,
+              "side": "at_threshold",
+              "payoff_gap": 0.011222707423580785
+            },
+            {
+              "threshold": 0.23,
+              "side": "left_limit",
+              "payoff_gap": 0.012707423580786028
+            },
+            {
+              "threshold": 0.23,
+              "side": "at_threshold",
+              "payoff_gap": 0.011703056768558952
+            },
+            {
+              "threshold": 0.25,
+              "side": "left_limit",
+              "payoff_gap": 0.013100436681222707
+            },
+            {
+              "threshold": 0.25,
+              "side": "at_threshold",
+              "payoff_gap": 0.015283842794759825
+            },
+            {
+              "threshold": 0.27,
+              "side": "left_limit",
+              "payoff_gap": 0.016855895196506553
+            },
+            {
+              "threshold": 0.27,
+              "side": "at_threshold",
+              "payoff_gap": 0.016855895196506553
+            },
+            {
+              "threshold": 0.34,
+              "side": "left_limit",
+              "payoff_gap": 0.02235807860262009
+            },
+            {
+              "threshold": 0.34,
+              "side": "at_threshold",
+              "payoff_gap": 0.02235807860262009
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.023144104803493448
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.02336244541484716
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.03253275109170306
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.026637554585152837
+            },
+            {
+              "threshold": 0.5,
+              "side": "left_limit",
+              "payoff_gap": 0.03056768558951965
+            },
+            {
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "payoff_gap": 0.03275109170305677
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.04165938864628821
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.04331877729257642
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.045414847161572056
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.028384279475982533
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": 0.03580786026200873
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": 0.03659388646288209
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": 0.03777292576419213
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.008515283842794765
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": 0.004541484716157201
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.004366812227074236
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.001091703056768559
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.0030567685589519777
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": -0.004017467248908305
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.002096069868995635
+            },
+            {
+              "threshold": 0.99,
+              "side": "left_limit",
+              "payoff_gap": 0.0010480349344978252
+            },
+            {
+              "threshold": 0.99,
+              "side": "at_threshold",
+              "payoff_gap": 0.0008296943231441104
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "salt_summary": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.10480349344978165
+            },
+            {
+              "threshold": 0.01,
+              "side": "left_limit",
+              "payoff_gap": 0.10336244541484717
+            },
+            {
+              "threshold": 0.01,
+              "side": "at_threshold",
+              "payoff_gap": 0.10344978165938865
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": 0.10209606986899562
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": 0.10637554585152838
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": 0.10218340611353711
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.13995633187772924
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.12803493449781658
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.15615720524017465
+            },
+            {
+              "threshold": 0.15,
+              "side": "left_limit",
+              "payoff_gap": 0.1460698689956332
+            },
+            {
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "payoff_gap": 0.161353711790393
+            },
+            {
+              "threshold": 0.21,
+              "side": "left_limit",
+              "payoff_gap": 0.1437991266375546
+            },
+            {
+              "threshold": 0.21,
+              "side": "at_threshold",
+              "payoff_gap": 0.14288209606986899
+            },
+            {
+              "threshold": 0.23,
+              "side": "left_limit",
+              "payoff_gap": 0.13694323144104803
+            },
+            {
+              "threshold": 0.23,
+              "side": "at_threshold",
+              "payoff_gap": 0.13593886462882096
+            },
+            {
+              "threshold": 0.25,
+              "side": "left_limit",
+              "payoff_gap": 0.1299126637554585
+            },
+            {
+              "threshold": 0.25,
+              "side": "at_threshold",
+              "payoff_gap": 0.13537117903930132
+            },
+            {
+              "threshold": 0.27,
+              "side": "left_limit",
+              "payoff_gap": 0.12978165938864628
+            },
+            {
+              "threshold": 0.27,
+              "side": "at_threshold",
+              "payoff_gap": 0.13096069868995633
+            },
+            {
+              "threshold": 0.34,
+              "side": "left_limit",
+              "payoff_gap": 0.11170305676855895
+            },
+            {
+              "threshold": 0.34,
+              "side": "at_threshold",
+              "payoff_gap": 0.10873362445414847
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.10589519650655022
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.11179039301310044
+            },
+            {
+              "threshold": 0.5,
+              "side": "left_limit",
+              "payoff_gap": 0.06986899563318777
+            },
+            {
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "payoff_gap": 0.07423580786026202
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.03860262008733626
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.03755458515283843
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.028384279475982533
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.025327510917030557
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": -0.02515283842794759
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": -0.027947598253275103
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": -0.03711790393013101
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": -0.003930131004366806
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": -0.026550218340611345
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": -0.03615720524017468
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": -0.047161572052401735
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.014847161572052427
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.005938864628820958
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.002096069868995635
+            },
+            {
+              "threshold": 0.99,
+              "side": "left_limit",
+              "payoff_gap": 0.0010480349344978252
+            },
+            {
+              "threshold": 0.99,
+              "side": "at_threshold",
+              "payoff_gap": 0.000873362445414844
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ]
+        },
+        "source_tasks": {},
+        "infogap": {
+          "full": {
+            "full": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.09170305676855896,
+              "unscaled": 0.04585152838427948,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.07903930131004368,
+              "unscaled": 0.03951965065502184,
+              "threshold": 0.65,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.045414847161572056,
+              "unscaled": 0.022707423580786028,
+              "threshold": 0.65,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.161353711790393,
+              "unscaled": 0.0806768558951965,
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            }
+          },
+          "no_context": {
+            "full": {
+              "value": 0.03668122270742354,
+              "unscaled": 0.01834061135371177,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.10633187772925762,
+              "unscaled": 0.05316593886462881,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.0744541484716157,
+              "unscaled": 0.03722707423580785,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.09585152838427949,
+              "unscaled": 0.047925764192139744,
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            }
+          },
+          "selective_context": {
+            "full": {
+              "value": 0.008733624454148471,
+              "unscaled": 0.004366812227074236,
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.06986899563318777,
+              "unscaled": 0.034934497816593885,
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.13362445414847163,
+              "unscaled": 0.06681222707423581,
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            }
+          },
+          "llmlingua2": {
+            "full": {
+              "value": 0.008733624454148471,
+              "unscaled": 0.004366812227074236,
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.06986899563318777,
+              "unscaled": 0.034934497816593885,
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.04650655021834061,
+              "unscaled": 0.023253275109170305,
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.15327510917030568,
+              "unscaled": 0.07663755458515284,
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "n": 458,
+              "normalization_factor": 2
+            }
+          },
+          "salt_summary": {
+            "full": {
+              "value": 0.047161572052401735,
+              "unscaled": 0.023580786026200867,
+              "threshold": 0.95,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.02467248908296943,
+              "unscaled": 0.012336244541484714,
+              "threshold": 0.95,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.10676855895196508,
+              "unscaled": 0.05338427947598254,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.0748908296943231,
+              "unscaled": 0.03744541484716155,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 458,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 458,
+              "normalization_factor": 2
+            }
+          }
+        },
+        "bootstrap_vs_full": {
+          "no_context": {
+            "a_over_b": [
+              0.06550218340611354,
+              0.14192139737991266
+            ],
+            "b_over_a": [
+              0.0024017467248908173,
+              0.08820960698689957
+            ],
+            "repetitions": 500,
+            "context_clusters": 458,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "selective_context": {
+            "a_over_b": [
+              0.05152838427947599,
+              0.11768558951965066
+            ],
+            "b_over_a": [
+              0.0,
+              0.03056768558951965
+            ],
+            "repetitions": 500,
+            "context_clusters": 458,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "llmlingua2": {
+            "a_over_b": [
+              0.019388646288209604,
+              0.08231441048034933
+            ],
+            "b_over_a": [
+              0.0,
+              0.03668122270742358
+            ],
+            "repetitions": 500,
+            "context_clusters": 458,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "salt_summary": {
+            "a_over_b": [
+              0.11637554585152837,
+              0.2158951965065502
+            ],
+            "b_over_a": [
+              0.01703056768558948,
+              0.09366812227074231
+            ],
+            "repetitions": 500,
+            "context_clusters": 458,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          }
+        },
+        "normalization": "2 * sup_t mean[(t-y)(1[p_A<=t]-1[p_B<=t])]; also save unscaled.",
+        "scope": "Small pilot of verbalized probabilities, not true-posterior recovery or a dominance test."
+      },
+      "api_usage": {
+        "prompt_tokens": 339227,
+        "completion_tokens": 4454,
+        "total_tokens": 343681
+      },
+      "api_attempts": 458,
+      "api_statuses": {
+        "received": 458
+      },
+      "audit": {
+        "status": "passed",
+        "samples": 458,
+        "forecasts": 2290,
+        "unchanged_forecasts_from_previous_run": 1832,
+        "source_run": "hotpotqa_full_sc_llmlingua2_r50_cuda_20261018",
+        "unique_api_responses_checked": 2290,
+        "local_compressions_checked": 1374,
+        "infogap_cells_independently_checked": 25,
+        "new_api_calls": 0,
+        "checks": [
+          "source immutable files and raw dataset",
+          "complete request identity and raw probability",
+          "query-blind compression cache inputs",
+          "identical historical conditions",
+          "actual Qwen token counts",
+          "independent two-action payoff verification"
+        ]
+      },
+      "replay": {
+        "status": "passed",
+        "new_api_attempts": 0,
+        "socket_connections_blocked": true,
+        "local_model_loading_blocked": true,
+        "cache_hits": 458,
+        "byte_identical_files_sha256": {
+          "predictions.json": "c889b9323b9d48b4fa3bcab0bcdec954ab25fcfcff5bc6d16ec449d8f7a78a91",
+          "metrics.json": "c4b71e274c10a14788ef37e0b054b7366af723e3955f40e2ba002f8b017dab51",
+          "api_attempts.json": "2f17499a64668d2c983d9c9c6542cd3c60502dcd74900419950148f984948062"
+        }
+      },
+      "dataset": {
+        "name": "HotpotQA yes/no (distractor)",
+        "split": "dev",
+        "dataset_home": "https://hotpotqa.github.io/",
+        "source_url": "https://huggingface.co/datasets/hotpotqa/hotpot_qa/resolve/1908d6afbbead072334abe2965f91bd2709910ab/distractor/validation-00000-of-00001.parquet",
+        "source_sha256": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6",
+        "revision": "1908d6afbbead072334abe2965f91bd2709910ab",
+        "source_format": "Hugging Face Parquet mirror; dev is named validation",
+        "raw_rows": 7405,
+        "available_rows": 458,
+        "license": "CC BY-SA 4.0",
+        "selection_rule": "answer.strip().lower() in {yes, no}; no balancing or outcome filtering",
+        "context_definition": "All supplied titles and paragraphs (usually 10), original order; sentences joined by spaces. No supporting_facts.",
+        "scope": "The supplied retrieved context is question-conditioned; only the compressor is query-blind.",
+        "sample_seed": 20261018
+      },
+      "config": {
+        "run_name": "salt_summary_hotpotqa_full_20261023",
+        "dataset_split": "dev",
+        "sample_size": 458,
+        "sample_seed": 20261018,
+        "retained_ratio": 0.5,
+        "provider": "siliconflow",
+        "base_url": "https://api.siliconflow.cn/v1",
+        "api_key_env": "SILICONFLOW_API_KEY",
+        "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+        "temperature": 0.0,
+        "enable_thinking": false,
+        "prediction_max_tokens": 128,
+        "timeout_seconds": 90,
+        "min_interval_seconds": 3.0,
+        "max_api_attempts": 606,
+        "bootstrap_repetitions": 500,
+        "bootstrap_seed": 20261018,
+        "methods": [
+          "full",
+          "no_context",
+          "selective_context",
+          "llmlingua2",
+          "salt_summary"
+        ],
+        "dataset": "hotpotqa_yesno",
+        "compression_device": "cuda",
+        "source_run": "hotpotqa_full_sc_llmlingua2_r50_cuda_20261018"
+      },
+      "runtime": {
+        "device": "cuda",
+        "hardware": {
+          "gpu_name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+          "cuda_build": "12.8",
+          "compute_capability": [
+            12,
+            0
+          ],
+          "tf32": false
+        },
+        "dtype": "float32",
+        "torch_threads": 4,
+        "upstream_files_sha256": {
+          "selective_context/__init__.py": "35bc30bb1059dd18dc7cc474282abb3f82059ac64486e33a5cfe39bdee1fbb23",
+          "llmlingua/prompt_compressor.py": "472fde8f6f55f273fe94eee40c25c73508f1ed3a7f5d61788636c20fc4be5068",
+          "llmlingua/utils.py": "1ed3eb0734354ea0136a0d98a9366233a872d22ff350fab107e53de45c954e33"
+        },
+        "packages": {
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.1",
+          "tokenizers": "0.22.1",
+          "accelerate": "1.10.1",
+          "llmlingua": "0.2.2",
+          "selective-context": "0.1.4",
+          "spacy": "3.8.7",
+          "en-core-web-sm": "3.8.0",
+          "numpy": "2.2.6",
+          "nltk": "3.9.2",
+          "tiktoken": "0.12.0",
+          "safetensors": "0.8.0",
+          "sentencepiece": "0.2.1",
+          "click": "8.5.0"
+        },
+        "assets": {
+          "salt_summary": {
+            "model_id": "BAAI/bge-small-en-v1.5",
+            "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+            "source_repository": "https://github.com/oteomamo/SALT",
+            "source_revision": "a8d35ca45ec61db7810363ccbd48a3a55b307d60",
+            "directory": ".cache/salt",
+            "files": {
+              "model/config.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/config.json",
+                "sha256": "094f8e891b932f2000c92cfc663bac4c62069f5d8af5b5278c4306aef3084750",
+                "bytes": 743
+              },
+              "model/model.safetensors": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/model.safetensors",
+                "sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad",
+                "bytes": 133466304
+              },
+              "model/special_tokens_map.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/special_tokens_map.json",
+                "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+                "bytes": 125
+              },
+              "model/tokenizer.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/tokenizer.json",
+                "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+                "bytes": 711396
+              },
+              "model/tokenizer_config.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/tokenizer_config.json",
+                "sha256": "9261e7d79b44c8195c1cada2b453e55b00aeb81e907a6664974b4d7776172ab3",
+                "bytes": 366
+              },
+              "model/vocab.txt": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/vocab.txt",
+                "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+                "bytes": 231508
+              },
+              "source/salt/__init__.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/__init__.py",
+                "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+                "bytes": 1
+              },
+              "source/salt/engine/__init__.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/__init__.py",
+                "sha256": "5f36c1c37b62578a8e04aab3b2d3bb16af04c0cfe4a80538489e3810cd4154c1",
+                "bytes": 440
+              },
+              "source/salt/engine/compressor.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/compressor.py",
+                "sha256": "1969fb526f81092661bec9d754f3f4ae549a62d6ae0aaa4f8884f4a1fc7021ba",
+                "bytes": 26648
+              },
+              "source/salt/engine/embedder.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/embedder.py",
+                "sha256": "20f2b57d7ac1607c4a15809f2a382b50a49debac1ce9a6bf3d90bdf214418aab",
+                "bytes": 5288
+              },
+              "source/salt/engine/fewshot.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/fewshot.py",
+                "sha256": "db9012d5b14b2806fab7303e965cf9c0287e21b1a8395395eb0fcadf77000fb0",
+                "bytes": 7474
+              },
+              "source/salt/engine/retrieval.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/retrieval.py",
+                "sha256": "f6a826d88a8753813b1dec3d02b05fa7fff0ddd98ecda38e30c024be813a68c6",
+                "bytes": 11641
+              },
+              "source/salt/engine/sentence_filter.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/sentence_filter.py",
+                "sha256": "0188dc5c1b15ec6c8926ab0cb39d41348f3876c253ea9c13a26b6e456e200b15",
+                "bytes": 12346
+              },
+              "source/salt/engine/trie_core.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/trie_core.py",
+                "sha256": "e9745c19ec2a87127151144143017e772de78515c2c580376880a1abcdce82d0",
+                "bytes": 24844
+              },
+              "source/LICENSE": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/LICENSE",
+                "sha256": "4deff8076cd89a548fb0adf91ed38e9c42abbc4c56a3e543dad06b635dac914e",
+                "bytes": 1073
+              }
+            }
+          }
+        },
+        "selective_context": {
+          "language": "en",
+          "reduce_level": "phrase",
+          "model_type": "gpt2",
+          "overlong_sentence_policy": "lossless whitespace-first split to <=1024 tokens including BOS; one global phrase threshold"
+        },
+        "llmlingua2": {
+          "use_context_level_filter": false,
+          "token_to_word": "mean",
+          "force_tokens": [],
+          "force_reserve_digit": false,
+          "drop_consecutive": false,
+          "max_batch_size": 1,
+          "overlong_chunk_policy": "lossless whitespace-first split only if native chunk exceeds 511 body tokens"
+        },
+        "budget_policy": "one native call at requested retained_ratio; no post-truncation",
+        "salt_summary": {
+          "selector": "legacy",
+          "query": null,
+          "dataset_name": "",
+          "max_keywords_ratio": 0.4,
+          "theme_percentile": 0.9,
+          "min_keywords": 2,
+          "pass1_budget_pct": 0.5,
+          "theme_prec_min": 0.0,
+          "redundancy_thresh": 1.0,
+          "intro_pct": 0.03,
+          "neighbor_window": 0,
+          "query_budget_uncapped": false,
+          "query_budget_pct": 0.75,
+          "branch_floor": 0,
+          "attention_implementation": "eager",
+          "python_hash_seed": 0,
+          "budget_basis": "floor(retained_ratio * words after native clean/split/dedup, before filtering)",
+          "preprocessing": "native prose clean/split/aggressive filter; no dataset-specific anchors or few-shot bypass",
+          "long_sentence_policy": "native split target 400 BGE tokens; native encoder truncation to 512 incl specials; selected sentence text kept",
+          "output_policy": "selected sentences in document order, joined with spaces; no post-truncation"
+        }
+      },
+      "files_sha256": {
+        "salt_hotpotqa_full.html": "eaa5dc27c508d4ad3bd95d2947fd715b7122b5103e125a13851cf3574f9181a2",
+        "salt_hotpotqa_full_predictions.csv": "6305769e1c0d9ce4674a9361fc4ce82b65fa11a9c00c25eae50328ec7441fb23",
+        "salt_hotpotqa_full_metrics.json": "c8309336a5072c0288753b9c372bb7871f196be5c3e903f258ea030c3d51d9ba",
+        "salt_hotpotqa_full_audit.json": "b08652eae32958a32d73794ccf3a7eb197665da525907242ea01dc77df474cbc",
+        "salt_hotpotqa_full_replay.json": "2c4257e268426f826c7ee2a34fe2326f4030c8eacf5398c0585113f10b4ecc29",
+        "salt_hotpotqa_full_extension.json": "ab16f2d55cf2400a723c6aa9207027c7a0bdb6df53426c53c4ff1a635c1d6e9a"
+      },
+      "extension": {
+        "source_run": "hotpotqa_full_sc_llmlingua2_r50_cuda_20261018",
+        "old_methods": [
+          "full",
+          "no_context",
+          "selective_context",
+          "llmlingua2"
+        ],
+        "new_method": "salt_summary",
+        "source_files_sha256": {
+          "manifest.json": "5bd892a7695d63a6eb358db5970388a7a85d35cb31447c93a9760b048099eedb",
+          "examples.json": "eec3965638464ae929c69b271c2c5421a5cfed47e694a1e86264f21b50c35c7a",
+          "predictions.json": "32a0f8fe0231ae81127d38c6348fe6c5e4c8056e814e349638117625d767cd4c",
+          "metrics.json": "44a4964e5404a23381f2d468c346525d219fad2a6e653c7c09571cef11dfe14f",
+          "audit.json": "19f6d79c74d8529843d76d867349613888031f9645c4245b553673dc51e00a21",
+          "replay_verification.json": "cf860ef804c0063ee55e564aa8d0a9517e200c7362db611a141cf7c284c7564e",
+          "api_attempts.json": "e82c4c677a5ccdb77a27a16a021f3438b1964b466a8225e5e37597b8a7abc9ae"
+        },
+        "selection": "first N rows of frozen source order",
+        "selected_samples": 458,
+        "source_samples": 458,
+        "source_reader_files_sha256": {
+          "blackwell/client.py": "4d55336d72bdc5f9a15c87926d61d660fb1e68974dbae665613b7801baf312a0",
+          "blackwell/prompts.py": "9f726955a5b8b65a5f68e78cfdee20ab5c57e2392fb0c2fd8d0da3feb93943dc",
+          "blackwell/tokenization.py": "740d6287166e22af0f6ee0ef9c8fb4d26fb2d01b2e59678a381801bcc3a17ce3",
+          "blackwell/metrics.py": "8485f58739ee8e47b3edc4ef97a084d3e48faf70981448590c4fa474a156effb",
+          "blackwell/data.py": "3c4eaf58b3f8ce574d2a5dae04356bcaf599e733327fa626065cc4dbeeb3246c",
+          "run_experiment.py": "5335ef7aa952048e337b142215a069914d63dd76eca648000f005bb36c769fc0"
+        },
+        "verification": {
+          "status": "passed",
+          "samples": 458,
+          "forecasts": 2290,
+          "unchanged_forecasts_from_previous_run": 1832,
+          "source_run": "hotpotqa_full_sc_llmlingua2_r50_cuda_20261018",
+          "unique_api_responses_checked": 2290,
+          "local_compressions_checked": 1374,
+          "infogap_cells_independently_checked": 25,
+          "new_api_calls": 0,
+          "checks": [
+            "source immutable files and raw dataset",
+            "complete request identity and raw probability",
+            "query-blind compression cache inputs",
+            "identical historical conditions",
+            "actual Qwen token counts",
+            "independent two-action payoff verification"
+          ]
+        }
+      },
+      "historical_api_usage": {
+        "prompt_tokens": 1459129,
+        "completion_tokens": 17875,
+        "total_tokens": 1477004
+      },
+      "historical_api_attempts": 1848,
+      "forecast_diagnostics": {
+        "full": {
+          "p_zero_or_one": 110,
+          "wrong_at_zero_or_one": 4,
+          "p_half": 0,
+          "distinct_probabilities": 18
+        },
+        "no_context": {
+          "p_zero_or_one": 151,
+          "wrong_at_zero_or_one": 18,
+          "p_half": 96,
+          "distinct_probabilities": 13
+        },
+        "selective_context": {
+          "p_zero_or_one": 35,
+          "wrong_at_zero_or_one": 2,
+          "p_half": 0,
+          "distinct_probabilities": 17
+        },
+        "llmlingua2": {
+          "p_zero_or_one": 53,
+          "wrong_at_zero_or_one": 2,
+          "p_half": 1,
+          "distinct_probabilities": 22
+        },
+        "salt_summary": {
+          "p_zero_or_one": 123,
+          "wrong_at_zero_or_one": 28,
+          "p_half": 4,
+          "distinct_probabilities": 20
+        }
+      }
+    },
+    "salt_qasper_train": {
+      "run_name": "salt_summary_qasper_train_20261023",
+      "metrics": {
+        "n": 283,
+        "positive_labels": 192,
+        "scores": {
+          "full": {
+            "accuracy": 0.7597173144876325,
+            "brier": 0.19251696113074204,
+            "log_loss": 0.580000608341445,
+            "mean_context_tokens": 5542.102473498233,
+            "pooled_retained_ratio": 1.0,
+            "over_budget_samples": 0,
+            "length_repairs": 0,
+            "unique_compressions": 0,
+            "compression_seconds_unique_total": 0,
+            "accuracy_delta_vs_full": 0.0,
+            "brier_delta_vs_full": 0.0,
+            "log_loss_delta_vs_full": 0.0
+          },
+          "no_context": {
+            "accuracy": 0.6855123674911661,
+            "brier": 0.2511925795053004,
+            "log_loss": 0.7875413087003315,
+            "mean_context_tokens": 0.0,
+            "pooled_retained_ratio": 0.0,
+            "over_budget_samples": 0,
+            "length_repairs": 0,
+            "unique_compressions": 0,
+            "compression_seconds_unique_total": 0,
+            "accuracy_delta_vs_full": -0.0742049469964664,
+            "brier_delta_vs_full": 0.05867561837455834,
+            "log_loss_delta_vs_full": 0.2075407003588865
+          },
+          "selective_context": {
+            "accuracy": 0.7385159010600707,
+            "brier": 0.2029424028268551,
+            "log_loss": 0.6058030473911254,
+            "mean_context_tokens": 3198.0989399293285,
+            "pooled_retained_ratio": 0.5770551799109291,
+            "over_budget_samples": 282,
+            "length_repairs": 0,
+            "unique_compressions": 233,
+            "compression_seconds_unique_total": 606.179836299445,
+            "accuracy_delta_vs_full": -0.021201413427561766,
+            "brier_delta_vs_full": 0.010425441696113064,
+            "log_loss_delta_vs_full": 0.025802439049680492
+          },
+          "llmlingua2": {
+            "accuracy": 0.7420494699646644,
+            "brier": 0.19895194346289752,
+            "log_loss": 0.5963108870066963,
+            "mean_context_tokens": 2741.3392226148408,
+            "pooled_retained_ratio": 0.4946388551499444,
+            "over_budget_samples": 77,
+            "length_repairs": 0,
+            "unique_compressions": 233,
+            "compression_seconds_unique_total": 163.79080839978997,
+            "accuracy_delta_vs_full": -0.0176678445229681,
+            "brier_delta_vs_full": 0.0064349823321554755,
+            "log_loss_delta_vs_full": 0.016310278665251365
+          },
+          "salt_summary": {
+            "accuracy": 0.7279151943462897,
+            "brier": 0.20739257950530035,
+            "log_loss": 0.6187643969919102,
+            "mean_context_tokens": 2586.4240282685514,
+            "pooled_retained_ratio": 0.4666864318436128,
+            "over_budget_samples": 17,
+            "length_repairs": 0,
+            "unique_compressions": 233,
+            "compression_seconds_unique_total": 119.03925930001424,
+            "accuracy_delta_vs_full": -0.03180212014134276,
+            "brier_delta_vs_full": 0.014875618374558308,
+            "log_loss_delta_vs_full": 0.03876378865046526
+          }
+        },
+        "context_clusters": 233,
+        "payoff_curves_vs_full": {
+          "no_context": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.007067137809187279
+            },
+            {
+              "threshold": 0.01,
+              "side": "left_limit",
+              "payoff_gap": 0.006925795053003533
+            },
+            {
+              "threshold": 0.01,
+              "side": "at_threshold",
+              "payoff_gap": 0.0069964664310954066
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": 0.006925795053003533
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": 0.007067137809187279
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": 0.007067137809187279
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.000353356890459364
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.0008480565371024734
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": -0.016678445229681982
+            },
+            {
+              "threshold": 0.15,
+              "side": "left_limit",
+              "payoff_gap": -0.012014134275618376
+            },
+            {
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "payoff_gap": -0.009893992932862193
+            },
+            {
+              "threshold": 0.21,
+              "side": "left_limit",
+              "payoff_gap": 0.0002826855123674914
+            },
+            {
+              "threshold": 0.21,
+              "side": "at_threshold",
+              "payoff_gap": 0.0017667844522968198
+            },
+            {
+              "threshold": 0.32,
+              "side": "left_limit",
+              "payoff_gap": 0.02120141342756184
+            },
+            {
+              "threshold": 0.32,
+              "side": "at_threshold",
+              "payoff_gap": 0.01639575971731449
+            },
+            {
+              "threshold": 0.34,
+              "side": "left_limit",
+              "payoff_gap": 0.020070671378091872
+            },
+            {
+              "threshold": 0.34,
+              "side": "at_threshold",
+              "payoff_gap": 0.024876325088339233
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.026855123674911652
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.03180212014134275
+            },
+            {
+              "threshold": 0.42,
+              "side": "left_limit",
+              "payoff_gap": 0.04664310954063604
+            },
+            {
+              "threshold": 0.42,
+              "side": "at_threshold",
+              "payoff_gap": 0.049611307420494695
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.056183745583038874
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.059363957597173146
+            },
+            {
+              "threshold": 0.46,
+              "side": "left_limit",
+              "payoff_gap": 0.06162544169611308
+            },
+            {
+              "threshold": 0.46,
+              "side": "at_threshold",
+              "payoff_gap": 0.06487632508833924
+            },
+            {
+              "threshold": 0.5,
+              "side": "left_limit",
+              "payoff_gap": 0.07420494699646643
+            },
+            {
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "payoff_gap": 0.4275618374558304
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.17632508833922253
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.1710247349823321
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": -0.107703180212014
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": -0.0812720848056537
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": -0.12897526501766785
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.02932862190812725
+            },
+            {
+              "threshold": 0.87,
+              "side": "left_limit",
+              "payoff_gap": 0.0065724381625442176
+            },
+            {
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "payoff_gap": 0.03830388692579507
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": -0.009045936395759725
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.03392226148409892
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.015901060070671377
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.0017667844522968198
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.0007067137809187254
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "selective_context": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.01,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.01,
+              "side": "at_threshold",
+              "payoff_gap": 7.06713780918728e-05
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": 0.0001413427561837456
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": 0.0001413427561837456
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": 0.000353356890459364
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.000706713780918728
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.0016961130742049468
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.007915194346289754
+            },
+            {
+              "threshold": 0.15,
+              "side": "left_limit",
+              "payoff_gap": 0.00812720848056537
+            },
+            {
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "payoff_gap": 0.00812720848056537
+            },
+            {
+              "threshold": 0.21,
+              "side": "left_limit",
+              "payoff_gap": 0.008551236749116608
+            },
+            {
+              "threshold": 0.21,
+              "side": "at_threshold",
+              "payoff_gap": 0.010035335689045936
+            },
+            {
+              "threshold": 0.32,
+              "side": "left_limit",
+              "payoff_gap": 0.011590106007067138
+            },
+            {
+              "threshold": 0.32,
+              "side": "at_threshold",
+              "payoff_gap": 0.006784452296819787
+            },
+            {
+              "threshold": 0.34,
+              "side": "left_limit",
+              "payoff_gap": 0.007208480565371025
+            },
+            {
+              "threshold": 0.34,
+              "side": "at_threshold",
+              "payoff_gap": 0.0048056537102473505
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.0049469964664310955
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.012367491166077738
+            },
+            {
+              "threshold": 0.42,
+              "side": "left_limit",
+              "payoff_gap": 0.014840989399293287
+            },
+            {
+              "threshold": 0.42,
+              "side": "at_threshold",
+              "payoff_gap": 0.011872791519434628
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.012720848056537103
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.015901060070671377
+            },
+            {
+              "threshold": 0.46,
+              "side": "left_limit",
+              "payoff_gap": 0.016254416961130745
+            },
+            {
+              "threshold": 0.46,
+              "side": "at_threshold",
+              "payoff_gap": 0.019505300353356892
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.026289752650176676
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.022897526501766786
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.02332155477031802
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.01166077738515901
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": 0.012862190812720846
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": 0.014134275618374558
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": 0.014134275618374558
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.0021201413427561887
+            },
+            {
+              "threshold": 0.87,
+              "side": "left_limit",
+              "payoff_gap": -0.0009893992932862232
+            },
+            {
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "payoff_gap": -0.0016254416961130772
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": -0.011872791519434626
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.008763250883392215
+            },
+            {
+              "threshold": 0.94,
+              "side": "left_limit",
+              "payoff_gap": 0.004805653710247348
+            },
+            {
+              "threshold": 0.94,
+              "side": "at_threshold",
+              "payoff_gap": 0.0052296819787986
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.0031802120141342957
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.0007067137809187285
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.0002826855123674914
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "llmlingua2": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.01,
+              "side": "left_limit",
+              "payoff_gap": -7.06713780918728e-05
+            },
+            {
+              "threshold": 0.01,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.01696113074204947
+            },
+            {
+              "threshold": 0.15,
+              "side": "left_limit",
+              "payoff_gap": 0.015901060070671377
+            },
+            {
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "payoff_gap": 0.020848056537102474
+            },
+            {
+              "threshold": 0.21,
+              "side": "left_limit",
+              "payoff_gap": 0.017879858657243817
+            },
+            {
+              "threshold": 0.21,
+              "side": "at_threshold",
+              "payoff_gap": 0.017879858657243817
+            },
+            {
+              "threshold": 0.31,
+              "side": "left_limit",
+              "payoff_gap": 0.012932862190812721
+            },
+            {
+              "threshold": 0.31,
+              "side": "at_threshold",
+              "payoff_gap": 0.010742049469964664
+            },
+            {
+              "threshold": 0.32,
+              "side": "left_limit",
+              "payoff_gap": 0.010176678445229681
+            },
+            {
+              "threshold": 0.32,
+              "side": "at_threshold",
+              "payoff_gap": 0.0053710247349823305
+            },
+            {
+              "threshold": 0.34,
+              "side": "left_limit",
+              "payoff_gap": 0.00438162544169611
+            },
+            {
+              "threshold": 0.34,
+              "side": "at_threshold",
+              "payoff_gap": 0.013851590106007066
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.013427561837455833
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.020848056537102474
+            },
+            {
+              "threshold": 0.42,
+              "side": "left_limit",
+              "payoff_gap": 0.019363957597173145
+            },
+            {
+              "threshold": 0.42,
+              "side": "at_threshold",
+              "payoff_gap": 0.019363957597173145
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.01872791519434629
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.015547703180212015
+            },
+            {
+              "threshold": 0.46,
+              "side": "left_limit",
+              "payoff_gap": 0.015265017667844523
+            },
+            {
+              "threshold": 0.46,
+              "side": "at_threshold",
+              "payoff_gap": 0.018515901060070672
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.015123674911660778
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.005653710247349822
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.0035335689045936395
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": -0.001413427561837457
+            },
+            {
+              "threshold": 0.67,
+              "side": "left_limit",
+              "payoff_gap": -0.002544169611307423
+            },
+            {
+              "threshold": 0.67,
+              "side": "at_threshold",
+              "payoff_gap": -0.007279151943462899
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": -0.016819787985865725
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": -0.005229681978798582
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": -0.006713780918727917
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.009540636042402836
+            },
+            {
+              "threshold": 0.87,
+              "side": "left_limit",
+              "payoff_gap": 0.005441696113074202
+            },
+            {
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "payoff_gap": -0.007773851590106017
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": -0.018374558303886936
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.018657243816254394
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.011660777385159025
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.0007067137809187285
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.0002826855123674914
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "salt_summary": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.01,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.01,
+              "side": "at_threshold",
+              "payoff_gap": 7.06713780918728e-05
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": 0.0001413427561837456
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.023180212014134276
+            },
+            {
+              "threshold": 0.15,
+              "side": "left_limit",
+              "payoff_gap": 0.021908127208480566
+            },
+            {
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "payoff_gap": 0.042756183745583036
+            },
+            {
+              "threshold": 0.21,
+              "side": "left_limit",
+              "payoff_gap": 0.03724381625441696
+            },
+            {
+              "threshold": 0.21,
+              "side": "at_threshold",
+              "payoff_gap": 0.04431095406360424
+            },
+            {
+              "threshold": 0.32,
+              "side": "left_limit",
+              "payoff_gap": 0.03420494699646643
+            },
+            {
+              "threshold": 0.32,
+              "side": "at_threshold",
+              "payoff_gap": 0.029399293286219083
+            },
+            {
+              "threshold": 0.34,
+              "side": "left_limit",
+              "payoff_gap": 0.027703180212014133
+            },
+            {
+              "threshold": 0.34,
+              "side": "at_threshold",
+              "payoff_gap": 0.03943462897526502
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.038515901060070676
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.04770318021201413
+            },
+            {
+              "threshold": 0.42,
+              "side": "left_limit",
+              "payoff_gap": 0.040282685512367494
+            },
+            {
+              "threshold": 0.42,
+              "side": "at_threshold",
+              "payoff_gap": 0.040282685512367494
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.037102473498233215
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.034628975265017674
+            },
+            {
+              "threshold": 0.46,
+              "side": "left_limit",
+              "payoff_gap": 0.03335689045936395
+            },
+            {
+              "threshold": 0.46,
+              "side": "at_threshold",
+              "payoff_gap": 0.03660777385159011
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.01378091872791519
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": -0.0042402826855123775
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": -0.03307420494699646
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": -0.014416961130742043
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": -0.01908127208480565
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": -0.011307420494699632
+            },
+            {
+              "threshold": 0.87,
+              "side": "left_limit",
+              "payoff_gap": -0.01639575971731449
+            },
+            {
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "payoff_gap": 0.022332155477031802
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": 0.011024734982332146
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.010742049469964661
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.0067137809187279105
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.00035335689045936427
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.0001413427561837457
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ]
+        },
+        "source_tasks": {},
+        "infogap": {
+          "full": {
+            "full": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.4275618374558304,
+              "unscaled": 0.2137809187279152,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.026289752650176676,
+              "unscaled": 0.013144876325088338,
+              "threshold": 0.62,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.020848056537102474,
+              "unscaled": 0.010424028268551237,
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.04770318021201413,
+              "unscaled": 0.023851590106007067,
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            }
+          },
+          "no_context": {
+            "full": {
+              "value": 0.12897526501766785,
+              "unscaled": 0.06448763250883392,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.1431095406360424,
+              "unscaled": 0.0715547703180212,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.1222614840989398,
+              "unscaled": 0.0611307420494699,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.10989399293286208,
+              "unscaled": 0.05494699646643104,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            }
+          },
+          "selective_context": {
+            "full": {
+              "value": 0.011872791519434626,
+              "unscaled": 0.005936395759717313,
+              "threshold": 0.92,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.40636042402826855,
+              "unscaled": 0.20318021201413428,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.012720848056537103,
+              "unscaled": 0.0063604240282685515,
+              "threshold": 0.15,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.0353356890459364,
+              "unscaled": 0.0176678445229682,
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            }
+          },
+          "llmlingua2": {
+            "full": {
+              "value": 0.018374558303886936,
+              "unscaled": 0.009187279151943468,
+              "threshold": 0.92,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.4098939929328622,
+              "unscaled": 0.2049469964664311,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.029681978798586566,
+              "unscaled": 0.014840989399293283,
+              "threshold": 0.82,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.030106007067137806,
+              "unscaled": 0.015053003533568903,
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            }
+          },
+          "salt_summary": {
+            "full": {
+              "value": 0.03307420494699646,
+              "unscaled": 0.01653710247349823,
+              "threshold": 0.82,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.3957597173144876,
+              "unscaled": 0.1978798586572438,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.045936395759717315,
+              "unscaled": 0.022968197879858657,
+              "threshold": 0.82,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.02183745583038869,
+              "unscaled": 0.010918727915194345,
+              "threshold": 0.87,
+              "side": "left_limit",
+              "n": 283,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 283,
+              "normalization_factor": 2
+            }
+          }
+        },
+        "bootstrap_vs_full": {
+          "no_context": {
+            "a_over_b": [
+              0.3253424657534247,
+              0.5179856115107914
+            ],
+            "b_over_a": [
+              0.04128113879003546,
+              0.2239130434782609
+            ],
+            "repetitions": 500,
+            "context_clusters": 233,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "selective_context": {
+            "a_over_b": [
+              0.010238907849829351,
+              0.06346863468634686
+            ],
+            "b_over_a": [
+              0.0,
+              0.058625429553264614
+            ],
+            "repetitions": 500,
+            "context_clusters": 233,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "llmlingua2": {
+            "a_over_b": [
+              0.013594771241830067,
+              0.0617857142857143
+            ],
+            "b_over_a": [
+              0.0005755395683453371,
+              0.06842105263157895
+            ],
+            "repetitions": 500,
+            "context_clusters": 233,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "salt_summary": {
+            "a_over_b": [
+              0.02419117647058823,
+              0.08583629893238434
+            ],
+            "b_over_a": [
+              0.0073381294964029,
+              0.08013888888888888
+            ],
+            "repetitions": 500,
+            "context_clusters": 233,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          }
+        },
+        "normalization": "2 * sup_t mean[(t-y)(1[p_A<=t]-1[p_B<=t])]; also save unscaled.",
+        "scope": "Small pilot of verbalized probabilities, not true-posterior recovery or a dominance test."
+      },
+      "api_usage": {
+        "prompt_tokens": 770864,
+        "completion_tokens": 2830,
+        "total_tokens": 773694
+      },
+      "api_attempts": 283,
+      "api_statuses": {
+        "received": 283
+      },
+      "audit": {
+        "status": "passed",
+        "samples": 283,
+        "forecasts": 1415,
+        "unchanged_forecasts_from_previous_run": 1132,
+        "source_run": "qasper_train_sc_llmlingua2_r50_cuda_resume_20261018",
+        "unique_api_responses_checked": 1405,
+        "local_compressions_checked": 699,
+        "infogap_cells_independently_checked": 25,
+        "new_api_calls": 0,
+        "checks": [
+          "source immutable files and raw dataset",
+          "complete request identity and raw probability",
+          "query-blind compression cache inputs",
+          "identical historical conditions",
+          "actual Qwen token counts",
+          "independent two-action payoff verification"
+        ]
+      },
+      "replay": {
+        "status": "passed",
+        "new_api_attempts": 0,
+        "socket_connections_blocked": true,
+        "local_model_loading_blocked": true,
+        "cache_hits": 283,
+        "byte_identical_files_sha256": {
+          "predictions.json": "5872201a746ebfc0a2aa358d7481fc4304634cf5b9135586ac679d9f8ac29769",
+          "metrics.json": "42c9540d0639c4422c47693d3a571fab1c8fe8cde1f11920d250e9a5075d7892",
+          "api_attempts.json": "6861f99bf7001d017c46a2799bd94e9fbf7b5cbed8523f6ac4bf9a23a80de048"
+        }
+      },
+      "dataset": {
+        "source_url": "https://qasper-dataset.s3.us-west-2.amazonaws.com/qasper-train-dev-v0.3.tgz",
+        "source_sha256": "a28fdf966db827bcee3d873107d6b6669864fb7ca8fbf73a192f5e39191bdb5a",
+        "archive_member": "qasper-train-v0.3.json",
+        "license": "CC BY 4.0",
+        "version": "0.3",
+        "name": "QASPER yes/no (text evidence)",
+        "split": "train",
+        "dataset_home": "https://allenai.org/data/qasper",
+        "available_rows": 283,
+        "excluded": {
+          "no_boolean": 2195,
+          "figure_or_table": 30,
+          "mixed_answer_types": 3,
+          "missing_evidence": 76,
+          "conflicting_boolean_labels": 3,
+          "missing_full_text": 3
+        },
+        "sample_seed": 20261018,
+        "selection_rule": "Nonempty body; all annotations boolean and consistent; every annotation has nonempty evidence found in the text; no figure/table evidence.",
+        "context_definition": "Title, abstract and all sections/paragraphs in order. No questions, answers or evidence markers appended.",
+        "scope": "Exploratory use of train; dev/test untouched. Evidence filtering changes label and task distribution. Each paper is compressed once and reused across its questions."
+      },
+      "config": {
+        "run_name": "salt_summary_qasper_train_20261023",
+        "dataset_split": "train",
+        "sample_size": 283,
+        "sample_seed": 20261018,
+        "retained_ratio": 0.5,
+        "provider": "siliconflow",
+        "base_url": "https://api.siliconflow.cn/v1",
+        "api_key_env": "SILICONFLOW_API_KEY",
+        "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+        "temperature": 0.0,
+        "enable_thinking": false,
+        "prediction_max_tokens": 128,
+        "timeout_seconds": 90,
+        "min_interval_seconds": 3.0,
+        "max_api_attempts": 378,
+        "bootstrap_repetitions": 500,
+        "bootstrap_seed": 20261018,
+        "methods": [
+          "full",
+          "no_context",
+          "selective_context",
+          "llmlingua2",
+          "salt_summary"
+        ],
+        "dataset": "qasper_yesno_text",
+        "compression_device": "cuda",
+        "source_run": "qasper_train_sc_llmlingua2_r50_cuda_resume_20261018"
+      },
+      "runtime": {
+        "device": "cuda",
+        "hardware": {
+          "gpu_name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+          "cuda_build": "12.8",
+          "compute_capability": [
+            12,
+            0
+          ],
+          "tf32": false
+        },
+        "dtype": "float32",
+        "torch_threads": 4,
+        "upstream_files_sha256": {
+          "selective_context/__init__.py": "35bc30bb1059dd18dc7cc474282abb3f82059ac64486e33a5cfe39bdee1fbb23",
+          "llmlingua/prompt_compressor.py": "472fde8f6f55f273fe94eee40c25c73508f1ed3a7f5d61788636c20fc4be5068",
+          "llmlingua/utils.py": "1ed3eb0734354ea0136a0d98a9366233a872d22ff350fab107e53de45c954e33"
+        },
+        "packages": {
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.1",
+          "tokenizers": "0.22.1",
+          "accelerate": "1.10.1",
+          "llmlingua": "0.2.2",
+          "selective-context": "0.1.4",
+          "spacy": "3.8.7",
+          "en-core-web-sm": "3.8.0",
+          "numpy": "2.2.6",
+          "nltk": "3.9.2",
+          "tiktoken": "0.12.0",
+          "safetensors": "0.8.0",
+          "sentencepiece": "0.2.1",
+          "click": "8.5.0"
+        },
+        "assets": {
+          "salt_summary": {
+            "model_id": "BAAI/bge-small-en-v1.5",
+            "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+            "source_repository": "https://github.com/oteomamo/SALT",
+            "source_revision": "a8d35ca45ec61db7810363ccbd48a3a55b307d60",
+            "directory": ".cache/salt",
+            "files": {
+              "model/config.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/config.json",
+                "sha256": "094f8e891b932f2000c92cfc663bac4c62069f5d8af5b5278c4306aef3084750",
+                "bytes": 743
+              },
+              "model/model.safetensors": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/model.safetensors",
+                "sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad",
+                "bytes": 133466304
+              },
+              "model/special_tokens_map.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/special_tokens_map.json",
+                "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+                "bytes": 125
+              },
+              "model/tokenizer.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/tokenizer.json",
+                "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+                "bytes": 711396
+              },
+              "model/tokenizer_config.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/tokenizer_config.json",
+                "sha256": "9261e7d79b44c8195c1cada2b453e55b00aeb81e907a6664974b4d7776172ab3",
+                "bytes": 366
+              },
+              "model/vocab.txt": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/vocab.txt",
+                "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+                "bytes": 231508
+              },
+              "source/salt/__init__.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/__init__.py",
+                "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+                "bytes": 1
+              },
+              "source/salt/engine/__init__.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/__init__.py",
+                "sha256": "5f36c1c37b62578a8e04aab3b2d3bb16af04c0cfe4a80538489e3810cd4154c1",
+                "bytes": 440
+              },
+              "source/salt/engine/compressor.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/compressor.py",
+                "sha256": "1969fb526f81092661bec9d754f3f4ae549a62d6ae0aaa4f8884f4a1fc7021ba",
+                "bytes": 26648
+              },
+              "source/salt/engine/embedder.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/embedder.py",
+                "sha256": "20f2b57d7ac1607c4a15809f2a382b50a49debac1ce9a6bf3d90bdf214418aab",
+                "bytes": 5288
+              },
+              "source/salt/engine/fewshot.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/fewshot.py",
+                "sha256": "db9012d5b14b2806fab7303e965cf9c0287e21b1a8395395eb0fcadf77000fb0",
+                "bytes": 7474
+              },
+              "source/salt/engine/retrieval.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/retrieval.py",
+                "sha256": "f6a826d88a8753813b1dec3d02b05fa7fff0ddd98ecda38e30c024be813a68c6",
+                "bytes": 11641
+              },
+              "source/salt/engine/sentence_filter.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/sentence_filter.py",
+                "sha256": "0188dc5c1b15ec6c8926ab0cb39d41348f3876c253ea9c13a26b6e456e200b15",
+                "bytes": 12346
+              },
+              "source/salt/engine/trie_core.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/trie_core.py",
+                "sha256": "e9745c19ec2a87127151144143017e772de78515c2c580376880a1abcdce82d0",
+                "bytes": 24844
+              },
+              "source/LICENSE": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/LICENSE",
+                "sha256": "4deff8076cd89a548fb0adf91ed38e9c42abbc4c56a3e543dad06b635dac914e",
+                "bytes": 1073
+              }
+            }
+          }
+        },
+        "selective_context": {
+          "language": "en",
+          "reduce_level": "phrase",
+          "model_type": "gpt2",
+          "overlong_sentence_policy": "lossless whitespace-first split to <=1024 tokens including BOS; one global phrase threshold"
+        },
+        "llmlingua2": {
+          "use_context_level_filter": false,
+          "token_to_word": "mean",
+          "force_tokens": [],
+          "force_reserve_digit": false,
+          "drop_consecutive": false,
+          "max_batch_size": 1,
+          "overlong_chunk_policy": "lossless whitespace-first split only if native chunk exceeds 511 body tokens"
+        },
+        "budget_policy": "one native call at requested retained_ratio; no post-truncation",
+        "salt_summary": {
+          "selector": "legacy",
+          "query": null,
+          "dataset_name": "",
+          "max_keywords_ratio": 0.4,
+          "theme_percentile": 0.9,
+          "min_keywords": 2,
+          "pass1_budget_pct": 0.5,
+          "theme_prec_min": 0.0,
+          "redundancy_thresh": 1.0,
+          "intro_pct": 0.03,
+          "neighbor_window": 0,
+          "query_budget_uncapped": false,
+          "query_budget_pct": 0.75,
+          "branch_floor": 0,
+          "attention_implementation": "eager",
+          "python_hash_seed": 0,
+          "budget_basis": "floor(retained_ratio * words after native clean/split/dedup, before filtering)",
+          "preprocessing": "native prose clean/split/aggressive filter; no dataset-specific anchors or few-shot bypass",
+          "long_sentence_policy": "native split target 400 BGE tokens; native encoder truncation to 512 incl specials; selected sentence text kept",
+          "output_policy": "selected sentences in document order, joined with spaces; no post-truncation"
+        }
+      },
+      "files_sha256": {
+        "salt_qasper_train.html": "44b075bbbf73fd48bd7aaa244beef782c312f4ca399779a114447d7e8270ab58",
+        "salt_qasper_train_predictions.csv": "eef2f5f7ddf79a3ea6f6e9fe2972a25bf6a8c1a072cbbec49f625303884cec0d",
+        "salt_qasper_train_metrics.json": "87624da14b24d22df0489a7fed942406d7a1be5a972d1037b8999017e6319526",
+        "salt_qasper_train_audit.json": "0182491e3e35828dedeff9316c9ada6018a6dbc185444055538d7f598232f263",
+        "salt_qasper_train_replay.json": "ea6230b726c52da7937e9eff39505cc14a1aef09c63e9686fa2b055897e2837b",
+        "salt_qasper_train_extension.json": "9ad2979f526c79a06148957cf76d016b619505b47d0d5b9abdaee5d1bd54d6a8"
+      },
+      "extension": {
+        "source_run": "qasper_train_sc_llmlingua2_r50_cuda_resume_20261018",
+        "old_methods": [
+          "full",
+          "no_context",
+          "selective_context",
+          "llmlingua2"
+        ],
+        "new_method": "salt_summary",
+        "source_files_sha256": {
+          "manifest.json": "b061b600fed2acecb1b16f8b05b51c041f64643b2a3ce850c0716ac048c1b574",
+          "examples.json": "9e2d17d2a121b2cfc99b3bb956d3cfeff95d2449527469a955418f29a2d65bee",
+          "predictions.json": "220c28b559224689ebb61d8f1b43a01e5bcfddc96145aece629fa86587d4e24b",
+          "metrics.json": "d100f869a397284d80b555f1007a98108661d616aab27d10a04f68484c620115",
+          "audit.json": "464656d52b785b27ad6b701c3b84d90c23aa46768d21d31ea42b348438359dc2",
+          "replay_verification.json": "70fadf48574960b801f1b08e3c68c050f12487f913efb55bbcf269b52d206ac2",
+          "api_attempts.json": "6e6dd807a937ec9b089cc1c6ebcbc5b4d67348175c2bdf6d2258cec437ac27e9"
+        },
+        "selection": "first N rows of frozen source order",
+        "selected_samples": 283,
+        "source_samples": 283,
+        "source_reader_files_sha256": {
+          "blackwell/client.py": "4d55336d72bdc5f9a15c87926d61d660fb1e68974dbae665613b7801baf312a0",
+          "blackwell/prompts.py": "9f726955a5b8b65a5f68e78cfdee20ab5c57e2392fb0c2fd8d0da3feb93943dc",
+          "blackwell/tokenization.py": "740d6287166e22af0f6ee0ef9c8fb4d26fb2d01b2e59678a381801bcc3a17ce3",
+          "blackwell/metrics.py": "8485f58739ee8e47b3edc4ef97a084d3e48faf70981448590c4fa474a156effb",
+          "blackwell/data.py": "3c4eaf58b3f8ce574d2a5dae04356bcaf599e733327fa626065cc4dbeeb3246c",
+          "run_experiment.py": "5335ef7aa952048e337b142215a069914d63dd76eca648000f005bb36c769fc0"
+        },
+        "verification": {
+          "status": "passed",
+          "samples": 283,
+          "forecasts": 1415,
+          "unchanged_forecasts_from_previous_run": 1132,
+          "source_run": "qasper_train_sc_llmlingua2_r50_cuda_resume_20261018",
+          "unique_api_responses_checked": 1405,
+          "local_compressions_checked": 699,
+          "infogap_cells_independently_checked": 25,
+          "new_api_calls": 0,
+          "checks": [
+            "source immutable files and raw dataset",
+            "complete request identity and raw probability",
+            "query-blind compression cache inputs",
+            "identical historical conditions",
+            "actual Qwen token counts",
+            "independent two-action payoff verification"
+          ]
+        }
+      },
+      "historical_api_usage": {
+        "prompt_tokens": 3404051,
+        "completion_tokens": 10957,
+        "total_tokens": 3415008
+      },
+      "historical_api_attempts": 1352,
+      "forecast_diagnostics": {
+        "full": {
+          "p_zero_or_one": 0,
+          "wrong_at_zero_or_one": 0,
+          "p_half": 0,
+          "distinct_probabilities": 19
+        },
+        "no_context": {
+          "p_zero_or_one": 2,
+          "wrong_at_zero_or_one": 1,
+          "p_half": 270,
+          "distinct_probabilities": 7
+        },
+        "selective_context": {
+          "p_zero_or_one": 0,
+          "wrong_at_zero_or_one": 0,
+          "p_half": 0,
+          "distinct_probabilities": 15
+        },
+        "llmlingua2": {
+          "p_zero_or_one": 1,
+          "wrong_at_zero_or_one": 0,
+          "p_half": 0,
+          "distinct_probabilities": 19
+        },
+        "salt_summary": {
+          "p_zero_or_one": 0,
+          "wrong_at_zero_or_one": 0,
+          "p_half": 0,
+          "distinct_probabilities": 16
+        }
+      }
+    },
+    "salt_longbench_binary": {
+      "run_name": "salt_summary_longbench_binary_20261023",
+      "metrics": {
+        "n": 52,
+        "positive_labels": 31,
+        "scores": {
+          "full": {
+            "accuracy": 0.8076923076923077,
+            "brier": 0.1548076923076923,
+            "log_loss": 1.424611973358817,
+            "mean_context_tokens": 7349.538461538462,
+            "pooled_retained_ratio": 1.0,
+            "over_budget_samples": 0,
+            "length_repairs": 0,
+            "unique_compressions": 0,
+            "compression_seconds_unique_total": 0,
+            "accuracy_delta_vs_full": 0.0,
+            "brier_delta_vs_full": 0.0,
+            "log_loss_delta_vs_full": 0.0
+          },
+          "no_context": {
+            "accuracy": 0.7307692307692307,
+            "brier": 0.18562499999999998,
+            "log_loss": 0.5310027177420075,
+            "mean_context_tokens": 0.0,
+            "pooled_retained_ratio": 0.0,
+            "over_budget_samples": 0,
+            "length_repairs": 0,
+            "unique_compressions": 0,
+            "compression_seconds_unique_total": 0,
+            "accuracy_delta_vs_full": -0.07692307692307698,
+            "brier_delta_vs_full": 0.03081730769230767,
+            "log_loss_delta_vs_full": -0.8936092556168095
+          },
+          "selective_context": {
+            "accuracy": 0.7307692307692307,
+            "brier": 0.20194615384615386,
+            "log_loss": 1.0739511802712665,
+            "mean_context_tokens": 4293.711538461538,
+            "pooled_retained_ratio": 0.5842151260152391,
+            "over_budget_samples": 52,
+            "length_repairs": 0,
+            "unique_compressions": 52,
+            "compression_seconds_unique_total": 156.34433860011632,
+            "accuracy_delta_vs_full": -0.07692307692307698,
+            "brier_delta_vs_full": 0.047138461538461546,
+            "log_loss_delta_vs_full": -0.3506607930875505
+          },
+          "llmlingua2": {
+            "accuracy": 0.7692307692307693,
+            "brier": 0.17319615384615383,
+            "log_loss": 1.0059833501651119,
+            "mean_context_tokens": 3679.230769230769,
+            "pooled_retained_ratio": 0.5006070501549025,
+            "over_budget_samples": 28,
+            "length_repairs": 0,
+            "unique_compressions": 52,
+            "compression_seconds_unique_total": 42.323801600316074,
+            "accuracy_delta_vs_full": -0.038461538461538436,
+            "brier_delta_vs_full": 0.01838846153846152,
+            "log_loss_delta_vs_full": -0.4186286231937051
+          },
+          "salt_summary": {
+            "accuracy": 0.6730769230769231,
+            "brier": 0.2792557692307692,
+            "log_loss": 3.215127006606811,
+            "mean_context_tokens": 3506.1923076923076,
+            "pooled_retained_ratio": 0.4770629238884702,
+            "over_budget_samples": 4,
+            "length_repairs": 0,
+            "unique_compressions": 52,
+            "compression_seconds_unique_total": 32.678210199956084,
+            "accuracy_delta_vs_full": -0.13461538461538458,
+            "brier_delta_vs_full": 0.12444807692307691,
+            "log_loss_delta_vs_full": 1.790515033247994
+          }
+        },
+        "context_clusters": 52,
+        "payoff_curves_vs_full": {
+          "no_context": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": -0.07692307692307693
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": -0.07615384615384616
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": -0.07538461538461538
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": -0.07307692307692307
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": -0.07115384615384615
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": -0.06307692307692309
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": -0.04923076923076923
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.0038461538461538325
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.017307692307692298
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.044230769230769226
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.06153846153846154
+            },
+            {
+              "threshold": 0.5,
+              "side": "left_limit",
+              "payoff_gap": 0.07692307692307693
+            },
+            {
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "payoff_gap": 0.25
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.1346153846153846
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.1584615384615385
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.13076923076923072
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.13076923076923072
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": -0.026153846153846142
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": 0.005384615384615406
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": -0.021153846153846183
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.011538461538461565
+            },
+            {
+              "threshold": 0.87,
+              "side": "left_limit",
+              "payoff_gap": -0.005384615384615406
+            },
+            {
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "payoff_gap": 0.028076923076923093
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": -0.012307692307692318
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.0492307692307692
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.030769230769230795
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.011538461538461565
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.004615384615384619
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": -0.0015384615384615398
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "selective_context": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": -0.038461538461538464
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": -0.036153846153846154
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": -0.036153846153846154
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": -0.032692307692307694
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": -0.03461538461538462
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": -0.02923076923076923
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.04307692307692308
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.051923076923076926
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.06538461538461539
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.07307692307692307
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.07307692307692307
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.08615384615384616
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.11
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.11346153846153847
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.06346153846153846
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": 0.06999999999999999
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": 0.06999999999999999
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": 0.07115384615384615
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.06153846153846154
+            },
+            {
+              "threshold": 0.87,
+              "side": "left_limit",
+              "payoff_gap": 0.05846153846153846
+            },
+            {
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "payoff_gap": 0.03000000000000001
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": 0.018461538461538442
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.015384615384615365
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.009615384615384616
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.007692307692307699
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.0030769230769230795
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.0007692307692307699
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "llmlingua2": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": -0.038461538461538464
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": -0.036153846153846154
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": -0.036153846153846154
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": -0.032692307692307694
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": -0.032692307692307694
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": -0.024615384615384615
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.004615384615384615
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.01346153846153846
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.01346153846153846
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.01730769230769231
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.03461538461538462
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.047692307692307694
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.047692307692307694
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.05
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.025
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": 0.031538461538461536
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": 0.06307692307692307
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": 0.06538461538461539
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.017307692307692316
+            },
+            {
+              "threshold": 0.87,
+              "side": "left_limit",
+              "payoff_gap": 0.015000000000000005
+            },
+            {
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "payoff_gap": 0.05346153846153846
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": 0.04769230769230769
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.0123076923076923
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.007692307692307699
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.009615384615384616
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.0038461538461538325
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.0007692307692307699
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ],
+          "salt_summary": [
+            {
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.11538461538461539
+            },
+            {
+              "threshold": 0.02,
+              "side": "left_limit",
+              "payoff_gap": 0.11384615384615385
+            },
+            {
+              "threshold": 0.02,
+              "side": "at_threshold",
+              "payoff_gap": 0.11384615384615385
+            },
+            {
+              "threshold": 0.05,
+              "side": "left_limit",
+              "payoff_gap": 0.11153846153846153
+            },
+            {
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "payoff_gap": 0.15
+            },
+            {
+              "threshold": 0.12,
+              "side": "left_limit",
+              "payoff_gap": 0.14461538461538462
+            },
+            {
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "payoff_gap": 0.2076923076923077
+            },
+            {
+              "threshold": 0.35,
+              "side": "left_limit",
+              "payoff_gap": 0.16346153846153846
+            },
+            {
+              "threshold": 0.35,
+              "side": "at_threshold",
+              "payoff_gap": 0.1769230769230769
+            },
+            {
+              "threshold": 0.45,
+              "side": "left_limit",
+              "payoff_gap": 0.16153846153846155
+            },
+            {
+              "threshold": 0.45,
+              "side": "at_threshold",
+              "payoff_gap": 0.14423076923076922
+            },
+            {
+              "threshold": 0.62,
+              "side": "left_limit",
+              "payoff_gap": 0.11153846153846153
+            },
+            {
+              "threshold": 0.62,
+              "side": "at_threshold",
+              "payoff_gap": 0.11153846153846153
+            },
+            {
+              "threshold": 0.65,
+              "side": "left_limit",
+              "payoff_gap": 0.10576923076923077
+            },
+            {
+              "threshold": 0.65,
+              "side": "at_threshold",
+              "payoff_gap": 0.11923076923076922
+            },
+            {
+              "threshold": 0.82,
+              "side": "left_limit",
+              "payoff_gap": 0.08
+            },
+            {
+              "threshold": 0.82,
+              "side": "at_threshold",
+              "payoff_gap": 0.11153846153846156
+            },
+            {
+              "threshold": 0.85,
+              "side": "left_limit",
+              "payoff_gap": 0.10576923076923077
+            },
+            {
+              "threshold": 0.85,
+              "side": "at_threshold",
+              "payoff_gap": 0.013461538461538481
+            },
+            {
+              "threshold": 0.87,
+              "side": "left_limit",
+              "payoff_gap": 0.0065384615384615355
+            },
+            {
+              "threshold": 0.87,
+              "side": "at_threshold",
+              "payoff_gap": 0.04
+            },
+            {
+              "threshold": 0.92,
+              "side": "left_limit",
+              "payoff_gap": 0.0246153846153846
+            },
+            {
+              "threshold": 0.92,
+              "side": "at_threshold",
+              "payoff_gap": 0.059999999999999984
+            },
+            {
+              "threshold": 0.95,
+              "side": "left_limit",
+              "payoff_gap": 0.05192307692307695
+            },
+            {
+              "threshold": 0.95,
+              "side": "at_threshold",
+              "payoff_gap": 0.007692307692307699
+            },
+            {
+              "threshold": 0.98,
+              "side": "left_limit",
+              "payoff_gap": 0.0030769230769230795
+            },
+            {
+              "threshold": 0.98,
+              "side": "at_threshold",
+              "payoff_gap": 0.0007692307692307699
+            },
+            {
+              "threshold": 1.0,
+              "side": "left_limit",
+              "payoff_gap": 0.0
+            },
+            {
+              "threshold": 1.0,
+              "side": "at_threshold",
+              "payoff_gap": 0.0
+            }
+          ]
+        },
+        "source_tasks": {
+          "2wikimqa": {
+            "n": 19,
+            "positive_labels": 14,
+            "scores": {
+              "full": {
+                "accuracy": 0.8421052631578947,
+                "brier": 0.1455,
+                "log_loss": 3.0503686177534335
+              },
+              "no_context": {
+                "accuracy": 0.7894736842105263,
+                "brier": 0.18776315789473683,
+                "log_loss": 0.5364009113860294
+              },
+              "selective_context": {
+                "accuracy": 0.7894736842105263,
+                "brier": 0.1629157894736842,
+                "log_loss": 1.7967956225550479
+              },
+              "llmlingua2": {
+                "accuracy": 0.8421052631578947,
+                "brier": 0.1377842105263158,
+                "log_loss": 1.7333711675536436
+              },
+              "salt_summary": {
+                "accuracy": 0.5263157894736842,
+                "brier": 0.42399999999999993,
+                "log_loss": 6.458008799244144
+              }
+            },
+            "infogap_vs_full": {
+              "no_context": {
+                "full_over_method": {
+                  "value": 0.3684210526315789,
+                  "unscaled": 0.18421052631578946,
+                  "threshold": 0.5,
+                  "side": "at_threshold",
+                  "n": 19,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.21052631578947367,
+                  "unscaled": 0.10526315789473684,
+                  "threshold": 0.0,
+                  "side": "at_threshold",
+                  "n": 19,
+                  "normalization_factor": 2
+                }
+              },
+              "selective_context": {
+                "full_over_method": {
+                  "value": 0.09263157894736843,
+                  "unscaled": 0.04631578947368421,
+                  "threshold": 0.12,
+                  "side": "at_threshold",
+                  "n": 19,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.10526315789473684,
+                  "unscaled": 0.05263157894736842,
+                  "threshold": 0.0,
+                  "side": "at_threshold",
+                  "n": 19,
+                  "normalization_factor": 2
+                }
+              },
+              "llmlingua2": {
+                "full_over_method": {
+                  "value": 0.08947368421052632,
+                  "unscaled": 0.04473684210526316,
+                  "threshold": 0.85,
+                  "side": "left_limit",
+                  "n": 19,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.10526315789473684,
+                  "unscaled": 0.05263157894736842,
+                  "threshold": 0.0,
+                  "side": "at_threshold",
+                  "n": 19,
+                  "normalization_factor": 2
+                }
+              },
+              "salt_summary": {
+                "full_over_method": {
+                  "value": 0.4757894736842105,
+                  "unscaled": 0.23789473684210524,
+                  "threshold": 0.12,
+                  "side": "at_threshold",
+                  "n": 19,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 19,
+                  "normalization_factor": 2
+                }
+              }
+            }
+          },
+          "hotpotqa": {
+            "n": 14,
+            "positive_labels": 7,
+            "scores": {
+              "full": {
+                "accuracy": 0.9285714285714286,
+                "brier": 0.07662857142857142,
+                "log_loss": 0.2504494597376436
+              },
+              "no_context": {
+                "accuracy": 0.8571428571428571,
+                "brier": 0.11321428571428571,
+                "log_loss": 0.35313391115498677
+              },
+              "selective_context": {
+                "accuracy": 0.7142857142857143,
+                "brier": 0.22523571428571426,
+                "log_loss": 0.6705909107565929
+              },
+              "llmlingua2": {
+                "accuracy": 0.7857142857142857,
+                "brier": 0.1543857142857143,
+                "log_loss": 0.4952823506804391
+              },
+              "salt_summary": {
+                "accuracy": 0.8571428571428571,
+                "brier": 0.15534285714285714,
+                "log_loss": 2.2787652541375154
+              }
+            },
+            "infogap_vs_full": {
+              "no_context": {
+                "full_over_method": {
+                  "value": 0.14285714285714285,
+                  "unscaled": 0.07142857142857142,
+                  "threshold": 0.5,
+                  "side": "at_threshold",
+                  "n": 14,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.017142857142857144,
+                  "unscaled": 0.008571428571428572,
+                  "threshold": 0.12,
+                  "side": "left_limit",
+                  "n": 14,
+                  "normalization_factor": 2
+                }
+              },
+              "selective_context": {
+                "full_over_method": {
+                  "value": 0.3514285714285714,
+                  "unscaled": 0.1757142857142857,
+                  "threshold": 0.82,
+                  "side": "left_limit",
+                  "n": 14,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 14,
+                  "normalization_factor": 2
+                }
+              },
+              "llmlingua2": {
+                "full_over_method": {
+                  "value": 0.17714285714285713,
+                  "unscaled": 0.08857142857142856,
+                  "threshold": 0.62,
+                  "side": "left_limit",
+                  "n": 14,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 14,
+                  "normalization_factor": 2
+                }
+              },
+              "salt_summary": {
+                "full_over_method": {
+                  "value": 0.16,
+                  "unscaled": 0.08,
+                  "threshold": 0.12,
+                  "side": "left_limit",
+                  "n": 14,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 14,
+                  "normalization_factor": 2
+                }
+              }
+            }
+          },
+          "multifieldqa_en": {
+            "n": 1,
+            "positive_labels": 0,
+            "scores": {
+              "full": {
+                "accuracy": 1.0,
+                "brier": 0.0004,
+                "log_loss": 0.020202707317519466
+              },
+              "no_context": {
+                "accuracy": 0.0,
+                "brier": 0.25,
+                "log_loss": 0.6931471805599453
+              },
+              "selective_context": {
+                "accuracy": 1.0,
+                "brier": 0.0004,
+                "log_loss": 0.020202707317519466
+              },
+              "llmlingua2": {
+                "accuracy": 1.0,
+                "brier": 0.0004,
+                "log_loss": 0.020202707317519466
+              },
+              "salt_summary": {
+                "accuracy": 1.0,
+                "brier": 0.0004,
+                "log_loss": 0.020202707317519466
+              }
+            },
+            "infogap_vs_full": {
+              "no_context": {
+                "full_over_method": {
+                  "value": 1.0,
+                  "unscaled": 0.5,
+                  "threshold": 0.5,
+                  "side": "left_limit",
+                  "n": 1,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 1,
+                  "normalization_factor": 2
+                }
+              },
+              "selective_context": {
+                "full_over_method": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 1,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 1,
+                  "normalization_factor": 2
+                }
+              },
+              "llmlingua2": {
+                "full_over_method": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 1,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 1,
+                  "normalization_factor": 2
+                }
+              },
+              "salt_summary": {
+                "full_over_method": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 1,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0,
+                  "unscaled": 0.0,
+                  "threshold": 0.0,
+                  "side": "constant_action",
+                  "n": 1,
+                  "normalization_factor": 2
+                }
+              }
+            }
+          },
+          "qasper": {
+            "n": 18,
+            "positive_labels": 10,
+            "scores": {
+              "full": {
+                "accuracy": 0.6666666666666666,
+                "brier": 0.23401666666666665,
+                "log_loss": 0.6997957629832622
+              },
+              "no_context": {
+                "accuracy": 0.6111111111111112,
+                "brier": 0.2361111111111111,
+                "log_loss": 0.6546390038622261
+              },
+              "selective_context": {
+                "accuracy": 0.6666666666666666,
+                "brier": 0.23622777777777781,
+                "log_loss": 0.6832149493138963
+              },
+              "llmlingua2": {
+                "accuracy": 0.6666666666666666,
+                "brier": 0.23480555555555555,
+                "log_loss": 0.6901625782346064
+              },
+              "salt_summary": {
+                "accuracy": 0.6666666666666666,
+                "brier": 0.23833888888888888,
+                "log_loss": 0.6978622718151494
+              }
+            },
+            "infogap_vs_full": {
+              "no_context": {
+                "full_over_method": {
+                  "value": 0.2222222222222222,
+                  "unscaled": 0.1111111111111111,
+                  "threshold": 0.5,
+                  "side": "at_threshold",
+                  "n": 18,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.21111111111111114,
+                  "unscaled": 0.10555555555555557,
+                  "threshold": 0.85,
+                  "side": "left_limit",
+                  "n": 18,
+                  "normalization_factor": 2
+                }
+              },
+              "selective_context": {
+                "full_over_method": {
+                  "value": 0.07222222222222223,
+                  "unscaled": 0.036111111111111115,
+                  "threshold": 0.65,
+                  "side": "left_limit",
+                  "n": 18,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.09999999999999999,
+                  "unscaled": 0.049999999999999996,
+                  "threshold": 0.95,
+                  "side": "left_limit",
+                  "n": 18,
+                  "normalization_factor": 2
+                }
+              },
+              "llmlingua2": {
+                "full_over_method": {
+                  "value": 0.07222222222222223,
+                  "unscaled": 0.036111111111111115,
+                  "threshold": 0.65,
+                  "side": "left_limit",
+                  "n": 18,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.0944444444444444,
+                  "unscaled": 0.0472222222222222,
+                  "threshold": 0.95,
+                  "side": "left_limit",
+                  "n": 18,
+                  "normalization_factor": 2
+                }
+              },
+              "salt_summary": {
+                "full_over_method": {
+                  "value": 0.05,
+                  "unscaled": 0.025,
+                  "threshold": 0.45,
+                  "side": "left_limit",
+                  "n": 18,
+                  "normalization_factor": 2
+                },
+                "method_over_full": {
+                  "value": 0.14999999999999997,
+                  "unscaled": 0.07499999999999998,
+                  "threshold": 0.87,
+                  "side": "left_limit",
+                  "n": 18,
+                  "normalization_factor": 2
+                }
+              }
+            }
+          }
+        },
+        "infogap": {
+          "full": {
+            "full": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.25,
+              "unscaled": 0.125,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.11346153846153847,
+              "unscaled": 0.05673076923076924,
+              "threshold": 0.65,
+              "side": "left_limit",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.06538461538461539,
+              "unscaled": 0.032692307692307694,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.2076923076923077,
+              "unscaled": 0.10384615384615385,
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            }
+          },
+          "no_context": {
+            "full": {
+              "value": 0.07692307692307693,
+              "unscaled": 0.038461538461538464,
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.09615384615384616,
+              "unscaled": 0.04807692307692308,
+              "threshold": 0.82,
+              "side": "left_limit",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.08653846153846154,
+              "unscaled": 0.04326923076923077,
+              "threshold": 0.85,
+              "side": "left_limit",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.2569230769230769,
+              "unscaled": 0.12846153846153846,
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            }
+          },
+          "selective_context": {
+            "full": {
+              "value": 0.038461538461538464,
+              "unscaled": 0.019230769230769232,
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.17307692307692307,
+              "unscaled": 0.08653846153846154,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.02923076923076924,
+              "unscaled": 0.01461538461538462,
+              "threshold": 0.92,
+              "side": "left_limit",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.1846153846153846,
+              "unscaled": 0.0923076923076923,
+              "threshold": 0.05,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            }
+          },
+          "llmlingua2": {
+            "full": {
+              "value": 0.038461538461538464,
+              "unscaled": 0.019230769230769232,
+              "threshold": 0.0,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.21153846153846154,
+              "unscaled": 0.10576923076923077,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.06346153846153846,
+              "unscaled": 0.03173076923076923,
+              "threshold": 0.65,
+              "side": "left_limit",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.2030769230769231,
+              "unscaled": 0.10153846153846155,
+              "threshold": 0.12,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            }
+          },
+          "salt_summary": {
+            "full": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "no_context": {
+              "value": 0.11538461538461539,
+              "unscaled": 0.057692307692307696,
+              "threshold": 0.5,
+              "side": "at_threshold",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "selective_context": {
+              "value": 0.05192307692307691,
+              "unscaled": 0.025961538461538456,
+              "threshold": 0.87,
+              "side": "left_limit",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "llmlingua2": {
+              "value": 0.0230769230769231,
+              "unscaled": 0.01153846153846155,
+              "threshold": 0.92,
+              "side": "left_limit",
+              "n": 52,
+              "normalization_factor": 2
+            },
+            "salt_summary": {
+              "value": 0.0,
+              "unscaled": 0.0,
+              "threshold": 0.0,
+              "side": "constant_action",
+              "n": 52,
+              "normalization_factor": 2
+            }
+          }
+        },
+        "bootstrap_vs_full": {
+          "no_context": {
+            "a_over_b": [
+              0.07692307692307693,
+              0.4230769230769231
+            ],
+            "b_over_a": [
+              0.0038461538461538325,
+              0.23076923076923078
+            ],
+            "repetitions": 500,
+            "context_clusters": 52,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "selective_context": {
+            "a_over_b": [
+              0.04461538461538461,
+              0.22500000000000003
+            ],
+            "b_over_a": [
+              0.0,
+              0.15384615384615385
+            ],
+            "repetitions": 500,
+            "context_clusters": 52,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "llmlingua2": {
+            "a_over_b": [
+              0.02,
+              0.17230769230769233
+            ],
+            "b_over_a": [
+              0.0,
+              0.1769230769230769
+            ],
+            "repetitions": 500,
+            "context_clusters": 52,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          },
+          "salt_summary": {
+            "a_over_b": [
+              0.07115384615384615,
+              0.4107692307692308
+            ],
+            "b_over_a": [
+              0.0,
+              0.12884615384615383
+            ],
+            "repetitions": 500,
+            "context_clusters": 52,
+            "interpretation": "Descriptive paired cluster-bootstrap percentile interval, not a dominance test."
+          }
+        },
+        "normalization": "2 * sup_t mean[(t-y)(1[p_A<=t]-1[p_B<=t])]; also save unscaled.",
+        "scope": "Small pilot of verbalized probabilities, not true-posterior recovery or a dominance test."
+      },
+      "api_usage": {
+        "prompt_tokens": 189686,
+        "completion_tokens": 510,
+        "total_tokens": 190196
+      },
+      "api_attempts": 52,
+      "api_statuses": {
+        "received": 52
+      },
+      "audit": {
+        "status": "passed",
+        "samples": 52,
+        "forecasts": 260,
+        "unchanged_forecasts_from_previous_run": 208,
+        "source_run": "longbench_binary_sc_llmlingua2_r50_cuda_resume_20261018",
+        "unique_api_responses_checked": 260,
+        "local_compressions_checked": 156,
+        "infogap_cells_independently_checked": 25,
+        "new_api_calls": 0,
+        "checks": [
+          "source immutable files and raw dataset",
+          "complete request identity and raw probability",
+          "query-blind compression cache inputs",
+          "identical historical conditions",
+          "actual Qwen token counts",
+          "independent two-action payoff verification"
+        ]
+      },
+      "replay": {
+        "status": "passed",
+        "new_api_attempts": 0,
+        "socket_connections_blocked": true,
+        "local_model_loading_blocked": true,
+        "cache_hits": 52,
+        "byte_identical_files_sha256": {
+          "predictions.json": "c1f24cb48358ad5fa686559d96d3402cb7f635a327d42b69a3fb5487ad0bd8fd",
+          "metrics.json": "43f21e35e3bd2a1fb1e9415cc8af22ea0627a88f273d3dc6a4e639d2628a3b59",
+          "api_attempts.json": "e51a2c8f309c10c81ea3bd522e6226b9739f304f7b78faa3a8a0b1ad1ad34138"
+        }
+      },
+      "dataset": {
+        "name": "LongBench v1 English yes/no",
+        "split": "test",
+        "dataset_home": "https://github.com/THUDM/LongBench",
+        "source_url": "https://huggingface.co/datasets/zai-org/LongBench/resolve/main/data.zip",
+        "source_sha256": "cb45b11a4133c6bc1d6a44b0f8e701335ff1e543195db1103472e575857f7f64",
+        "license": "MIT (LongBench release; retain source dataset attribution)",
+        "available_rows": 52,
+        "task_counts": {
+          "narrativeqa": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "qasper": {
+            "all_rows": 200,
+            "eligible_rows": 18
+          },
+          "multifieldqa_en": {
+            "all_rows": 150,
+            "eligible_rows": 1
+          },
+          "hotpotqa": {
+            "all_rows": 200,
+            "eligible_rows": 14
+          },
+          "2wikimqa": {
+            "all_rows": 200,
+            "eligible_rows": 19
+          },
+          "musique": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "gov_report": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "qmsum": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "multi_news": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "trec": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "triviaqa": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "samsum": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "passage_count": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "passage_retrieval_en": {
+            "all_rows": 200,
+            "eligible_rows": 0
+          },
+          "lcc": {
+            "all_rows": 500,
+            "eligible_rows": 0
+          },
+          "repobench-p": {
+            "all_rows": 500,
+            "eligible_rows": 0
+          }
+        },
+        "sample_seed": 20261018,
+        "selection_rule": "All reference answers normalize to the same English yes/no. Standard v1 English tasks only; exclude E and v2.",
+        "context_definition": "Unchanged context field; question=input. No reference answers or evidence enter the reader context.",
+        "scope": "Binary subset probability protocol, not official full LongBench scoring. Pooled result describes this fixed task mixture; source tasks reported separately."
+      },
+      "config": {
+        "run_name": "salt_summary_longbench_binary_20261023",
+        "dataset_split": "test",
+        "sample_size": 52,
+        "sample_seed": 20261018,
+        "retained_ratio": 0.5,
+        "provider": "siliconflow",
+        "base_url": "https://api.siliconflow.cn/v1",
+        "api_key_env": "SILICONFLOW_API_KEY",
+        "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+        "temperature": 0.0,
+        "enable_thinking": false,
+        "prediction_max_tokens": 128,
+        "timeout_seconds": 90,
+        "min_interval_seconds": 3.0,
+        "max_api_attempts": 78,
+        "bootstrap_repetitions": 500,
+        "bootstrap_seed": 20261018,
+        "methods": [
+          "full",
+          "no_context",
+          "selective_context",
+          "llmlingua2",
+          "salt_summary"
+        ],
+        "dataset": "longbench_yesno",
+        "compression_device": "cuda",
+        "source_run": "longbench_binary_sc_llmlingua2_r50_cuda_resume_20261018"
+      },
+      "runtime": {
+        "device": "cuda",
+        "hardware": {
+          "gpu_name": "NVIDIA GeForce RTX 5070 Laptop GPU",
+          "cuda_build": "12.8",
+          "compute_capability": [
+            12,
+            0
+          ],
+          "tf32": false
+        },
+        "dtype": "float32",
+        "torch_threads": 4,
+        "upstream_files_sha256": {
+          "selective_context/__init__.py": "35bc30bb1059dd18dc7cc474282abb3f82059ac64486e33a5cfe39bdee1fbb23",
+          "llmlingua/prompt_compressor.py": "472fde8f6f55f273fe94eee40c25c73508f1ed3a7f5d61788636c20fc4be5068",
+          "llmlingua/utils.py": "1ed3eb0734354ea0136a0d98a9366233a872d22ff350fab107e53de45c954e33"
+        },
+        "packages": {
+          "torch": "2.8.0+cu128",
+          "transformers": "4.57.1",
+          "tokenizers": "0.22.1",
+          "accelerate": "1.10.1",
+          "llmlingua": "0.2.2",
+          "selective-context": "0.1.4",
+          "spacy": "3.8.7",
+          "en-core-web-sm": "3.8.0",
+          "numpy": "2.2.6",
+          "nltk": "3.9.2",
+          "tiktoken": "0.12.0",
+          "safetensors": "0.8.0",
+          "sentencepiece": "0.2.1",
+          "click": "8.5.0"
+        },
+        "assets": {
+          "salt_summary": {
+            "model_id": "BAAI/bge-small-en-v1.5",
+            "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+            "source_repository": "https://github.com/oteomamo/SALT",
+            "source_revision": "a8d35ca45ec61db7810363ccbd48a3a55b307d60",
+            "directory": ".cache/salt",
+            "files": {
+              "model/config.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/config.json",
+                "sha256": "094f8e891b932f2000c92cfc663bac4c62069f5d8af5b5278c4306aef3084750",
+                "bytes": 743
+              },
+              "model/model.safetensors": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/model.safetensors",
+                "sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad",
+                "bytes": 133466304
+              },
+              "model/special_tokens_map.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/special_tokens_map.json",
+                "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+                "bytes": 125
+              },
+              "model/tokenizer.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/tokenizer.json",
+                "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+                "bytes": 711396
+              },
+              "model/tokenizer_config.json": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/tokenizer_config.json",
+                "sha256": "9261e7d79b44c8195c1cada2b453e55b00aeb81e907a6664974b4d7776172ab3",
+                "bytes": 366
+              },
+              "model/vocab.txt": {
+                "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/vocab.txt",
+                "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+                "bytes": 231508
+              },
+              "source/salt/__init__.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/__init__.py",
+                "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+                "bytes": 1
+              },
+              "source/salt/engine/__init__.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/__init__.py",
+                "sha256": "5f36c1c37b62578a8e04aab3b2d3bb16af04c0cfe4a80538489e3810cd4154c1",
+                "bytes": 440
+              },
+              "source/salt/engine/compressor.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/compressor.py",
+                "sha256": "1969fb526f81092661bec9d754f3f4ae549a62d6ae0aaa4f8884f4a1fc7021ba",
+                "bytes": 26648
+              },
+              "source/salt/engine/embedder.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/embedder.py",
+                "sha256": "20f2b57d7ac1607c4a15809f2a382b50a49debac1ce9a6bf3d90bdf214418aab",
+                "bytes": 5288
+              },
+              "source/salt/engine/fewshot.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/fewshot.py",
+                "sha256": "db9012d5b14b2806fab7303e965cf9c0287e21b1a8395395eb0fcadf77000fb0",
+                "bytes": 7474
+              },
+              "source/salt/engine/retrieval.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/retrieval.py",
+                "sha256": "f6a826d88a8753813b1dec3d02b05fa7fff0ddd98ecda38e30c024be813a68c6",
+                "bytes": 11641
+              },
+              "source/salt/engine/sentence_filter.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/sentence_filter.py",
+                "sha256": "0188dc5c1b15ec6c8926ab0cb39d41348f3876c253ea9c13a26b6e456e200b15",
+                "bytes": 12346
+              },
+              "source/salt/engine/trie_core.py": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/trie_core.py",
+                "sha256": "e9745c19ec2a87127151144143017e772de78515c2c580376880a1abcdce82d0",
+                "bytes": 24844
+              },
+              "source/LICENSE": {
+                "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/LICENSE",
+                "sha256": "4deff8076cd89a548fb0adf91ed38e9c42abbc4c56a3e543dad06b635dac914e",
+                "bytes": 1073
+              }
+            }
+          }
+        },
+        "selective_context": {
+          "language": "en",
+          "reduce_level": "phrase",
+          "model_type": "gpt2",
+          "overlong_sentence_policy": "lossless whitespace-first split to <=1024 tokens including BOS; one global phrase threshold"
+        },
+        "llmlingua2": {
+          "use_context_level_filter": false,
+          "token_to_word": "mean",
+          "force_tokens": [],
+          "force_reserve_digit": false,
+          "drop_consecutive": false,
+          "max_batch_size": 1,
+          "overlong_chunk_policy": "lossless whitespace-first split only if native chunk exceeds 511 body tokens"
+        },
+        "budget_policy": "one native call at requested retained_ratio; no post-truncation",
+        "salt_summary": {
+          "selector": "legacy",
+          "query": null,
+          "dataset_name": "",
+          "max_keywords_ratio": 0.4,
+          "theme_percentile": 0.9,
+          "min_keywords": 2,
+          "pass1_budget_pct": 0.5,
+          "theme_prec_min": 0.0,
+          "redundancy_thresh": 1.0,
+          "intro_pct": 0.03,
+          "neighbor_window": 0,
+          "query_budget_uncapped": false,
+          "query_budget_pct": 0.75,
+          "branch_floor": 0,
+          "attention_implementation": "eager",
+          "python_hash_seed": 0,
+          "budget_basis": "floor(retained_ratio * words after native clean/split/dedup, before filtering)",
+          "preprocessing": "native prose clean/split/aggressive filter; no dataset-specific anchors or few-shot bypass",
+          "long_sentence_policy": "native split target 400 BGE tokens; native encoder truncation to 512 incl specials; selected sentence text kept",
+          "output_policy": "selected sentences in document order, joined with spaces; no post-truncation"
+        }
+      },
+      "files_sha256": {
+        "salt_longbench_binary.html": "0b6e83256c07f3e3d8ba9bc95dfc0915c007589808af991e9ad01f9003670098",
+        "salt_longbench_binary_predictions.csv": "da02f88e132c564f4e4c7a0a7976cd8695e5a23174db8ebe8a7ffb83de31fb2c",
+        "salt_longbench_binary_metrics.json": "6f87ae705dd853b51513c62e093bf072554ea7094e9011e8b9942b9fa029ade1",
+        "salt_longbench_binary_audit.json": "91a175978fcc9be300ef1d2eda49b214b05feaf7654ff4e8a519b1a00628cb62",
+        "salt_longbench_binary_replay.json": "d5eb2fe08d1143a576958f88d3d6ca43fc92cae94a02d31f54849d47a37f9b82",
+        "salt_longbench_binary_extension.json": "28b28a673685c5e128f562a8b779fe88f75f72b4bd0627db47607ece35b16b42"
+      },
+      "extension": {
+        "source_run": "longbench_binary_sc_llmlingua2_r50_cuda_resume_20261018",
+        "old_methods": [
+          "full",
+          "no_context",
+          "selective_context",
+          "llmlingua2"
+        ],
+        "new_method": "salt_summary",
+        "source_files_sha256": {
+          "manifest.json": "9596f27fa80d4aa3da2ec9c01d9347ded7da1b1052276077a162ab2fb952462d",
+          "examples.json": "5a0430a21816b5491cb4e198a2128f00501af4b791f2b5cc815fa31e7f994409",
+          "predictions.json": "e98ec940fb7428b3e5cac9bac7c1c22d6effd75b79a074fc53efd8f8c3cb5042",
+          "metrics.json": "11e4686004b42cbee86a98ac8329ed7b64e765cb2e33578a1a519f52c2ffebb5",
+          "audit.json": "567cc3c4d1a17bfb35fb19a343c051b24d17115976ec44ae240faca004d156e1",
+          "replay_verification.json": "3bb4daca54862bb8274d7cc66863579067fd7a9d62421f37d977b17efe5ffc6e",
+          "api_attempts.json": "176792af9cbb013998e328d29611579fa2fa55818d233573d3a4ea708e128edf"
+        },
+        "selection": "first N rows of frozen source order",
+        "selected_samples": 52,
+        "source_samples": 52,
+        "source_reader_files_sha256": {
+          "blackwell/client.py": "4d55336d72bdc5f9a15c87926d61d660fb1e68974dbae665613b7801baf312a0",
+          "blackwell/prompts.py": "9f726955a5b8b65a5f68e78cfdee20ab5c57e2392fb0c2fd8d0da3feb93943dc",
+          "blackwell/tokenization.py": "740d6287166e22af0f6ee0ef9c8fb4d26fb2d01b2e59678a381801bcc3a17ce3",
+          "blackwell/metrics.py": "8485f58739ee8e47b3edc4ef97a084d3e48faf70981448590c4fa474a156effb",
+          "blackwell/data.py": "3c4eaf58b3f8ce574d2a5dae04356bcaf599e733327fa626065cc4dbeeb3246c",
+          "run_experiment.py": "5335ef7aa952048e337b142215a069914d63dd76eca648000f005bb36c769fc0"
+        },
+        "verification": {
+          "status": "passed",
+          "samples": 52,
+          "forecasts": 260,
+          "unchanged_forecasts_from_previous_run": 208,
+          "source_run": "longbench_binary_sc_llmlingua2_r50_cuda_resume_20261018",
+          "unique_api_responses_checked": 260,
+          "local_compressions_checked": 156,
+          "infogap_cells_independently_checked": 25,
+          "new_api_calls": 0,
+          "checks": [
+            "source immutable files and raw dataset",
+            "complete request identity and raw probability",
+            "query-blind compression cache inputs",
+            "identical historical conditions",
+            "actual Qwen token counts",
+            "independent two-action payoff verification"
+          ]
+        }
+      },
+      "historical_api_usage": {
+        "prompt_tokens": 826316,
+        "completion_tokens": 2018,
+        "total_tokens": 828334
+      },
+      "historical_api_attempts": 261,
+      "forecast_diagnostics": {
+        "full": {
+          "p_zero_or_one": 9,
+          "wrong_at_zero_or_one": 2,
+          "p_half": 0,
+          "distinct_probabilities": 15
+        },
+        "no_context": {
+          "p_zero_or_one": 10,
+          "wrong_at_zero_or_one": 0,
+          "p_half": 33,
+          "distinct_probabilities": 6
+        },
+        "selective_context": {
+          "p_zero_or_one": 5,
+          "wrong_at_zero_or_one": 1,
+          "p_half": 0,
+          "distinct_probabilities": 12
+        },
+        "llmlingua2": {
+          "p_zero_or_one": 5,
+          "wrong_at_zero_or_one": 1,
+          "p_half": 0,
+          "distinct_probabilities": 12
+        },
+        "salt_summary": {
+          "p_zero_or_one": 10,
+          "wrong_at_zero_or_one": 5,
+          "p_half": 0,
+          "distinct_probabilities": 11
+        }
+      }
+    }
+  },
+  "cross_dataset_question_overlap": [
+    {
+      "a": "salt_hotpotqa_full",
+      "b": "salt_qasper_train",
+      "identical_normalized_questions": 0
+    },
+    {
+      "a": "salt_hotpotqa_full",
+      "b": "salt_longbench_binary",
+      "identical_normalized_questions": 14
+    },
+    {
+      "a": "salt_longbench_binary",
+      "b": "salt_qasper_train",
+      "identical_normalized_questions": 1
+    }
+  ],
+  "overlap_rule": "Lowercase and whitespace-normalized exact question matching only; not exhaustive semantic deduplication."
+}
