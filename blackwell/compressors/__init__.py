@@ -1,6 +1,6 @@
 """本地压缩器的统一入口；导入本包不会导入 PyTorch 或加载权重。"""
 
-LOCAL_METHODS = ("selective_context", "llmlingua2")
+LOCAL_METHODS = ("selective_context", "llmlingua2", "salt_summary")
 
 
 def create_compressor(method, device='cpu'):
@@ -11,6 +11,9 @@ def create_compressor(method, device='cpu'):
     if method == "llmlingua2":
         from .llmlingua2 import LLMLingua2Compressor
         return LLMLingua2Compressor(device=device)
+    if method == "salt_summary":
+        from .salt_summary import SaltSummaryCompressor
+        return SaltSummaryCompressor(device=device)
     raise ValueError(f"Unknown local compressor: {method}")
 
 

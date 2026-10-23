@@ -1,0 +1,86 @@
+{
+  "salt_summary": {
+    "model_id": "BAAI/bge-small-en-v1.5",
+    "revision": "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+    "source_repository": "https://github.com/oteomamo/SALT",
+    "source_revision": "a8d35ca45ec61db7810363ccbd48a3a55b307d60",
+    "directory": ".cache/salt",
+    "files": {
+      "model/config.json": {
+        "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/config.json",
+        "sha256": "094f8e891b932f2000c92cfc663bac4c62069f5d8af5b5278c4306aef3084750",
+        "bytes": 743
+      },
+      "model/model.safetensors": {
+        "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/model.safetensors",
+        "sha256": "3c9f31665447c8911517620762200d2245a2518d6e7208acc78cd9db317e21ad",
+        "bytes": 133466304
+      },
+      "model/special_tokens_map.json": {
+        "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/special_tokens_map.json",
+        "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+        "bytes": 125
+      },
+      "model/tokenizer.json": {
+        "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/tokenizer.json",
+        "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "bytes": 711396
+      },
+      "model/tokenizer_config.json": {
+        "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/tokenizer_config.json",
+        "sha256": "9261e7d79b44c8195c1cada2b453e55b00aeb81e907a6664974b4d7776172ab3",
+        "bytes": 366
+      },
+      "model/vocab.txt": {
+        "url": "https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/5c38ec7c405ec4b44b94cc5a9bb96e735b38267a/vocab.txt",
+        "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+        "bytes": 231508
+      },
+      "source/salt/__init__.py": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/__init__.py",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "bytes": 1
+      },
+      "source/salt/engine/__init__.py": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/__init__.py",
+        "sha256": "5f36c1c37b62578a8e04aab3b2d3bb16af04c0cfe4a80538489e3810cd4154c1",
+        "bytes": 440
+      },
+      "source/salt/engine/compressor.py": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/compressor.py",
+        "sha256": "1969fb526f81092661bec9d754f3f4ae549a62d6ae0aaa4f8884f4a1fc7021ba",
+        "bytes": 26648
+      },
+      "source/salt/engine/embedder.py": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/embedder.py",
+        "sha256": "20f2b57d7ac1607c4a15809f2a382b50a49debac1ce9a6bf3d90bdf214418aab",
+        "bytes": 5288
+      },
+      "source/salt/engine/fewshot.py": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/fewshot.py",
+        "sha256": "db9012d5b14b2806fab7303e965cf9c0287e21b1a8395395eb0fcadf77000fb0",
+        "bytes": 7474
+      },
+      "source/salt/engine/retrieval.py": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/retrieval.py",
+        "sha256": "f6a826d88a8753813b1dec3d02b05fa7fff0ddd98ecda38e30c024be813a68c6",
+        "bytes": 11641
+      },
+      "source/salt/engine/sentence_filter.py": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/sentence_filter.py",
+        "sha256": "0188dc5c1b15ec6c8926ab0cb39d41348f3876c253ea9c13a26b6e456e200b15",
+        "bytes": 12346
+      },
+      "source/salt/engine/trie_core.py": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/salt/engine/trie_core.py",
+        "sha256": "e9745c19ec2a87127151144143017e772de78515c2c580376880a1abcdce82d0",
+        "bytes": 24844
+      },
+      "source/LICENSE": {
+        "url": "https://raw.githubusercontent.com/oteomamo/SALT/a8d35ca45ec61db7810363ccbd48a3a55b307d60/LICENSE",
+        "sha256": "4deff8076cd89a548fb0adf91ed38e9c42abbc4c56a3e543dad06b635dac914e",
+        "bytes": 1073
+      }
+    }
+  }
+}

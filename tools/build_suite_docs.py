@@ -1,5 +1,7 @@
 """从已完成、审计通过的运行生成可分享双语总览；不调用 API。"""
+import argparse
 import html
+import os
 import sys
 from collections import Counter
 from pathlib import Path
@@ -28,7 +30,8 @@ def infogap_matrix(metrics, scale_max):
     """用统一线性色阶展示 G(行, 列)，只读取指标，不重新计算实验结果。"""
     labels = {'full': bi('Full context', '原始上下文'),
               'no_context': bi('No context', '无上下文'),
-              'selective_context': 'Selective Context', 'llmlingua2': 'LLMLingua-2'}
+              'selective_context': 'Selective Context', 'llmlingua2': 'LLMLingua-2',
+              'salt_summary': 'SALT-summary'}
     methods = list(metrics['scores'])
     rows = []
     for a in methods:
@@ -55,11 +58,11 @@ def infogap_matrix(metrics, scale_max):
         '</tr></thead><tbody>' + ''.join(rows) + '</tbody></table></div><div class="gap-legend">' +
         '<div class="gap-gradient"></div><div class="gap-ticks"><span>0.0000</span>' +
         f'<span>{scale_max/2:.4f}</span><span>{scale_max:.4f}</span></div>' + bi(
-        'Linear color scale shared across all three datasets (0 to observed maximum). Values are payoff gaps, not percentages.',
-        '三个数据集共用线性色阶（0 至观测最大值）。数值为收益差，不是百分比。') + '</div>')
+        'Linear color scale shared across every dataset in this report (0 to observed maximum). Values are payoff gaps, not percentages.',
+        '本报告所有数据集共用线性色阶（0 至观测最大值）。数值为收益差，不是百分比。') + '</div>')
 
 
-def publish_detail_report(source, target, metrics, scale_max):
+def publish_detail_report(source, target, metrics, scale_max, provenance=''):
     """只替换分享副本中的矩阵；保留原运行报告与代码身份记录。"""
     methods = list(metrics['scores'])
     old_rows = [[a] + [f"{metrics['infogap'][a][b]['value']:.4f}" for b in methods] for a in methods]
@@ -69,6 +72,7 @@ def publish_detail_report(source, target, metrics, scale_max):
         raise ValueError('Expected exactly one directional InfoGap table in the detail report.')
     page = page.replace(old_matrix, infogap_matrix(metrics, scale_max))
     page = page.replace('</style>', MATRIX_STYLE + '</style>', 1)
+    page = page.replace('</header>', '</header>' + provenance, 1)
     target.write_text(page, encoding='utf-8', newline='\n')
 
 
@@ -77,17 +81,65 @@ def publish_text(source, target):
     target.write_text(source.read_text(encoding='utf-8'), encoding='utf-8', newline='\n')
 
 
+def api_accounting(run):
+    """只合计指定运行的账本；不把历史调用计入补跑费用。"""
+    ledger = read_json(run / 'api_attempts.json')
+    usage = {k: sum(e.get('usage', {}).get(k, 0) for e in ledger)
+             for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')}
+    return ledger, usage
+
+
+def extension_note(receipt, destination):
+    """合并结果必须交代时间差、旧预测复用与 SALT 的具体模式。"""
+    previous = Path(os.path.relpath(ROOT / 'docs/Experiments_20261018/Experiment_Overview.html', destination)).as_posix()
+    return '<section><h2>' + bi('SALT-summary extension', 'SALT-summary 补充实验') + '</h2><p>' + bi(
+        'The four existing conditions retain their October 18 forecasts and compressed texts exactly. '
+        'Only SALT-summary was added on October 23 with the same reader model name, prompts and examples. '
+        'The API ledger counts this extension only; old compressor timings are historical measurements. '
+        'The dates differ, so unobserved changes in the hosted reader remain a temporal confound.',
+        '原有四组条件逐条保留 10 月 18 日的预测和压缩文本，仅在 10 月 23 日补充 SALT-summary。'
+        'Reader 模型名称、提示词和题目保持一致。API 账本只统计补跑调用；旧压缩器耗时为历史记录。'
+        '两次预测日期不同，托管 reader 的潜在变化仍构成时间混杂因素。') + '</p><p>' + bi(
+        'SALT-summary uses the official legacy selector with query=None: topic coverage and sentence selection, '
+        'followed by the original sentence order. Official cleaning, duplicate removal and sentence filtering are retained. '
+        'The nominal 0.5 word budget uses cleaned, deduplicated sentences before aggressive filtering; it is not half of raw input words or Qwen tokens. '
+        'The table measures actual retained Qwen tokens. Overlong sentences may be truncated for embedding scores, but selected original sentences are retained. '
+        'We do not truncate the output to force an exact token ratio. '
+        'This query-blind setting is not a reproduction of the paper’s query-aware QA tables.',
+        'SALT-summary 使用官方 legacy 选择器，显式 query=None：根据主题覆盖选择句子，再按原文顺序输出。'
+        '保留官方清洗、去重和句子过滤。原生 0.5 词数预算的分母为清洗、去重后且激进过滤前的句子，'
+        '不等于原始词数或 Qwen token 数的一半。表中另报实际 Qwen token 保留率。'
+        '超长句的 embedding 打分可能截断，但输出仍保留选中的原句，不靠事后截断强行对齐长度。'
+        '这里是 query-blind 条件，不等于复现论文中利用 query 的 QA 主表。') + '</p><p>' + bi(
+        'Frozen source run: ', '冻结的来源运行：') + '<code>' + html.escape(receipt['source_run']) + '</code></p>' + \
+        f'<a href="{html.escape(previous)}">' + bi('Preserved four-condition report', '保留的四组条件报告') + '</a></section>'
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--configs', nargs='+', help='要发布的已完成运行配置；默认使用原三数据集配置。')
+    parser.add_argument('--destination', help='报告目录；使用 --configs 时必须显式指定，避免覆盖历史结果。')
+    args = parser.parse_args()
+    if args.configs and not args.destination:
+        parser.error('--configs requires --destination to preserve previous reports.')
+    configs = args.configs or DEFAULT_CONFIGS
+    destination = ROOT / (args.destination or 'docs/Experiments_20261018')
+    if args.configs and destination.resolve() == (ROOT / 'docs/Experiments_20261018').resolve():
+        parser.error('Custom runs must be published to a new destination.')
+    return configs, destination
+
+
 def main():
-    destination = ROOT / 'docs/Experiments_20261018'
+    configs, destination = parse_args()
     destination.mkdir(parents=True, exist_ok=True)
     panels, records, overview = [], {}, []
     questions = {}
     # 所有数据集共用观测最大值，避免相同颜色在不同页面表示不同的 gap。
     all_metrics = [read_json(ROOT / 'runs' / read_json(ROOT / c)['run_name'] / 'metrics.json')
-                   for c in DEFAULT_CONFIGS]
+                   for c in configs]
     scale_max = max(gap['value'] for metrics in all_metrics
                     for row in metrics['infogap'].values() for gap in row.values())
-    for index, config_path in enumerate(DEFAULT_CONFIGS):
+    for index, config_path in enumerate(configs):
         config = read_json(ROOT / config_path)
         name = Path(config_path).stem
         run = ROOT / 'runs' / config['run_name']
@@ -100,9 +152,10 @@ def main():
             raise ValueError('Publish only completed, audited, replay-verified experiments.')
         rows = read_json(run / 'predictions.json')
         questions[name] = {' '.join(r['question'].lower().split()) for r in rows}
-        ledger = read_json(run / 'api_attempts.json')
-        usage = {k: sum(e.get('usage', {}).get(k, 0) for e in ledger)
-                 for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')}
+        ledger, usage = api_accounting(run)
+        extension_path = run / 'extension_receipt.json'
+        extension = read_json(extension_path) if extension_path.exists() else None
+        provenance = extension_note(extension, destination) if extension else ''
         title = manifest['identity']['dataset']['name']
         copied = {}
         for source, suffix in [('report.html','.html'), ('predictions.csv','_predictions.csv'),
@@ -110,7 +163,7 @@ def main():
                                ('replay_verification.json','_replay.json')]:
             target = destination / (name + suffix)
             if source == 'report.html':
-                publish_detail_report(run / source, target, metrics, scale_max)
+                publish_detail_report(run / source, target, metrics, scale_max, provenance)
             else:
                 publish_text(run / source, target)
             copied[target.name] = file_hash(target)
@@ -119,6 +172,14 @@ def main():
                          'audit':audit, 'replay':replay,
                          'dataset':manifest['identity']['dataset'], 'config':config,
                          'runtime':manifest['identity']['local_compressors'], 'files_sha256':copied}
+        if extension:
+            target = destination / (name + '_extension.json')
+            publish_text(extension_path, target)
+            copied[target.name] = file_hash(target)
+            source_ledger, source_usage = api_accounting(ROOT / 'runs' / extension['source_run'])
+            records[name]['extension'] = extension
+            records[name]['historical_api_usage'] = source_usage
+            records[name]['historical_api_attempts'] = len(source_ledger)
         receipt = run / 'continuation_receipt.json'
         if receipt.exists():
             target = destination / (name + '_continuation.json')
@@ -130,7 +191,7 @@ def main():
                          f"{metrics['positive_labels']} / {metrics['n']-metrics['positive_labels']}",len(ledger)])
         score_rows = []
         for method,s in metrics['scores'].items():
-            score_rows.append([method, f"{s['accuracy']:.3f}", f"{s['brier']:.4f}",
+            score_rows.append([method.replace('salt_summary', 'SALT-summary'), f"{s['accuracy']:.3f}", f"{s['brier']:.4f}",
                                f"{s['brier_delta_vs_full']:+.4f}",f"{s['log_loss']:.4f}",
                                f"{s['pooled_retained_ratio']:.1%}"])
         interval_rows = [[m, f"{b['a_over_b'][0]:.4f}–{b['a_over_b'][1]:.4f}",
@@ -150,13 +211,25 @@ def main():
                 'These are verbalized probabilities with a finite observed granularity. Log loss is particularly sensitive to wrong 0/1 forecasts and the stated clipping convention. A value of 0.5 is counted as reported, not automatically interpreted as abstention.',
                 '这些是模型直接报告的概率，在样本中呈有限粒度。Log loss 对答错的 0/1 预测及前述截断约定尤其敏感。0.5 按原始数值统计，不自动解释为拒答。')+'</p></details>'
         timing = sum(s['compression_seconds_unique_total'] for s in metrics['scores'].values())
+        if extension:
+            salt_minutes = metrics['scores']['salt_summary']['compression_seconds_unique_total'] / 60
+            accounting = bi(
+                f"New SALT reader calls: {len(ledger)} attempts, {usage['prompt_tokens']:,} input + {usage['completion_tokens']:,} output tokens. "
+                f"New SALT compression: {salt_minutes:.1f} minutes. Reused old compressor timings: {timing/60-salt_minutes:.1f} minutes. "
+                f"Historical four-condition source run: {len(source_ledger)} attempts and {source_usage['total_tokens']:,} tokens (excluded from new usage).",
+                f"新增 SALT reader：{len(ledger)} 次尝试，输入 {usage['prompt_tokens']:,}、输出 {usage['completion_tokens']:,} tokens。"
+                f"新增 SALT 压缩累计 {salt_minutes:.1f} 分钟；旧压缩器记录为 {timing/60-salt_minutes:.1f} 分钟，本轮未重跑。"
+                f"历史四组来源运行有 {len(source_ledger)} 次尝试、{source_usage['total_tokens']:,} tokens，不计入补跑用量。")
+        else:
+            accounting = bi(
+                f"API: {usage['prompt_tokens']:,} input + {usage['completion_tokens']:,} output tokens. Unique local compression: {timing/60:.1f} minutes, excluding initialization. {preflight['contexts_with_length_adapter']} contexts needed the recorded length adapter.",
+                f"API：输入 {usage['prompt_tokens']:,}、输出 {usage['completion_tokens']:,} tokens。独立本地压缩累计 {timing/60:.1f} 分钟，不含初始化。{preflight['contexts_with_length_adapter']} 份上下文使用了已记录的长度适配。")
         panels.append(f'<section class="dataset" id="d{index}"'+(' hidden' if index else '')+'><h2>'+html.escape(title)+'</h2>'+table(
             ['Method','Accuracy ↑','Brier ↓','Δ Brier ↓','Log loss ↓',bi('Retained','保留率')],score_rows)+diagnostic_html+
-            '<p>'+bi(f"API: {usage['prompt_tokens']:,} input + {usage['completion_tokens']:,} output tokens. Unique local compression: {timing/60:.1f} minutes, excluding initialization. {preflight['contexts_with_length_adapter']} contexts needed the recorded length adapter.",
-                     f"API：输入 {usage['prompt_tokens']:,}、输出 {usage['completion_tokens']:,} tokens。独立本地压缩累计 {timing/60:.1f} 分钟，不含初始化。{preflight['contexts_with_length_adapter']} 份上下文使用了已记录的长度适配。")+'</p><h3>'+bi('Directional InfoGap matrix','双向 InfoGap 矩阵')+'</h3>'+infogap_matrix(metrics, scale_max)+'<h3>'+bi('Descriptive uncertainty','描述性波动')+'</h3>'+table(
+            '<p>'+accounting+'</p>'+provenance+'<h3>'+bi('Directional InfoGap matrix','双向 InfoGap 矩阵')+'</h3>'+infogap_matrix(metrics, scale_max)+'<h3>'+bi('Descriptive uncertainty','描述性波动')+'</h3>'+table(
                          ['Method','G(Full, method): 95%','G(method, Full): 95%'],interval_rows)+
-            '<p>'+bi('Paired context-cluster bootstrap, 500 repetitions. These percentile intervals describe pilot variability; they are not a validated dominance test.',
-                     '按上下文成组的配对 bootstrap，500 次。百分位区间描述探索实验的波动，不是经过验证的支配检验。')+'</p><div class="grid">'+''.join(
+            '<p>'+bi(f"Paired context-cluster bootstrap, {config['bootstrap_repetitions']} repetitions. These percentile intervals describe pilot variability; they are not a validated dominance test.",
+                     f"按上下文成组的配对 bootstrap，{config['bootstrap_repetitions']} 次。百分位区间描述探索实验的波动，不是经过验证的支配检验。")+'</p><div class="grid">'+''.join(
                 '<div class="card">'+decision_curve(p,m)+'</div>' for m,p in metrics['payoff_curves_vs_full'].items())+'</div><p>'+bi(
                 'Positive curve: full context has higher payoff; negative: the compared method has higher payoff. Each panel has its own vertical scale. Hover for threshold and jump-side values.',
                 '曲线正值表示原文收益更高，负值表示对比方法更高。各图纵轴刻度独立。悬停查看阈值及跳跃左右侧取值。')+'</p>'+f'<p><a href="{name}.html">'+bi('Open full report and every example','打开完整报告与逐题案例')+f'</a> · <a href="{name}_predictions.csv">CSV</a> · <a href="{name}_metrics.json">Metrics JSON</a></p></section>')
@@ -165,25 +238,28 @@ def main():
     write_json(destination / 'summary.json', {'runs':records,'cross_dataset_question_overlap':overlaps,
                'overlap_rule':'Lowercase and whitespace-normalized exact question matching only; not exhaustive semantic deduplication.'})
     publish_text(destination / 'summary.json', destination / 'summary.json')
-    options=''.join(f'<option value="d{i}">{html.escape(records[Path(c).stem]["dataset"]["name"])}</option>' for i,c in enumerate(DEFAULT_CONFIGS))
+    options=''.join(f'<option value="d{i}">{html.escape(records[Path(c).stem]["dataset"]["name"])}</option>' for i,c in enumerate(configs))
     first = next(iter(records.values()))
     runtime = first['runtime']
+    has_salt = 'salt_summary' in first['metrics']['scores']
+    method_count = len(first['metrics']['scores'])
     setup = '<section><h2>'+bi('Fixed experimental setup','固定实验设置')+'</h2>'+table(
         [bi('Component','组件'),bi('Setting','设置')],[
         ['API reader',html.escape(first['config']['model'])+' · temperature 0 · thinking off'],
         [bi('Local compression','本地压缩'),html.escape(runtime['hardware']['gpu_name'])+' · float32'],
         ['PyTorch / CUDA',html.escape(runtime['packages']['torch'])+' / '+html.escape(runtime['hardware']['cuda_build'])],
         ['Selective Context','GPT-2 · phrase-level selection'],
-        ['LLMLingua-2','XLM-R-large · MeetingBank checkpoint']])+ '<p>'+bi(
-            'The GPU runs the two text compressors locally. The API reader sees the resulting context and question, and returns a JSON p_yes forecast. No model training or probability calibration is performed in this run.',
-            'GPU 在本机运行两个文本压缩器；API reader 接收压缩后的上下文和问题，返回 JSON 格式的 p_yes。本轮没有训练模型，也没有另做概率校准。')+'</p></section>'
+        ['LLMLingua-2','XLM-R-large · MeetingBank checkpoint']] + (
+        [['SALT-summary', 'BGE-small-en-v1.5 · official legacy · query=None']] if has_salt else []))+ '<p>'+bi(
+            'The text compressors run locally on GPU. The API reader sees the resulting context and question, and returns a JSON p_yes forecast. No model training or probability calibration is performed. In the SALT extension, the old four conditions are reused rather than recomputed.',
+            '文本压缩器在本机 GPU 上运行；API reader 接收压缩后的上下文和问题，返回 JSON 格式的 p_yes。没有训练模型，也没有另做概率校准。在 SALT 补充实验中，原四组条件直接复用，不重新计算。')+'</p></section>'
     explanation = '<section><h2>'+bi('How to read the experiment','如何阅读实验')+'</h2><p>'+bi(
         'G(Full, C) is the largest empirical decision-payoff advantage of full context over compressor C; G(C, Full) measures the reverse advantage. Both may be positive. Brier and log loss evaluate probabilistic forecasts; accuracy uses a 0.5 threshold. A nominal 50% retention setting does not imply equal realized token budgets.',
         'G(原文,C) 是原文相对压缩方法 C 的最大经验决策收益优势，G(C,原文) 衡量反向优势；两者可能同时大于零。Brier 和 log loss 评价概率预测，Accuracy 使用 0.5 阈值。名义保留率相同，不代表实际 token 预算相同。')+'</p><p>'+bi(
         'HotpotQA is the larger multi-paragraph pilot, not a long-context benchmark. QASPER uses full papers from train and a conservative text-evidence filter (192 Yes / 91 No); dev/test are reserved. LongBench is a 52-item binary subset of the standard English release; its pooled number describes this task mixture, not the official full benchmark. Dataset results remain separate.',
         'HotpotQA 是样本较多的多段落探索实验，不是长上下文 benchmark。QASPER 使用 train 全文及保守的文字证据筛选（192 Yes / 91 No），dev/test 保留。LongBench 是标准英文版的 52 题二元子集，其汇总值描述该任务混合，不是官方完整 benchmark 分数。各数据集分别报告。')+'</p><p>'+bi(
-        'All numbers use one fixed API reader and its verbalized p(Yes), not verified Bayesian posteriors. Compressors never receive questions or labels. InfoGap is a normalized payoff gap, not bits or a percentage of information retained. The experiment measures forecast usefulness on these question distributions; it does not prove universal Blackwell informativeness of the compressed text.',
-        '所有结果使用同一个 API reader 直接报告的 p(Yes)，不预设为真实贝叶斯后验。压缩器看不到问题或标签。InfoGap 是归一化的收益差，不是比特数或信息保留百分比。本实验测量这些问题分布下的预测价值，不能证明压缩文本对所有未来问题的 Blackwell 信息性。')+'</p></section>'
+        'All numbers use one API reader model name and its verbalized p(Yes), not verified Bayesian posteriors. Compressors never receive questions or labels. InfoGap is a normalized payoff gap, not bits or a percentage of information retained. The experiment measures forecast usefulness on these question distributions; it does not prove universal Blackwell informativeness of the compressed text.',
+        '所有结果使用相同 API reader 模型名称直接报告的 p(Yes)，不预设为真实贝叶斯后验。压缩器看不到问题或标签。InfoGap 是归一化的收益差，不是比特数或信息保留百分比。本实验测量这些问题分布下的预测价值，不能证明压缩文本对所有未来问题的 Blackwell 信息性。')+'</p></section>'
     explanation += '<section><h2>'+bi('Question overlap across datasets','跨数据集问题重叠')+'</h2>'+table(
         ['A','B',bi('Identical questions','相同问题')],
         [[r['a'],r['b'],r['identical_normalized_questions']] for r in overlaps])+'<p>'+bi(
@@ -201,16 +277,20 @@ def main():
         ['5','blackwell/metrics.py',bi('Exact threshold scan, both directional gaps and probability scores.','精确扫描阈值，计算双向差距和概率评分。')],
         ['6','tools/run_current_suite.py',bi('Run datasets sequentially through compression, prediction and audits; avoid shared API rate limits.','按数据集串行执行压缩、预测和审计，避免共享 API 配额限流。')],
         ['7','tools/audit_run.py / verify_offline_replay.py',bi('Inspect actual requests and replay cached results with network/model loading blocked.','核验实际请求，并在禁止网络和加载模型的情况下重放缓存。')]])+'<p>'+bi(
-        'Full local records live in runs/&lt;run_name&gt;/. Shareable reports and probability tables live in docs/Experiments_20261018/. Old runs are preserved. CPU startup runs were interrupted for the CUDA migration and are not part of these result tables. Initial overlapping API readers triggered HTTP 429; execution was serialized while preserving caches. The API ledger retains failed and interrupted attempts; all reported forecasts have validated responses.',
-        '完整本地记录位于 runs/&lt;run_name&gt;/，可分享报告和概率表位于 docs/Experiments_20261018/。旧实验保留。切换 CUDA 前中止的 CPU 试运行不计入这些结果表。最初并行 reader 触发 HTTP 429，随后保留缓存改为串行。API 账本保留失败和中断尝试，所有用于指标的预测均有核验通过的响应。')+'</p></section>'
+        'Full local records live in runs/&lt;run_name&gt;/. Shareable reports and probability tables live beside this overview; the previous four-condition snapshot remains in docs/Experiments_20261018/. Old runs are preserved. CPU startup runs were interrupted for the CUDA migration and are not part of these result tables. Initial overlapping API readers triggered HTTP 429; execution was serialized while preserving caches. The API ledger retains failed and interrupted attempts; all reported forecasts have validated responses.',
+        '完整本地记录位于 runs/&lt;run_name&gt;/，可分享报告和概率表位于当前总览目录，原四组快照仍保留在 docs/Experiments_20261018/。旧实验保留。切换 CUDA 前中止的 CPU 试运行不计入这些结果表。最初并行 reader 触发 HTTP 429，随后保留缓存改为串行。API 账本保留失败和中断尝试，所有用于指标的预测均有核验通过的响应。')+'</p></section>'
     for name, record in records.items():
         if 'continuation' in record:
             c = record['continuation']
             guide += '<section><details><summary>'+bi('Continuation audit: ','续跑审计：')+html.escape(name)+'</summary><p>'+bi(
                 f"Rate-limit retries exhausted the original attempt cap. A separate run preserved {c['source_complete_questions']} completed questions, {c['copied_api_responses']} API responses and the entire ledger. Only the run name and attempt cap changed ({c['source_config']['max_api_attempts']} → {c['continuation_config']['max_api_attempts']}); data, code, prompts, model and compression outputs stayed fixed.",
                 f"限流重试耗尽原尝试上限后，单独建立续跑记录，保留 {c['source_complete_questions']} 道已完成题目、{c['copied_api_responses']} 份 API 响应和全部账本。仅运行名和尝试上限改变（{c['source_config']['max_api_attempts']} → {c['continuation_config']['max_api_attempts']}）；数据、代码、提示词、模型和压缩输出保持一致。")+f'</p><a href="{name}_continuation.json">'+bi('Verified cache transfer receipt','已核验的缓存转移记录')+'</a></details></section>'
-    page = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackwell Compaction · Three-dataset experiment</title><style>'+STYLE+MATRIX_STYLE+'[hidden]{display:none!important}</style><body><header><div class="toolbar"><button onclick="language(\'en\')">English</button><button onclick="language(\'zh\')">中文</button></div><h1>'+bi('Compaction and decision informativeness','上下文压缩与决策信息性')+'</h1><p>'+bi('Three datasets · Four paired conditions · Nominal 50% retention · CUDA compression','三个数据集 · 四组配对输入 · 名义保留率 50% · CUDA 压缩')+'</p></header><section>'+table(
-        ['Dataset','Questions','Contexts',bi('Mean context tokens','平均上下文 token'),'Yes / No','API attempts'],overview)+'<p><label>'+bi('Inspect dataset: ','查看数据集：')+'<select onchange="selectDataset(this.value)">'+options+'</select></label></p></section>'+''.join(panels)+setup+explanation+guide+'<section><h2>'+bi('Sources','来源')+'</h2><p><a href="https://hotpotqa.github.io/">HotpotQA · CC BY-SA 4.0</a> · <a href="https://aclanthology.org/2021.naacl-main.365/">QASPER · CC BY 4.0</a> · <a href="https://github.com/THUDM/LongBench">LongBench</a> · <a href="https://arxiv.org/html/2507.12094v2">InfoGap</a></p></section><script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}function selectDataset(x){document.querySelectorAll(".dataset").forEach(el=>el.hidden=el.id!==x)}</script></body></html>'
+    if has_salt:
+        guide += '<section><h2>' + bi('Reading the SALT extension code', '如何阅读 SALT 补充代码') + '</h2><p>' + bi(
+            'blackwell/compressors/salt_summary.py wraps the frozen official selector. tools/extend_with_salt.py copies each source row, appends only the SALT condition, and checks that the old conditions stay identical. The extension receipt records the source run and file hashes; the API ledger contains only new attempts.',
+            'blackwell/compressors/salt_summary.py 封装固定版本的官方选择器。tools/extend_with_salt.py 逐条复制来源样本，只新增 SALT 条件，并核验旧条件完全一致。extension_receipt 记录来源运行及文件哈希，API 账本只包含新增尝试。') + '</p></section>'
+    page = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Blackwell Compaction · Paired experiment</title><style>'+STYLE+MATRIX_STYLE+'[hidden]{display:none!important}</style><body><header><div class="toolbar"><button onclick="language(\'en\')">English</button><button onclick="language(\'zh\')">中文</button></div><h1>'+bi('Compaction and decision informativeness','上下文压缩与决策信息性')+'</h1><p>'+bi(f'{len(configs)} datasets · {method_count} paired conditions · Nominal 50% retention · CUDA compression',f'{len(configs)} 个数据集 · {method_count} 组配对输入 · 名义保留率 50% · CUDA 压缩')+'</p></header><section>'+table(
+        ['Dataset','Questions','Contexts',bi('Mean context tokens','平均上下文 token'),'Yes / No',bi('New API attempts' if has_salt else 'API attempts','新增 API 尝试' if has_salt else 'API 尝试')],overview)+'<p><label>'+bi('Inspect dataset: ','查看数据集：')+'<select onchange="selectDataset(this.value)">'+options+'</select></label></p></section>'+''.join(panels)+setup+explanation+guide+'<section><h2>'+bi('Sources','来源')+'</h2><p><a href="https://hotpotqa.github.io/">HotpotQA · CC BY-SA 4.0</a> · <a href="https://aclanthology.org/2021.naacl-main.365/">QASPER · CC BY 4.0</a> · <a href="https://github.com/THUDM/LongBench">LongBench</a> · <a href="https://arxiv.org/html/2507.12094v2">InfoGap</a> · <a href="https://arxiv.org/abs/2607.17486">SALT paper</a> · <a href="https://github.com/oteomamo/SALT">SALT official code</a></p></section><script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}function selectDataset(x){document.querySelectorAll(".dataset").forEach(el=>el.hidden=el.id!==x)}</script></body></html>'
     (destination / 'Experiment_Overview.html').write_text(page, encoding='utf-8', newline='\n')
     print(destination / 'Experiment_Overview.html')
 

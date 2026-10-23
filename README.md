@@ -12,6 +12,7 @@
 
 ## 先看结果与导读
 
+- **[SALT-summary 补充实验](docs/Experiments_20261023_SALT/Experiment_Overview.html)**：相同三个数据集，追加 query-blind SALT-summary；5×5 InfoGap 矩阵、实际 token 保留率、新旧调用分开统计。原四组预测和下方历史报告保留。
 - **[三数据集实验与代码导读](docs/Experiments_20261018/Experiment_Overview.html)**：HotpotQA 458 题、QASPER 283 题、LongBench 52 题；四组输入、双向 InfoGap、收益差曲线、概率评分与逐题审计。
 - **[数据集与代码导读](docs/Datasets_and_Experiment_Guide.html)**：HotpotQA 输入规则、QASPER 的真实可用规模、代码阅读顺序，中英文切换，默认英文。
 - **[HotpotQA 30 条配对实验](docs/HotpotQA_Results.html)**：原文、空上下文、Selective Context、LLMLingua-2；可逐条检查原文、压缩文本与概率。
@@ -95,6 +96,47 @@ QASPER 在完成 282/283 题后因限流重试达到 1,350 次尝试上限；Lon
 
 如 Windows 阻止 `.ps1`，可用 `powershell -ExecutionPolicy Bypass -File .\run.ps1 -Mode Test`。`setup.ps1` 可用 `-PythonPath` 指定 Python；当前本地压缩环境验证于 Python 3.12。
 
+## 追加 SALT-summary，而不重跑旧四组
+
+`blackwell/compressors/salt_summary.py` 是一个独立压缩模块，接口仍为 `compress(context_text, retained_ratio)`。它使用固定版本的官方 **legacy** 选择器：清洗、分句与去重 → 主题组织与句子筛选 → 按原文顺序输出。所有 query 相关参数均为 `None`，模块不接收问题、标签或 reader 输出。模型是 BGE-small-en-v1.5；源码与权重版本、哈希保存在 `configs/salt_models.lock.json`，准备脚本负责下载并校验。数据、模型和缓存仍在 D 盘，无需更换现有 PyTorch/Transformers。
+
+SALT 的名义 `0.5` 预算按**清洗去重后、激进过滤前的句子词数**计算，不是原文词数或 Qwen token 的一半。保留官方清洗和过滤后，实际长度可能明显偏离 50%；报告会如实展示。超长句在编码打分时可能截断，但选中句子的输出文本不因此截尾。该 query-blind 条件不是对论文 query-aware QA 主表的直接复现。
+
+```powershell
+# 保证官方实现的集合遍历次序可重复；每次启动新 Python 进程前设置。
+$env:PYTHONHASHSEED = '0'
+
+# 下载固定版本的公开代码和权重；不调用付费 reader。
+.\.venv\Scripts\python.exe tools/prepare_salt.py
+# 已有资产时可只校验：.\.venv\Scripts\python.exe tools/prepare_salt.py --check-only
+
+# 先运行小样本；只有 predict 阶段在缓存缺失时调用付费 API。
+.\.venv\Scripts\python.exe tools/extend_with_salt.py --config configs/salt_smoke.json --stage compress
+.\.venv\Scripts\python.exe tools/extend_with_salt.py --config configs/salt_smoke.json --stage predict
+.\.venv\Scripts\python.exe tools/extend_with_salt.py --config configs/salt_smoke.json --stage audit
+.\.venv\Scripts\python.exe tools/extend_with_salt.py --config configs/salt_smoke.json --stage replay
+
+# 三个正式数据集依次处理，避免 API 并发限流。
+$saltConfigs = @('configs/salt_hotpotqa_full.json', 'configs/salt_qasper_train.json', 'configs/salt_longbench_binary.json')
+foreach ($saltConfig in $saltConfigs) {
+    .\.venv\Scripts\python.exe tools/extend_with_salt.py --config $saltConfig --stage compress
+    if ($LASTEXITCODE -ne 0) { throw 'Compression failed; inspect the run before continuing.' }
+    .\.venv\Scripts\python.exe tools/extend_with_salt.py --config $saltConfig --stage predict
+    if ($LASTEXITCODE -ne 0) { throw 'Prediction failed; inspect the run before continuing.' }
+    .\.venv\Scripts\python.exe tools/extend_with_salt.py --config $saltConfig --stage audit
+    if ($LASTEXITCODE -ne 0) { throw 'Audit failed.' }
+    .\.venv\Scripts\python.exe tools/extend_with_salt.py --config $saltConfig --stage replay
+    if ($LASTEXITCODE -ne 0) { throw 'Offline replay failed.' }
+}
+
+# 发布到新目录；原报告保留。此步骤不调用 API。
+.\.venv\Scripts\python.exe tools/build_suite_docs.py --configs $saltConfigs --destination docs/Experiments_20261023_SALT
+```
+
+补跑主流程集中在 `tools/extend_with_salt.py`：核验来源运行和代码身份 → 复制原样本及四组结果 → 只新增 SALT 压缩与预测 → 重新计算五组指标 → 审计、断网重放。每个正式数据集使用独立新运行名，`extension_receipt.json` 记录来源文件哈希与旧预测完全一致性；新 API 账本只记录补跑调用。可先读这一小工具，再读压缩模块和原有指标模块。
+
+**时间差需要注意**：原四组预测采集于 10 月 18 日，SALT 在 10 月 23 日补跑。虽保持模型名称、提示词和配对题目一致，托管 reader 可能存在无法观察的版本或服务变化。因此这些结果仍有时间混杂，不能把差异全部归因于压缩方法。旧 SC/LLMLingua-2 压缩耗时是复用的历史记录，报告与新增 SALT 耗时分开列出。
+
 ## 不花 API 费用的审计与复跑
 
 ```powershell
@@ -157,7 +199,7 @@ SC 0.1.4 的旧 spaCy / click 依赖约束不兼容当前环境，安装时显�
 - [HotpotQA（EMNLP 2018）](https://hotpotqa.github.io/) · CC BY-SA 4.0；原服务器不可用时使用已固定 revision 和 SHA-256 的 [Hugging Face 镜像](https://huggingface.co/datasets/hotpotqa/hotpot_qa)。
 - [QASPER（NAACL 2021）](https://aclanthology.org/2021.naacl-main.365/) · CC BY 4.0；[官方 evaluator](https://github.com/allenai/qasper-led-baseline/blob/main/scripts/evaluator.py)。
 - [BoolQ](https://github.com/google-research-datasets/boolean-questions) · CC BY-SA 3.0。
-- [Selective Context](https://github.com/liyucheng09/Selective_Context)、[LLMLingua-2](https://github.com/microsoft/LLMLingua)。
+- [Selective Context](https://github.com/liyucheng09/Selective_Context)、[LLMLingua-2](https://github.com/microsoft/LLMLingua)、[SALT](https://github.com/oteomamo/SALT)。
 - [InfoGap · Feng, Qian, Tang](https://arxiv.org/html/2507.12094v2)。
 
 报告中的数据摘录及实验性压缩改写遵循对应数据许可，不能将数据许可误认为代码许可。原始数据、模型、密钥和 API 响应缓存均由 Git 忽略；公开 HTML、统计和概率表保存在 `docs/`。

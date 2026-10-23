@@ -28,11 +28,14 @@ def configure_cache():
 
 
 def asset_spec(method):
-    return read_json(ROOT / "configs" / "local_models.lock.json")[method]
+    lock_name = "salt_models.lock.json" if method == "salt_summary" else "local_models.lock.json"
+    return read_json(ROOT / "configs" / lock_name)[method]
 
 
 def model_directory(method):
     folder = ROOT / asset_spec(method)["directory"]
+    if method == "salt_summary":
+        folder = folder / "model"
     if not (folder / "model.safetensors").exists():
         raise RuntimeError("Local model missing. Run .\\setup-local.ps1, then prepare_local_models.py.")
     return folder
@@ -71,7 +74,7 @@ def runtime_identity(methods, device='cpu'):
                                    ("llmlingua", "llmlingua/utils.py")]:
         path = importlib.metadata.distribution(distribution).locate_file(relative)
         upstream_files[relative] = file_digest(path)
-    return {"device": device, "hardware": hardware, "dtype": "float32", "torch_threads": 4,
+    identity = {"device": device, "hardware": hardware, "dtype": "float32", "torch_threads": 4,
             "upstream_files_sha256": upstream_files,
             "packages": versions, "assets": {m: asset_spec(m) for m in methods},
             "selective_context": {"language": "en", "reduce_level": "phrase", "model_type": "gpt2",
@@ -81,6 +84,10 @@ def runtime_identity(methods, device='cpu'):
                            "drop_consecutive": False, "max_batch_size": 1,
                            "overlong_chunk_policy": "lossless whitespace-first split only if native chunk exceeds 511 body tokens"},
             "budget_policy": "one native call at requested retained_ratio; no post-truncation"}
+    if "salt_summary" in methods:
+        from .salt_summary import SALT_SETTINGS
+        identity["salt_summary"] = SALT_SETTINGS
+    return identity
 
 
 def prepare_torch(device='cpu'):
