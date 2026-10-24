@@ -181,7 +181,7 @@ def function_card(path, node, lines, index):
         stop = min(start+18,node.end_lineno)
         source = '\n'.join(lines[start:stop])
         digest = hashlib.sha256(source.encode()).hexdigest()
-        code = '\n'.join(f'<span class="line-number">{i+1:>3}</span> '+html.escape(lines[i]) for i in range(start,stop))
+        code = '\n'.join(f'<span class="line-number">{i+1:>3}</span>'+(' '+html.escape(lines[i]) if lines[i] else '') for i in range(start,stop))
         card += f'<p class="muted">{path} · {start+1}–{stop}</p><pre data-code-sha256="{digest}"><code>{code}</code></pre>'
     return card+'</article>'
 

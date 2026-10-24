@@ -44,6 +44,26 @@ LongBench：从固定 SHA-256 的官方标准 v1 归档筛选所有参考答案�
 
 长度适配：仅对超过 GPT-2 1024-token 上限的 SC 长句进行保留全部字符的分段，再使用全文统一短语阈值；仅对 LLMLingua-2 原生分块重新分词后超过 511 正文 token 的块进行同类分段。正常输入保留原生分块。QASPER 的 233 篇论文中 4 篇需要适配，HotpotQA/LongBench 均不需要。适配规则、GPU 型号、CUDA/PyTorch 版本都写入运行清单。GPU 耗时经过同步，不把异步提交时间当成实际推理时间。
 
+## 预算对齐实验（2026-10-24）
+
+本轮保持原有三组题目，使用八个条件：`full`、`no_context`、`head_tail`、`selective_context`、`llmlingua2`、`salt_summary`、`llm_summary`、`telegrapher`。两个新增 API 压缩器共用 DeepSeek-V3.2，reader 仍是上面的 Qwen。普通摘要输出自然语言；Telegrapher 使用固定 commit 的官方 v5 语法提示词及随附许可。
+
+先以原文 Qwen token 数的 50% 为上限。本地压缩器最多按长度试探 8 次原生比例，API 压缩器固定生成一稿；都不看问题、标签或答题效果。若 API 达到输出上限，仅对相同提示词提高一次输出上限重试，最多 32768；截断稿不参与评测，失败响应及尝试仍留档。reader 不采用这个重试。
+
+取得各方法的完整草稿后，对超长稿执行首尾裁剪，再取同一上下文最短的可行长度，进一步裁剪其他压缩条件，直到六个条件的实际 Qwen token 数完全相同。`full` 和 `no_context` 保持原样。**共同长度可能明显低于 50%；本轮测量的是压缩器与裁剪适配器的组合，并未在最终共同预算下重新运行本地算法。** 报告分别展示原生草稿、初次上限裁剪、最终等长后的长度和裁剪比例，不把短输出填长。
+
+InfoGap 保持精确断点、左侧极限及双向计算。另加十个等宽箱的概率可靠性图、ECE、极端错判、概率 0.5 聚集及 log loss 对数值截断的敏感性。这些仅作诊断，不校准或修改原始预测概率。
+
+```powershell
+$env:PYTHONHASHSEED = "0"
+# 三个 smoke 配置各取 2 题。缓存不存在时才调用 API。
+.\.venv\Scripts\python.exe tools/run_aligned_suite.py --config configs/aligned_hotpotqa_smoke.json --stage all
+# 正式配置分别是 aligned_hotpotqa / aligned_qasper / aligned_longbench.json。
+.\.venv\Scripts\python.exe tools/run_aligned_suite.py --config configs/aligned_hotpotqa.json --stage all
+```
+
+阶段可选 `prepare`、`local`、`rewrite`、`predict`、`audit` 或 `all`。同一配置可从缓存续跑；更改代码、配置或样本时必须换 `run_name`。本轮正式输出在 `runs/aligned50_<dataset>_20261024_v2/`。此前失败或完成的运行都保留；`cache_reuse_provenance.json` 记录经核验复用的旧结果哈希、原计算时间和 API 账本。原始数据、密钥、模型和运行缓存不提交 GitHub。
+
 ## 第一次运行
 
 在仓库根目录打开 PowerShell。数据、环境、模型及缓存都留在仓库所在的 D 盘，不上传 GitHub。

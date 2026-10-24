@@ -1254,7 +1254,7 @@ def parse_probability(text):
 <span class="line-number"> 52</span>         key = os.environ.get(self.config[&quot;api_key_env&quot;], &quot;&quot;).strip()
 <span class="line-number"> 53</span>         if not key:
 <span class="line-number"> 54</span>             raise RuntimeError(f&quot;Set the environment variable {self.config[&#x27;api_key_env&#x27;]} first.&quot;)
-<span class="line-number"> 55</span> 
+<span class="line-number"> 55</span>
 <span class="line-number"> 56</span>         # 只对网络错误、限流、服务端错误重试；参数/认证错误立即停止。
 <span class="line-number"> 57</span>         for attempt in range(3):
 <span class="line-number"> 58</span>             retry_delay = 2 ** (attempt + 1)
@@ -2615,7 +2615,7 @@ if __name__ == &#x27;__main__&#x27;:
 <span class="line-number">259</span>                 replay_client = CachedChatClient(compression_config(config), run / cached[&#x27;compression_api_subdir&#x27;], offline=True)
 <span class="line-number">260</span>                 replay_result = LLMRewriteCompressor(replay_client, tokenizer, method,
 <span class="line-number">261</span>                     max_trials=config.get(&#x27;rewrite_max_trials&#x27;,1)).compress(row[&#x27;context&#x27;], condition[&#x27;budget_tokens&#x27;])</code></pre><p class="muted">tools/run_aligned_suite.py · 262–277</p><pre data-code-sha256="31a598f32ce3c9ace7b8a2fe2e435c6956ac01e79443b62fd8d04bd7e31eca69"><code><span class="line-number">262</span>                 require(all(cached[k] == v for k,v in replay_result.items()), &#x27;Rewrite request/response mismatch, including output-limit retries.&#x27;)
-<span class="line-number">263</span> 
+<span class="line-number">263</span>
 <span class="line-number">264</span>     check_matrix(rows, read_json(run / &#x27;metrics.json&#x27;), config[&#x27;methods&#x27;])
 <span class="line-number">265</span>     before = {name: file_hash(run / name) for name in (&#x27;predictions.json&#x27;, &#x27;metrics.json&#x27;, &#x27;api_attempts.json&#x27;)}
 <span class="line-number">266</span>     with patch.object(socket.socket, &#x27;connect&#x27;, side_effect=AssertionError(&#x27;Offline replay&#x27;)):
@@ -3843,7 +3843,7 @@ def function_card(path, node, lines, index):
         stop = min(start+18,node.end_lineno)
         source = &#x27;\n&#x27;.join(lines[start:stop])
         digest = hashlib.sha256(source.encode()).hexdigest()
-        code = &#x27;\n&#x27;.join(f&#x27;&lt;span class=&quot;line-number&quot;&gt;{i+1:&gt;3}&lt;/span&gt; &#x27;+html.escape(lines[i]) for i in range(start,stop))
+        code = &#x27;\n&#x27;.join(f&#x27;&lt;span class=&quot;line-number&quot;&gt;{i+1:&gt;3}&lt;/span&gt;&#x27;+(&#x27; &#x27;+html.escape(lines[i]) if lines[i] else &#x27;&#x27;) for i in range(start,stop))
         card += f&#x27;&lt;p class=&quot;muted&quot;&gt;{path} · {start+1}–{stop}&lt;/p&gt;&lt;pre data-code-sha256=&quot;{digest}&quot;&gt;&lt;code&gt;{code}&lt;/code&gt;&lt;/pre&gt;&#x27;
     return card+&#x27;&lt;/article&gt;&#x27;
 
@@ -3927,18 +3927,18 @@ if __name__ == &#x27;__main__&#x27;:
 <span class="line-number">169</span>     meaning = EXPLAIN.get(key)
 <span class="line-number">170</span>     if path == &#x27;blackwell/client.py&#x27; and node.name == &#x27;complete&#x27;:
 <span class="line-number">171</span>         meaning = (&#x27;Validate exact cache identities, record every attempted call, and accept only normally finished nonempty text. A truncated reader forecast raises an error; only the rewrite compressor explicitly handles that exception.&#x27;, &#x27;核验精确缓存身份，记录每次尝试，仅接受正常结束且非空的文本。reader 概率被截断会直接报错；只有改写压缩器显式处理该异常。&#x27;)
-<span class="line-number">172</span> 
+<span class="line-number">172</span>
 <span class="line-number">173</span>     if path.startswith(&#x27;tests/&#x27;) and node.name in {&#x27;compress&#x27;,&#x27;__init__&#x27;,&#x27;complete&#x27;}:
 <span class="line-number">174</span>         meaning = (&#x27;A test double that records calls, returns synthetic drafts or raises deliberately; it makes no real API request.&#x27;,&#x27;测试替身：记录调用、返回模拟草稿或故意抛错，不会产生真实 API 请求。&#x27;)
 <span class="line-number">175</span>     if meaning is None:
 <span class="line-number">176</span>         raise ValueError(f&#x27;Missing function explanation: {node.name}&#x27;)
-<span class="line-number">177</span>     card = f&#x27;&lt;article id=&quot;function-{index}&quot;&gt;&lt;h3&gt;&lt;code&gt;{node.name}&lt;/code&gt;&lt;/h3&gt;&lt;p&gt;&#x27;+bi(*meaning)+&#x27;&lt;/p&gt;&#x27;</code></pre><p class="muted">tools/build_aligned_guide.py · 178–186</p><pre data-code-sha256="b3333882384a92923cf6344a60df21c041bceb1ce40d08a028d1861d9350f0e5"><code><span class="line-number">178</span>     if parameters:
+<span class="line-number">177</span>     card = f&#x27;&lt;article id=&quot;function-{index}&quot;&gt;&lt;h3&gt;&lt;code&gt;{node.name}&lt;/code&gt;&lt;/h3&gt;&lt;p&gt;&#x27;+bi(*meaning)+&#x27;&lt;/p&gt;&#x27;</code></pre><p class="muted">tools/build_aligned_guide.py · 178–186</p><pre data-code-sha256="62c1967715ccaa7a6e520207512c991bec9a68691842f626005327487d6c320c"><code><span class="line-number">178</span>     if parameters:
 <span class="line-number">179</span>         card += table([bi(&#x27;Parameter&#x27;,&#x27;参数&#x27;),bi(&#x27;Purpose&#x27;,&#x27;含义及作用&#x27;)],parameters)
 <span class="line-number">180</span>     for start in range(node.lineno-1,node.end_lineno,18):
 <span class="line-number">181</span>         stop = min(start+18,node.end_lineno)
 <span class="line-number">182</span>         source = &#x27;\n&#x27;.join(lines[start:stop])
 <span class="line-number">183</span>         digest = hashlib.sha256(source.encode()).hexdigest()
-<span class="line-number">184</span>         code = &#x27;\n&#x27;.join(f&#x27;&lt;span class=&quot;line-number&quot;&gt;{i+1:&gt;3}&lt;/span&gt; &#x27;+html.escape(lines[i]) for i in range(start,stop))
+<span class="line-number">184</span>         code = &#x27;\n&#x27;.join(f&#x27;&lt;span class=&quot;line-number&quot;&gt;{i+1:&gt;3}&lt;/span&gt;&#x27;+(&#x27; &#x27;+html.escape(lines[i]) if lines[i] else &#x27;&#x27;) for i in range(start,stop))
 <span class="line-number">185</span>         card += f&#x27;&lt;p class=&quot;muted&quot;&gt;{path} · {start+1}–{stop}&lt;/p&gt;&lt;pre data-code-sha256=&quot;{digest}&quot;&gt;&lt;code&gt;{code}&lt;/code&gt;&lt;/pre&gt;&#x27;
 <span class="line-number">186</span>     return card+&#x27;&lt;/article&gt;&#x27;</code></pre></article><article id="function-65"><h3><code>main</code></h3><p><span lang="en">Read source files without executing them, parse function boundaries, and build this offline walkthrough.</span><span lang="zh">读取但不执行源码，解析函数边界，生成这份离线导读。</span></p><p class="muted">tools/build_aligned_guide.py · 189–206</p><pre data-code-sha256="6af6ac9ddc7baaf7e6039e8669ab3799d646ff4cbb5f3abcd720dac8e2eb65bb"><code><span class="line-number">189</span> def main():
 <span class="line-number">190</span>     modules = [
