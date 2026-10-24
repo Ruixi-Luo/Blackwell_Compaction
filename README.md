@@ -170,7 +170,7 @@ foreach ($saltConfig in $saltConfigs) {
 5. **`blackwell/prompts.py` 与 `blackwell/client.py`**：reader 看到什么，以及 API 缓存、重试、限额如何实现。
 6. **`blackwell/metrics.py`**：不依赖网络的数学计算。`tests/` 展示如何检查标签、信息隔离、边界值和回归。
 
-不必先理解所有辅助工具。`tools/` 负责核验和文档，实验主流程没有依赖它们；`docs/` 保存给人读的快照；`runs/<run_name>/` 保存完整本地实验。
+不必先理解所有辅助工具。`tools/` 主要负责核验和文档；本轮新增的预算对齐实验入口也放在其中，文件名为 `run_aligned_suite.py`；`docs/` 保存给人读的快照；`runs/<run_name>/` 保存完整本地实验。
 
 新增数据集只需写一个 loader 并在 `blackwell/data.py` 注册。它返回普通字典列表（含 `id, context, question, label, context_group`）及来源记录。**不要把整个样本字典传给压缩器**。新增模型则需另行核验 tokenizer、API 参数及概率格式；当前 reader 有明确的模型限制，不是改任意链接就保证兼容。
 
@@ -183,7 +183,7 @@ compressed_text = compressor.compress(context_text, retained_ratio=0.5)
 
 ## 读指标时注意什么
 
-`retained_ratio` 是名义保留率。SC 的删除率参数取 `1 - retained_ratio`；两个官方方法的词法单位不同，实际 Qwen token 数不一定等于预算。本项目保留原生输出、不事后截断，报告实际长度及超预算次数，因此不是严格等长度排名。
+`retained_ratio` 是名义保留率。SC 的删除率参数取 `1 - retained_ratio`；两个官方方法的词法单位不同，实际 Qwen token 数不一定等于预算。旧版实验保留原生输出、不事后截断，因此不是严格等长度排名；2026-10-24 的新入口另外执行实际等长对齐，详见本文末尾的新协议。
 
 InfoGap 的实现约定为：
 
