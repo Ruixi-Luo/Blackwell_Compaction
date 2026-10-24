@@ -3,6 +3,7 @@ import math
 from pathlib import Path
 
 from ..budgeting import select_candidate
+from ..client import OutputLimitError
 from ..storage import read_json, file_hash
 
 API_METHODS = ('llm_summary', 'telegrapher')
@@ -62,9 +63,24 @@ class LLMRewriteCompressor:
         for _ in range(self.max_trials):
             messages = rewrite_messages(context, budget, self.method, previous, previous_tokens)
             # 输出上限高于预算，便于完整得到草稿后实测，而非接受被截断的响应。
-            text, key = self.client.complete(messages, max_tokens=min(32768, max(512, 2*budget+512)))
+            ceiling = min(32768, max(512, 2*budget+512))
+            retry = None
+            try:
+                text, key = self.client.complete(messages, max_tokens=ceiling)
+            except OutputLimitError as error:
+                # 只对压缩草稿重试一次；不接受截断文本，不修改 prompt，也不重试 reader 概率。
+                larger = min(32768, 2*ceiling)
+                if larger == ceiling:
+                    raise
+                hashes.append(error.request_hash)
+                retry = {'truncated_request_hash': error.request_hash,
+                         'initial_max_tokens': ceiling, 'retry_max_tokens': larger}
+                text, key = self.client.complete(messages, max_tokens=larger)
             count = self.tokenizer.count(text)
-            candidates.append({'text': text, 'tokens': count, 'request_hash': key})
+            candidate = {'text': text, 'tokens': count, 'request_hash': key}
+            if retry is not None:
+                candidate['output_limit_retry'] = retry
+            candidates.append(candidate)
             hashes.append(key)
             if math.ceil(.95*budget) <= count <= budget:
                 break

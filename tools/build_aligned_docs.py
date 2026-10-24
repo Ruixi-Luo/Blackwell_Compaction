@@ -148,6 +148,7 @@ def main():
             record['diagnostics'][method]['retention']['selected_before_clamp_pooled_ratio'] = native_tokens / sum(row['original_tokens'] for row in record['rows'])
     scale = max(c['value'] for r in records for row in r['metrics']['infogap'].values() for c in row.values())
     overview = '<section><p>'+bi(f'Completed and audited datasets shown: {len(records)} / 3. The page is updated as each full dataset finishes.',f'当前展示已完成且通过审计的数据集：{len(records)} / 3；每个完整数据集完成后更新。')+'</p></section>'+protocol_section()
+    overview += '<section><p>'+bi('Only complete API rewrites are accepted. An output-limit response triggers at most one identical-prompt retry with a larger output ceiling (maximum 32768); truncated text is excluded. Raw responses and attempts remain recorded. Reader forecasts are strictly parsed without this retry. Validated cache reuse and original compute times are recorded in each v2 run’s cache_reuse_provenance.json; previous runs are preserved.', '仅接受完整 API 改写。输出上限截断最多触发一次相同提示词、提高输出上限的重试（最多 32768），截断文本不参与实验。原响应及尝试次数均留存。reader 概率严格解析且不使用此重试。v2 的 cache_reuse_provenance.json 记录经核验的缓存复用和原计算时间；旧运行全部保留。')+'</p></section>'
     overview += '<section><h2>'+bi('Choose a dataset','选择数据集')+'</h2><p>'+ ' · '.join(f'<a href="#{r["name"]}">{r["name"]} (n={r["metrics"]["n"]})</a>' for r in records)+'</p><p><a href="../Code_Walkthrough_20261024_Aligned.html">'+bi('Read the new pipeline and its code','查看新流程与逐块代码导读')+'</a></p></section>'
     for r in records:
         name, config, run = r['name'],r['config'],r['run']

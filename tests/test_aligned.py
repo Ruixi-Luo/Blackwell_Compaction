@@ -134,6 +134,48 @@ class AlignmentTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             LLMRewriteCompressor(Client(), WordTokenizer(), 'llm_summary').compress('source',1)
 
+    def test_output_limit_retry_keeps_prompt_and_records_both_requests(self):
+        from blackwell.client import OutputLimitError
+        class Client:
+            def __init__(self):
+                self.calls = []
+            def complete(self, messages, max_tokens):
+                self.calls.append((messages,max_tokens))
+                if len(self.calls) == 1:
+                    raise OutputLimitError('truncated')
+                return 'x '*5,'complete'
+        client = Client()
+        result = LLMRewriteCompressor(client,WordTokenizer(),'telegrapher',max_trials=1).compress('source',5)
+        self.assertEqual(client.calls[0][0],client.calls[1][0])
+        self.assertEqual(client.calls[1][1],2*client.calls[0][1])
+        self.assertEqual(result['compression_request_hashes'],['truncated','complete'])
+        self.assertEqual(len(result['candidates']),1)
+        self.assertEqual(result['candidates'][0]['output_limit_retry']['truncated_request_hash'],'truncated')
+
+    def test_repeated_output_limit_and_other_failures_are_not_hidden(self):
+        from blackwell.client import OutputLimitError
+        from unittest.mock import Mock
+        client = Mock()
+        client.complete.side_effect = OutputLimitError('bad')
+        with self.assertRaises(OutputLimitError):
+            LLMRewriteCompressor(client,WordTokenizer(),'llm_summary',1).compress('source',5)
+        self.assertEqual(client.complete.call_count,2)
+        client.reset_mock();client.complete.side_effect = ValueError('content_filter')
+        with self.assertRaises(ValueError):
+            LLMRewriteCompressor(client,WordTokenizer(),'llm_summary',1).compress('source',5)
+        self.assertEqual(client.complete.call_count,1)
+
+    def test_reader_rejects_truncation_and_compressor_ceiling_is_bounded(self):
+        from blackwell.client import CachedChatClient, OutputLimitError
+        from unittest.mock import Mock
+        with self.assertRaises(OutputLimitError):
+            CachedChatClient._extract({'choices':[{'finish_reason':'length','message':{'content':'{"p_yes":0.5}'}}]},'bad')
+        client=Mock();client.complete.side_effect=OutputLimitError('bad')
+        with self.assertRaises(OutputLimitError):
+            LLMRewriteCompressor(client,WordTokenizer(),'llm_summary',1).compress('source',20000)
+        client.complete.assert_called_once()
+        self.assertEqual(client.complete.call_args.kwargs['max_tokens'],32768)
+
     def test_bins_include_one_and_keep_empty_bins(self):
         result = probability_diagnostics([0.,.5,1.],[1,0,1])
         self.assertEqual(sum(b['n'] for b in result['reliability']),3)

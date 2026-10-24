@@ -11,6 +11,10 @@ sys.path.insert(0,str(ROOT))
 from blackwell.reporting import STYLE,bi,table
 
 PARAMS = {
+ 'request_hash': ('Fingerprint of the exact API request; locates its preserved raw response.', '精确 API 请求的指纹，可定位已保留的原始响应。'),
+ 'json_mode': ('Ask the API to return a JSON object; used by the probability reader.', '要求 API 返回 JSON 对象；概率 reader 使用此选项。'),
+ 'body': ('Decoded API response, including finish reason and content.', '解码后的 API 响应，包含结束原因及文本。'),
+
  'title': ('The human-readable page title, escaped before insertion.', '页面标题，插入 HTML 前会转义。'),
  'body': ('Already assembled report HTML from the other presentation functions.', '由其他展示函数组装好的报告 HTML。'),
  'metrics': ('Saved scores, exact InfoGap values, bootstrap ranges and payoff curves.', '已保存的评分、精确 InfoGap、bootstrap 区间及收益曲线。'),
@@ -71,6 +75,12 @@ PARAMS = {
 }
 
 EXPLAIN = {
+ '_extract': ('Reject abnormal or empty responses. A length-limited response raises OutputLimitError with its request fingerprint; partial text never becomes a prediction or a compression candidate.', '拒绝异常或空响应。达到输出上限时抛出携带请求指纹的 OutputLimitError；不把不完整文本作为预测或压缩候选。'),
+ 'parse_probability': ('Accept only a finite numeric p_yes in [0,1], with no extra fields or substitute values.', '仅接受 [0,1] 内有限数值 p_yes，不允许额外字段或替代值。'),
+ 'test_output_limit_retry_keeps_prompt_and_records_both_requests': ('Verify identical prompts, one larger output ceiling, one complete candidate and preservation of both request fingerprints.', '核验提示词完全不变、仅扩大一次输出上限、仅保留完整候选，并记录两个请求指纹。'),
+ 'test_repeated_output_limit_and_other_failures_are_not_hidden': ('Check that a second truncation stops the run and unrelated errors are never retried as output-limit failures.', '核验第二次截断会终止运行，其他错误不会被误当成输出上限错误重试。'),
+ 'test_reader_rejects_truncation_and_compressor_ceiling_is_bounded': ('Check strict reader rejection and the 32768-token hard ceiling for rewrite retries.', '核验 reader 严格拒绝截断，以及改写重试的 32768-token 硬上限。'),
+
  'section_title':('Select the English or Chinese presentation of a static section label.','为静态章节名称生成可切换的英文和中文展示。'),
  'page': ('Wrap prepared content with the shared style and English/Chinese controls. No API calls occur here.', '给已组装内容加上公共样式和中英文按钮；此处不会调用 API。'),
  'matrix': ('Render the saved directional values as an 8×8 heat map with a common color scale.', '把已保存的双向数值画成使用共同色阶的 8×8 热力矩阵。'),
@@ -145,6 +155,8 @@ def function_card(path, node, lines, index):
             meaning = ('Optional paired records for probability scatterplots; omitting them skips those plots.','可选的配对记录，用来画概率散点图；省略时只跳过这组图。')
         if node.name == 'section_title' and arg.arg == 'title':
             meaning = ('A static English / Chinese label from the module list.','模块列表中的静态“英文 / 中文”名称。')
+        if path == 'blackwell/client.py' and arg.arg == 'body':
+            meaning = ('Decoded raw API response; its finish reason must be checked before reading content.','解码后的原始 API 响应；读取文本前必须核验结束原因。')
         if meaning is None:
             raise ValueError(f'Missing parameter explanation: {path}:{node.name}:{arg.arg}')
         prefix = '*' if arg is node.args.vararg else '**' if arg is node.args.kwarg else ''
@@ -155,6 +167,9 @@ def function_card(path, node, lines, index):
     if node.name == 'main' and path == 'tools/build_aligned_guide.py':
         key = 'guide_main'
     meaning = EXPLAIN.get(key)
+    if path == 'blackwell/client.py' and node.name == 'complete':
+        meaning = ('Validate exact cache identities, record every attempted call, and accept only normally finished nonempty text. A truncated reader forecast raises an error; only the rewrite compressor explicitly handles that exception.', '核验精确缓存身份，记录每次尝试，仅接受正常结束且非空的文本。reader 概率被截断会直接报错；只有改写压缩器显式处理该异常。')
+
     if path.startswith('tests/') and node.name in {'compress','__init__','complete'}:
         meaning = ('A test double that records calls, returns synthetic drafts or raises deliberately; it makes no real API request.','测试替身：记录调用、返回模拟草稿或故意抛错，不会产生真实 API 请求。')
     if meaning is None:
@@ -176,6 +191,7 @@ def main():
         ('prepare','1 · Freeze samples / 冻结样本','tools/run_aligned_suite.py',['prepare','compression_request','compression_config']),
         ('budget','2 · Native budget search / 原生预算搜索','blackwell/budgeting.py',['select_candidate','align_local']),
         ('rewrite','3 · Summary & Telegrapher / API 改写','blackwell/compressors/llm_rewrite.py',None),
+        ('api','3a · API cache & finish checks / API 缓存与结束检查','blackwell/client.py',None),
         ('pacing','3b · Bounded concurrency / 有界并行','blackwell/rewrite_client.py',None),
         ('cache','4 · Compress & cache / 压缩与缓存','tools/run_aligned_suite.py',['read_compaction','save_compaction','compress_stage','rewrite_worker']),
         ('match','5 · Match actual lengths / 统一实际长度','blackwell/budgeting.py',['match_lengths']),
@@ -209,7 +225,8 @@ def main():
             url = lock['repository']+'/blob/'+lock['commit']+'/'+lock['source_path']
             body += '<details><summary>Telegrapher v5 · pinned grammar</summary><p><a href="'+html.escape(url)+'">'+html.escape(lock['authors'])+'</a> · '+html.escape(lock['license'])+'</p><pre>'+html.escape(prompt_path.read_text(encoding='utf-8'))+'</pre></details><p>'+bi('The lock records the grammar source and license. Its adaptation note dates from an earlier Qwen pilot; the current rewrite model is compression_model in the experiment configuration (DeepSeek-V3.2).','版本锁记录语法来源和许可；其中的 adaptation 备注来自早期 Qwen 试验。当前改写模型由实验配置的 compression_model 指定，本轮为 DeepSeek-V3.2。')+'</p>'
         body += '</section>'
-    body += '<section><h2>'+bi('Where outputs live','输出在哪里')+'</h2><pre>runs/aligned50_&lt;dataset&gt;_20261024/\n  manifest.json / examples.json\n  aligned_compression_cache/     # context-only requests + all drafts\n  compression_api/              # rewrite API requests, responses and ledger\n  api_cache/ / api_attempts.json # reader requests, responses and ledger\n  predictions.json / .csv\n  metrics.json / diagnostics.json / audit.json\n  report.html\ndocs/Experiments_20261024_Aligned/Experiment_Overview.html</pre><p>'+bi('InfoGap is unchanged: exact breakpoints and one-sided limits, both directions, factor 2 plus saved unscaled values. ECE is a new diagnostic, not the objective used to choose compressed text. The six compressed conditions are then exactly length-matched per context at their common feasible budget, at most 50% of the original. Inspect initial and matching trims separately.','InfoGap 算法未改变：精确断点与单侧极限、双向、系数 2 及未缩放值。ECE 是新增诊断，不用于挑选压缩文本。六种压缩条件还会按每份上下文的共同可行预算严格等长，最多为原文 50%。需分别检查初次预算裁剪和共同长度裁剪。')+'</p></section>'
+    body += '<section><h2>'+bi('Complete output before compression','完整响应后才能压缩')+'</h2><p>'+bi('The formal protocol still uses one rewrite draft. If an API response ends with finish_reason=length, the compressor retries the identical prompt once with a doubled output ceiling, capped at 32768. It never uses the truncated text. A second truncation or any unrelated error stops the run. Both raw responses and attempt counts are retained. Reader forecasts do not use this retry. The v2 runs preserve the failed v1 directories; cache_reuse_provenance.json records verified equivalent outputs, their old compute times and the imported API ledgers.', '正式协议仍使用一稿改写。若 API 因输出上限结束，压缩器仅把相同提示词的输出上限翻倍后重试一次，最多 32768。截断文本不参与实验。再次截断或其他错误会停止运行；原始响应和尝试次数均留存。reader 概率不使用此重试。v2 保留失败的 v1 目录；cache_reuse_provenance.json 记录经核验可复用的结果、原计算时间及导入的 API 账本。')+'</p></section>'
+    body += '<section><h2>'+bi('Where outputs live','输出在哪里')+'</h2><pre>runs/aligned50_&lt;dataset&gt;_20261024_v2/\n  manifest.json / examples.json\n  aligned_compression_cache/     # context-only requests + all drafts\n  compression_api/              # rewrite API requests, responses and ledger\n  api_cache/ / api_attempts.json # reader requests, responses and ledger\n  predictions.json / .csv\n  metrics.json / diagnostics.json / audit.json\n  report.html\ndocs/Experiments_20261024_Aligned/Experiment_Overview.html</pre><p>'+bi('InfoGap is unchanged: exact breakpoints and one-sided limits, both directions, factor 2 plus saved unscaled values. ECE is a new diagnostic, not the objective used to choose compressed text. The six compressed conditions are then exactly length-matched per context at their common feasible budget, at most 50% of the original. Inspect initial and matching trims separately.','InfoGap 算法未改变：精确断点与单侧极限、双向、系数 2 及未缩放值。ECE 是新增诊断，不用于挑选压缩文本。六种压缩条件还会按每份上下文的共同可行预算严格等长，最多为原文 50%。需分别检查初次预算裁剪和共同长度裁剪。')+'</p></section>'
     page = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aligned experiment · Code walkthrough</title><style>'+STYLE+'.flow{display:flex;flex-wrap:wrap;gap:12px}.node{padding:20px;border:1px solid #abc;border-radius:8px;background:#edf4fb;text-decoration:none}.line-number{color:#8798a9;user-select:none}article{border-top:1px solid #dce5ee;margin-top:25px}pre{white-space:pre;overflow:auto}section{scroll-margin-top:15px}</style><body>'+body+'<script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}</script></body></html>'
     target = ROOT/'docs/Code_Walkthrough_20261024_Aligned.html'
     target.write_text(page,encoding='utf-8')

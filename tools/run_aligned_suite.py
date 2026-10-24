@@ -256,13 +256,11 @@ def audit(config, run, tokenizer, examples, manifest):
             selection = select_candidate(candidates, condition['budget_tokens'], tokenizer)
             require(all(cached[k] == v for k, v in selection.items() if k != 'compression_request_hashes'), 'Length-only candidate selection mismatch.')
             if method in API_METHODS:
-                previous, previous_tokens = None, None
-                for candidate in candidates:
-                    messages = rewrite_messages(row['context'], condition['budget_tokens'], method, previous, previous_tokens)
-                    raw, request_hash = CachedChatClient(compression_config(config), run / cached['compression_api_subdir'], offline=True).complete(
-                        messages, max_tokens=min(32768, max(512, 2*condition['budget_tokens']+512)))
-                    require(raw == candidate['text'] and request_hash == candidate['request_hash'], 'Rewrite request/response mismatch.')
-                    previous, previous_tokens = raw, candidate['tokens']
+                replay_client = CachedChatClient(compression_config(config), run / cached['compression_api_subdir'], offline=True)
+                replay_result = LLMRewriteCompressor(replay_client, tokenizer, method,
+                    max_trials=config.get('rewrite_max_trials',1)).compress(row['context'], condition['budget_tokens'])
+                require(all(cached[k] == v for k,v in replay_result.items()), 'Rewrite request/response mismatch, including output-limit retries.')
+
     check_matrix(rows, read_json(run / 'metrics.json'), config['methods'])
     before = {name: file_hash(run / name) for name in ('predictions.json', 'metrics.json', 'api_attempts.json')}
     with patch.object(socket.socket, 'connect', side_effect=AssertionError('Offline replay')):

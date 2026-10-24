@@ -10,6 +10,13 @@ from urllib.request import Request, urlopen
 from .storage import fingerprint, read_json, write_json
 
 
+class OutputLimitError(ValueError):
+    """响应因输出上限被截断；原始响应已缓存，但不可作为有效结果。"""
+    def __init__(self, request_hash):
+        super().__init__('API output reached its token ceiling; incomplete text is not accepted.')
+        self.request_hash = request_hash
+
+
 class CachedChatClient:
     def __init__(self, config, run_dir, offline=False):
         self.config = config
@@ -101,6 +108,8 @@ class CachedChatClient:
     @staticmethod
     def _extract(body, request_hash):
         choice = body["choices"][0]
+        if choice.get("finish_reason") == "length":
+            raise OutputLimitError(request_hash)
         if choice.get("finish_reason") != "stop":
             raise ValueError("API output did not finish normally; truncated predictions are not accepted.")
         content = choice["message"].get("content")
