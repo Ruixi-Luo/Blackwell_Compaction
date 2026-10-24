@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from blackwell.reporting import STYLE, bi, table, decision_curve
+from blackwell.reporting import STYLE, bi, table, decision_curve, scatter
 from blackwell.storage import read_json, write_json
 
 DESTINATION = ROOT / 'docs/Experiments_20261024_Aligned'
@@ -58,13 +58,13 @@ def protocol_section():
     return '<section><h2>'+bi('What changed','本轮改进')+'</h2><p>'+bi(
         'Eight paired conditions; all forecasts were collected anew. The target cap is floor(0.5 × original Qwen tokens). The preferred band is 95–100% of this cap (about 47.5–50% of the original). Local methods use at most eight length-only native-rate trials. The formal baselines use one API rewrite per unique context and method; optional length-repair drafts are supported in code but disabled here. Final equality is enforced by the separate common-length step. A draft within the target band is preferred; otherwise select the closest measured length, favoring feasible drafts at ties. A selected overshoot is clamped with a common head–tail adapter and explicitly counted. Underfilled outputs are kept and reported; no padding, gold-based selection or silent sample removal.',
         '共八组配对输入，全部重新获取预测。共同上限为 floor(0.5×原文 Qwen tokens)，目标区间是上限的 95%–100%，约等于原文的 47.5%–50%。本地方法最多尝试八个原生保留率，只看长度；正式 baseline 每种方法对每份独立上下文只改写一次；代码保留可选的长度修订能力，本轮关闭。最终等长由单独的共同长度步骤保证。优先选目标区间内候选，否则选实测长度距预算最近者，同距时优先不超长；选中超长稿则使用共同首尾裁剪并明确计数。填不满的结果保留且报告，不补无意义内容，不用答案选候选，不悄悄删题。')+'</p><p>'+bi(
-        'For the primary comparison, each context is then matched to the shortest feasible output among the six compressed conditions. Longer outputs are deterministically trimmed until their actual Qwen token counts are exactly equal. Full and no-context controls are unchanged. The common budget can be below 50% and varies by context; no query or label is used to choose it. Read the actual-length distribution, underfill and clamp counts alongside InfoGap. Summary and Telegrapher both use DeepSeek-V3.2 as the rewrite model; the reader remains Qwen3-30B-A3B-Instruct-2507. Rewrite requests contain no query. Telegrapher uses the pinned official v5 grammar with an explicit budget instruction; full-document input, DeepSeek deployment and length repairs are adaptations, not the original paper configuration.',
-        '主比较还会按每份上下文在六种压缩条件中取最短可行长度，将更长输出确定性裁剪到实际 Qwen token 数完全相同。原文和空上下文对照不变。共同预算可能低于 50%，因上下文而异，确定它不使用 query 或标签。解读 InfoGap 时应同时查看实际长度分布、欠填和裁剪次数。摘要与 Telegrapher 均用 DeepSeek-V3.2 改写，reader 保持 Qwen3-30B-A3B-Instruct-2507；改写请求不含 query。Telegrapher 使用固定官方 v5 语法及额外预算指令；全文输入、DeepSeek 部署和长度修订属于适配，并非论文原配置。')+'</p><p>'+bi(
+        'For the primary comparison, each context is then matched to the shortest feasible output among the six compressed conditions. Longer outputs are deterministically trimmed until their actual Qwen token counts are exactly equal. Full and no-context controls are unchanged. Local native algorithms are not rerun at this lower common budget: this experiment compares compressor-plus-trimming compositions, not native algorithms optimized directly for that budget. The common budget can be below 50% and varies by context; no query or label is used to choose it. Read the actual-length distribution, underfill and clamp counts alongside InfoGap. Summary and Telegrapher both use DeepSeek-V3.2 as the rewrite model; the reader remains Qwen3-30B-A3B-Instruct-2507. Rewrite requests contain no query. Telegrapher uses the pinned official v5 grammar with an explicit budget instruction; full-document input, DeepSeek deployment and length repairs are adaptations, not the original paper configuration.',
+        '主比较还会按每份上下文在六种压缩条件中取最短可行长度，将更长输出确定性裁剪到实际 Qwen token 数完全相同。原文和空上下文对照不变。本轮不会在更低的共同预算下重跑原生算法，因此比较的是“压缩器＋裁剪”的组合，不是原生算法直接针对该低预算优化的表现。共同预算可能低于 50%，因上下文而异，确定它不使用 query 或标签。解读 InfoGap 时应同时查看实际长度分布、欠填和裁剪次数。摘要与 Telegrapher 均用 DeepSeek-V3.2 改写，reader 保持 Qwen3-30B-A3B-Instruct-2507；改写请求不含 query。Telegrapher 使用固定官方 v5 语法及额外预算指令；全文输入、DeepSeek 部署和长度修订属于适配，并非论文原配置。')+'</p><p>'+bi(
         'Compression receives only context and budget. The reader alone receives the evaluation question; labels are used only during evaluation. Shared paper contexts reuse the same compression. All six compressed conditions have the same token count per question, including the head–tail control. The 458 HotpotQA / 283 QASPER-train / 52 LongBench binary examples and order are frozen from the old runs. LongBench is a native binary subset, not its official full benchmark; 14 questions overlap HotpotQA and one overlaps QASPER train.',
         '压缩只接收 context 与预算；只有 reader 接收评测问题，标签只用于评估。同篇论文复用同一压缩文本。包括首尾截断在内的六种压缩条件在每题上 token 数完全相同。458 道 HotpotQA、283 道 QASPER train、52 道 LongBench 二元题沿用旧样本及顺序。LongBench 为原生二元子集，并非官方完整 benchmark；其中 14 题与 HotpotQA 重叠，1 题与 QASPER train 重叠。')+'</p></section>'
 
 
-def method_panels(config, metrics, diagnostics, scale, usage):
+def method_panels(config, metrics, diagnostics, scale, usage, rows=None):
     methods = config['methods']
     score_rows, length_rows, diag_rows = [], [], []
     for m in methods:
@@ -77,6 +77,7 @@ def method_panels(config, metrics, diagnostics, scale, usage):
         diag_rows.append([NAMES[m],f"{d['mean_p_yes']:.3f}",f"{d['ece_equal_width_10']:.4f}",d['p_half'],d['p_zero_or_one'],d['wrong_zero_or_one'],d['confident_wrong_95'],d['distinct_probabilities']])
     body = '<section><h2>'+bi('Forecast performance','预测表现')+'</h2>'+table(['Method','Accuracy ↑','Brier ↓','Log loss ↓',bi('Actual retained','实际保留率')],score_rows)+'</section>'
     body += '<section><h2>'+bi('Directional InfoGap matrix','双向 InfoGap 矩阵')+'</h2>'+matrix(metrics,scale)+'</section>'
+    body += '<section><details><summary>'+bi('Decision payoff across thresholds','展开：不同阈值下的决策收益差')+'</summary><p>'+bi('Positive values favor Full; negative values favor the compared method. The positive maximum and negative minimum recover the two InfoGap directions. Hover points to distinguish threshold values from left limits. Each panel has its own vertical scale.','正值表示原文收益更高，负值表示对比方法收益更高；正向最大值与负向最小值对应双向 InfoGap。悬停可区分断点值与左极限。各图纵轴刻度不同。')+'</p><div class="grid">'+''.join('<div class="card">'+decision_curve(points,NAMES[m])+'</div>' for m,points in metrics['payoff_curves_vs_full'].items())+'</div></details></section>'
     body += '<section><h2>'+bi('Actual budget diagnostics','实际预算诊断')+'</h2>'+table(['Method',bi('Native draft','原生草稿'),bi('Before matching','共同对齐前'),'Min','P10','Median','P90','Max',bi('Final in band','最终落在目标区间'),bi('Pre-match below band','等长对齐前欠填'),bi('Initial cap trims','初次上限裁剪'),bi('Matching trims','共同长度裁剪')],length_rows)+'<p>'+bi('Quantiles are per-question realized retained ratios. Before-clamp ratio measures the selected native draft, prior to the last-resort cap. If many outputs require clamping, interpret the condition as compressor plus budget adapter, not the unmodified native method. Target-band counts do not apply to Full or No context. Timing includes all search trials.','分位数按每题最终实际保留率统计。裁剪前保留率测量选定原生草稿，不含末次裁剪。如果许多样本需要裁剪，应将其解读为“压缩器＋预算适配器”，不能当作未修改的原生方法。原文和空上下文不适用目标区间。耗时包含全部长度试探。')+'</p></section>'
     body += '<section><h2>'+bi('Probability diagnostics','概率诊断')+'</h2>'+table(['Method','Mean p(Yes)','ECE ↓','p = 0.5','p = 0 or 1',bi('Wrong 0/1','0/1 且错'),bi('Wrong ≥95% confidence','≥95% 自信且错'),bi('Distinct p','不同概率数')],diag_rows)
     base_rate = diagnostics[methods[0]]['probability']['base_rate']
@@ -84,7 +85,15 @@ def method_panels(config, metrics, diagnostics, scale, usage):
     body += '<p>'+bi('ECE uses ten fixed equal-width bins: Σ(nᵦ/n)|mean(p)ᵦ − mean(y)ᵦ|. Empty bins do not contribute. Reliability diagrams plot reported p(Yes) against the observed Yes fraction; points are descriptive and noisy in small bins. No probabilities are recalibrated or changed. Perfect calibration is not a prerequisite for the InfoGap formulation used here.',
                         'ECE 使用十个固定等宽箱：Σ(nᵦ/n)|mean(p)ᵦ−mean(y)ᵦ|，空箱不贡献。可靠性图对比报告的 p(Yes) 与实际 Yes 比例；小箱波动大，仅作描述。没有重新校准或改动概率；这里使用的 InfoGap 公式不要求预测器完美校准。')+'</p><div class="grid">'+''.join('<div class="card">'+reliability_plot(diagnostics[m]['probability'],NAMES[m])+'</div>' for m in methods)+'</div>'
     body += '<details><summary>'+bi('Log-loss sensitivity to endpoint clipping','Log loss 对端点截断的敏感性')+'</summary>'+table(['Method','ε = 1e−12','ε = 1e−6','ε = 1e−3'],[[NAMES[m],*[f'{v:.4f}' for v in diagnostics[m]['probability']['log_loss_sensitivity'].values()]] for m in methods])+'<p>'+bi('Only logarithms use clipping. InfoGap, Brier, ECE and all saved probabilities use the original values.','只有对数计算使用截断；InfoGap、Brier、ECE 和所有保存的概率均使用原值。')+'</p></details></section>'
+    if rows is not None:
+        body += '<section><details><summary>'+bi('Probability changes versus Full','展开：相对原文的概率变化')+'</summary><p>'+bi('Each point is one question. The diagonal means unchanged p(Yes). Teal indicates gold Yes, orange gold No; hover for the sample ID.','每个点是一道题；对角线表示 p(Yes) 不变。青色为真实 Yes，橙色为真实 No；悬停查看样本编号。')+'</p><div class="grid">'+''.join('<div class="card"><h3>'+NAMES[m]+'</h3>'+scatter(rows,m)+'</div>' for m in methods if m != 'full')+'</div></details></section>'
     body += '<section><h2>'+bi('Descriptive uncertainty','描述性波动')+'</h2>'+table(['Method','G(Full, method): 95%','G(method, Full): 95%'],[[NAMES[m],f"{b['a_over_b'][0]:.4f}–{b['a_over_b'][1]:.4f}",f"{b['b_over_a'][0]:.4f}–{b['b_over_a'][1]:.4f}"] for m,b in metrics['bootstrap_vs_full'].items()])+'<p>'+bi('Paired context-cluster bootstrap; percentile ranges are descriptive, not a validated dominance test.','按上下文成组的配对 bootstrap；百分位区间描述波动，不是经过验证的支配检验。')+'</p></section>'
+    if metrics['source_tasks']:
+        task_rows = []
+        for task, values in metrics['source_tasks'].items():
+            for method, gaps in values['infogap_vs_full'].items():
+                task_rows.append([task, values['n'], NAMES[method], f"{values['scores'][method]['brier']:.4f}", f"{gaps['full_over_method']['value']:.4f}", f"{gaps['method_over_full']['value']:.4f}"])
+        body += '<section><details><summary>'+bi('LongBench source-task breakdown','展开：LongBench 来源任务分解')+'</summary>'+table(['Task','n','Method','Brier','G(Full, method)','G(method, Full)'],task_rows)+'<p>'+bi('These small subsets are descriptive; they are not independent benchmark replications.','这些小子集仅作描述，并非独立的 benchmark 重复实验。')+'</p></details></section>'
     body += '<section><h2>'+bi('API usage','API 用量')+'</h2>'+table(['Stage','Attempts','Input tokens','Output tokens'],[[key,v['attempts'],f"{v['prompt_tokens']:,}",f"{v['completion_tokens']:,}"] for key,v in usage.items()])+'<p>'+bi('Compression and reader attempts have separate hard caps and ledgers. Usage excludes prior experiments and smoke runs. Time/cost of search is part of this adapted protocol, not an intrinsic speed claim for the original methods.','压缩和 reader 各有独立硬性尝试上限与账本。用量不含旧实验和小样本；长度搜索的时间及费用属于此适配协议，不能据此宣称原方法本身的速度。')+'</p></section>'
     return body
 
@@ -143,7 +152,7 @@ def main():
     for r in records:
         name, config, run = r['name'],r['config'],r['run']
         title = f"{name} · n={r['metrics']['n']} · {config['dataset_split']}"
-        panels = method_panels(config,r['metrics'],r['diagnostics'],scale,r['usage'])
+        panels = method_panels(config,r['metrics'],r['diagnostics'],scale,r['usage'],r['rows'])
         overview += f'<section id="{name}"><h2>{title}</h2><a href="{name}.html">'+bi('Every example and compressed text','逐题预测与压缩文本')+f'</a> · <a href="{name}_predictions.csv">CSV</a> · <a href="{name}_metrics.json">InfoGap JSON</a></section>'+panels
         full = page(title,protocol_section()+panels+sample_section(r['rows'],config['methods']))
         (DESTINATION/f'{name}.html').write_text(full,encoding='utf-8')
