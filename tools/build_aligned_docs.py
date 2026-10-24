@@ -73,12 +73,14 @@ def method_panels(config, metrics, diagnostics, scale, usage):
         r = diagnostics[m]['retention']
         score_rows.append([NAMES[m],f"{s['accuracy']:.3f}",f"{s['brier']:.4f}",f"{s['log_loss']:.4f}",f"{s['pooled_retained_ratio']:.2%}"])
         before = r.get('selected_before_clamp_pooled_ratio')
-        length_rows.append([NAMES[m],f'{before:.1%}' if before is not None else '—',f"{r.get('before_match_pooled_ratio',0):.1%}",f"{r['min']:.1%}",f"{r['p10']:.1%}",f"{r['median']:.1%}",f"{r['p90']:.1%}",f"{r['max']:.1%}",r['within_target_band'],r['underfilled'],r['post_clip_used'],r.get('matching_trims',0)])
+        length_rows.append([NAMES[m],f'{before:.1%}' if before is not None else '—',f"{r.get('before_match_pooled_ratio',0):.1%}",f"{r['min']:.1%}",f"{r['p10']:.1%}",f"{r['median']:.1%}",f"{r['p90']:.1%}",f"{r['max']:.1%}",r['within_target_band'],r.get('before_match_underfilled',r['underfilled']),r['post_clip_used'],r.get('matching_trims',0)])
         diag_rows.append([NAMES[m],f"{d['mean_p_yes']:.3f}",f"{d['ece_equal_width_10']:.4f}",d['p_half'],d['p_zero_or_one'],d['wrong_zero_or_one'],d['confident_wrong_95'],d['distinct_probabilities']])
     body = '<section><h2>'+bi('Forecast performance','预测表现')+'</h2>'+table(['Method','Accuracy ↑','Brier ↓','Log loss ↓',bi('Actual retained','实际保留率')],score_rows)+'</section>'
     body += '<section><h2>'+bi('Directional InfoGap matrix','双向 InfoGap 矩阵')+'</h2>'+matrix(metrics,scale)+'</section>'
-    body += '<section><h2>'+bi('Actual budget diagnostics','实际预算诊断')+'</h2>'+table(['Method',bi('Native draft','原生草稿'),bi('Before matching','共同对齐前'),'Min','P10','Median','P90','Max',bi('In band','落在目标区间'),bi('Below initial band','低于初始目标区间'),bi('Initial cap trims','初次上限裁剪'),bi('Matching trims','共同长度裁剪')],length_rows)+'<p>'+bi('Quantiles are per-question realized retained ratios. Before-clamp ratio measures the selected native draft, prior to the last-resort cap. If many outputs require clamping, interpret the condition as compressor plus budget adapter, not the unmodified native method. Target-band counts do not apply to Full or No context. Timing includes all search trials.','分位数按每题最终实际保留率统计。裁剪前保留率测量选定原生草稿，不含末次裁剪。如果许多样本需要裁剪，应将其解读为“压缩器＋预算适配器”，不能当作未修改的原生方法。原文和空上下文不适用目标区间。耗时包含全部长度试探。')+'</p></section>'
+    body += '<section><h2>'+bi('Actual budget diagnostics','实际预算诊断')+'</h2>'+table(['Method',bi('Native draft','原生草稿'),bi('Before matching','共同对齐前'),'Min','P10','Median','P90','Max',bi('Final in band','最终落在目标区间'),bi('Pre-match below band','等长对齐前欠填'),bi('Initial cap trims','初次上限裁剪'),bi('Matching trims','共同长度裁剪')],length_rows)+'<p>'+bi('Quantiles are per-question realized retained ratios. Before-clamp ratio measures the selected native draft, prior to the last-resort cap. If many outputs require clamping, interpret the condition as compressor plus budget adapter, not the unmodified native method. Target-band counts do not apply to Full or No context. Timing includes all search trials.','分位数按每题最终实际保留率统计。裁剪前保留率测量选定原生草稿，不含末次裁剪。如果许多样本需要裁剪，应将其解读为“压缩器＋预算适配器”，不能当作未修改的原生方法。原文和空上下文不适用目标区间。耗时包含全部长度试探。')+'</p></section>'
     body += '<section><h2>'+bi('Probability diagnostics','概率诊断')+'</h2>'+table(['Method','Mean p(Yes)','ECE ↓','p = 0.5','p = 0 or 1',bi('Wrong 0/1','0/1 且错'),bi('Wrong ≥95% confidence','≥95% 自信且错'),bi('Distinct p','不同概率数')],diag_rows)
+    base_rate = diagnostics[methods[0]]['probability']['base_rate']
+    body += '<p>'+bi(f'Observed Yes rate: {base_rate:.1%}.',f'真实 Yes 比例：{base_rate:.1%}。')+'</p>'
     body += '<p>'+bi('ECE uses ten fixed equal-width bins: Σ(nᵦ/n)|mean(p)ᵦ − mean(y)ᵦ|. Empty bins do not contribute. Reliability diagrams plot reported p(Yes) against the observed Yes fraction; points are descriptive and noisy in small bins. No probabilities are recalibrated or changed. Perfect calibration is not a prerequisite for the InfoGap formulation used here.',
                         'ECE 使用十个固定等宽箱：Σ(nᵦ/n)|mean(p)ᵦ−mean(y)ᵦ|，空箱不贡献。可靠性图对比报告的 p(Yes) 与实际 Yes 比例；小箱波动大，仅作描述。没有重新校准或改动概率；这里使用的 InfoGap 公式不要求预测器完美校准。')+'</p><div class="grid">'+''.join('<div class="card">'+reliability_plot(diagnostics[m]['probability'],NAMES[m])+'</div>' for m in methods)+'</div>'
     body += '<details><summary>'+bi('Log-loss sensitivity to endpoint clipping','Log loss 对端点截断的敏感性')+'</summary>'+table(['Method','ε = 1e−12','ε = 1e−6','ε = 1e−3'],[[NAMES[m],*[f'{v:.4f}' for v in diagnostics[m]['probability']['log_loss_sensitivity'].values()]] for m in methods])+'<p>'+bi('Only logarithms use clipping. InfoGap, Brier, ECE and all saved probabilities use the original values.','只有对数计算使用截断；InfoGap、Brier、ECE 和所有保存的概率均使用原值。')+'</p></details></section>'
@@ -108,7 +110,7 @@ def main():
         config = read_json(ROOT / f'configs/aligned_{name}.json')
         run = ROOT / 'runs' / config['run_name']
         require_audit = read_json(run/'audit.json')
-        if require_audit['status'] != 'passed':
+        if require_audit['status'] != 'passed' or read_json(run/'manifest.json')['status'] != 'complete':
             raise ValueError('Only audited complete runs may be published.')
         usage = {}
         for stage, folder in [('Reader',run),('Compression',run/'compression_api')]:
@@ -121,14 +123,18 @@ def main():
         for method in config['methods']:
             native_tokens = 0
             before_match_tokens = 0
+            before_match_underfilled = 0
             for row in record['rows']:
                 condition = row['conditions'][method]
                 before_match_tokens += condition.get('before_match_tokens',condition['tokens'])
+                if condition.get('budget_tokens') is not None:
+                    before_match_underfilled += condition.get('before_match_tokens',condition['tokens']) < .95*condition['budget_tokens']
                 if 'local_compression_hash' in condition:
                     entry = read_json(run/'aligned_compression_cache'/f"{condition['local_compression_hash']}.json")['result']
                     native_tokens += entry['candidates'][entry['selected_candidate']]['tokens']
                 else:
-                    native_tokens += condition['tokens']
+                    native_tokens += condition.get('before_match_tokens',condition['tokens'])
+            record['diagnostics'][method]['retention']['before_match_underfilled'] = before_match_underfilled
             record['diagnostics'][method]['retention']['before_match_pooled_ratio'] = before_match_tokens / sum(row['original_tokens'] for row in record['rows'])
             record['diagnostics'][method]['retention']['selected_before_clamp_pooled_ratio'] = native_tokens / sum(row['original_tokens'] for row in record['rows'])
     scale = max(c['value'] for r in records for row in r['metrics']['infogap'].values() for c in row.values())
