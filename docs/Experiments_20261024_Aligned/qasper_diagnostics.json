@@ -1,0 +1,842 @@
+{
+  "full": {
+    "probability": {
+      "n": 283,
+      "base_rate": 0.6784452296819788,
+      "mean_p_yes": 0.798904593639576,
+      "ece_equal_width_10": 0.14689045936395756,
+      "reliability": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "n": 5,
+          "mean_p_yes": 0.034,
+          "observed_yes_rate": 0.2
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "n": 22,
+          "mean_p_yes": 0.12136363636363635,
+          "observed_yes_rate": 0.22727272727272727
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "n": 2,
+          "mean_p_yes": 0.21,
+          "observed_yes_rate": 0.5
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "n": 5,
+          "mean_p_yes": 0.346,
+          "observed_yes_rate": 0.0
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "n": 3,
+          "mean_p_yes": 0.44333333333333336,
+          "observed_yes_rate": 0.0
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "n": 10,
+          "mean_p_yes": 0.647,
+          "observed_yes_rate": 0.6
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "n": 99,
+          "mean_p_yes": 0.8529292929292929,
+          "observed_yes_rate": 0.5454545454545454
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "n": 137,
+          "mean_p_yes": 0.9405839416058394,
+          "observed_yes_rate": 0.9124087591240876
+        }
+      ],
+      "p_half": 0,
+      "p_zero_or_one": 1,
+      "wrong_zero_or_one": 0,
+      "confident_wrong_95": 3,
+      "distinct_probabilities": 21,
+      "log_loss_sensitivity": {
+        "1e-12": 0.5692254857474639,
+        "1e-06": 0.5692254892810311,
+        "0.001": 0.5692290210843283
+      }
+    },
+    "retention": {
+      "min": 1.0,
+      "p10": 1.0,
+      "median": 1.0,
+      "p90": 1.0,
+      "max": 1.0,
+      "within_target_band": 0,
+      "post_clip_used": 0,
+      "matching_trims": 0,
+      "zero_matched_budget": 0,
+      "underfilled": 0,
+      "before_match_underfilled": 0,
+      "before_match_pooled_ratio": 1.0,
+      "selected_before_clamp_pooled_ratio": 1.0
+    }
+  },
+  "no_context": {
+    "probability": {
+      "n": 283,
+      "base_rate": 0.6784452296819788,
+      "mean_p_yes": 0.5017667844522968,
+      "ece_equal_width_10": 0.19045936395759722,
+      "reliability": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "n": 4,
+          "mean_p_yes": 0.0125,
+          "observed_yes_rate": 0.5
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "n": 1,
+          "mean_p_yes": 0.35,
+          "observed_yes_rate": 0.0
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "n": 270,
+          "mean_p_yes": 0.5,
+          "observed_yes_rate": 0.6851851851851852
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "n": 2,
+          "mean_p_yes": 0.65,
+          "observed_yes_rate": 0.5
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "n": 4,
+          "mean_p_yes": 0.85,
+          "observed_yes_rate": 0.75
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "n": 2,
+          "mean_p_yes": 0.95,
+          "observed_yes_rate": 0.5
+        }
+      ],
+      "p_half": 270,
+      "p_zero_or_one": 3,
+      "wrong_zero_or_one": 2,
+      "confident_wrong_95": 3,
+      "distinct_probabilities": 7,
+      "log_loss_sensitivity": {
+        "1e-12": 0.882707295319559,
+        "1e-06": 0.7850711818357108,
+        "0.001": 0.7362566551303003
+      }
+    },
+    "retention": {
+      "min": 0.0,
+      "p10": 0.0,
+      "median": 0.0,
+      "p90": 0.0,
+      "max": 0.0,
+      "within_target_band": 0,
+      "post_clip_used": 0,
+      "matching_trims": 0,
+      "zero_matched_budget": 0,
+      "underfilled": 0,
+      "before_match_underfilled": 0,
+      "before_match_pooled_ratio": 0.0,
+      "selected_before_clamp_pooled_ratio": 0.0
+    }
+  },
+  "head_tail": {
+    "probability": {
+      "n": 283,
+      "base_rate": 0.6784452296819788,
+      "mean_p_yes": 0.6597526501766785,
+      "ece_equal_width_10": 0.15537102473498232,
+      "reliability": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "n": 7,
+          "mean_p_yes": 0.05,
+          "observed_yes_rate": 0.42857142857142855
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "n": 33,
+          "mean_p_yes": 0.13272727272727272,
+          "observed_yes_rate": 0.5151515151515151
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "n": 10,
+          "mean_p_yes": 0.21400000000000002,
+          "observed_yes_rate": 0.6
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "n": 22,
+          "mean_p_yes": 0.3409090909090909,
+          "observed_yes_rate": 0.5909090909090909
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "n": 8,
+          "mean_p_yes": 0.4475,
+          "observed_yes_rate": 0.25
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "n": 1,
+          "mean_p_yes": 0.55,
+          "observed_yes_rate": 0.0
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "n": 43,
+          "mean_p_yes": 0.6465116279069768,
+          "observed_yes_rate": 0.5348837209302325
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "n": 100,
+          "mean_p_yes": 0.8502,
+          "observed_yes_rate": 0.75
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "n": 59,
+          "mean_p_yes": 0.9388135593220339,
+          "observed_yes_rate": 0.8983050847457628
+        }
+      ],
+      "p_half": 0,
+      "p_zero_or_one": 0,
+      "wrong_zero_or_one": 0,
+      "confident_wrong_95": 5,
+      "distinct_probabilities": 19,
+      "log_loss_sensitivity": {
+        "1e-12": 0.6695953790250269,
+        "1e-06": 0.6695953790250269,
+        "0.001": 0.6695953790250269
+      }
+    },
+    "retention": {
+      "min": 0.03603287209383999,
+      "p10": 0.10019023462270134,
+      "median": 0.1527749334425558,
+      "p90": 0.23078347842192998,
+      "max": 0.3892935178441369,
+      "within_target_band": 0,
+      "post_clip_used": 0,
+      "matching_trims": 283,
+      "zero_matched_budget": 0,
+      "underfilled": 283,
+      "before_match_underfilled": 0,
+      "before_match_pooled_ratio": 0.4999422984350443,
+      "selected_before_clamp_pooled_ratio": 0.4999422984350443
+    }
+  },
+  "selective_context": {
+    "probability": {
+      "n": 283,
+      "base_rate": 0.6784452296819788,
+      "mean_p_yes": 0.7121201413427561,
+      "ece_equal_width_10": 0.11713780918727913,
+      "reliability": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "n": 2,
+          "mean_p_yes": 0.025,
+          "observed_yes_rate": 0.5
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "n": 27,
+          "mean_p_yes": 0.12777777777777777,
+          "observed_yes_rate": 0.4444444444444444
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "n": 2,
+          "mean_p_yes": 0.21,
+          "observed_yes_rate": 0.5
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "n": 19,
+          "mean_p_yes": 0.3373684210526316,
+          "observed_yes_rate": 0.42105263157894735
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "n": 7,
+          "mean_p_yes": 0.4414285714285714,
+          "observed_yes_rate": 0.14285714285714285
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "n": 43,
+          "mean_p_yes": 0.6479069767441861,
+          "observed_yes_rate": 0.6511627906976745
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "n": 127,
+          "mean_p_yes": 0.8509448818897637,
+          "observed_yes_rate": 0.7165354330708661
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "n": 56,
+          "mean_p_yes": 0.9317857142857143,
+          "observed_yes_rate": 0.8928571428571429
+        }
+      ],
+      "p_half": 0,
+      "p_zero_or_one": 1,
+      "wrong_zero_or_one": 1,
+      "confident_wrong_95": 2,
+      "distinct_probabilities": 18,
+      "log_loss_sensitivity": {
+        "1e-12": 0.7185561455852245,
+        "1e-06": 0.6697380870765168,
+        "0.001": 0.645329057822163
+      }
+    },
+    "retention": {
+      "min": 0.03603287209383999,
+      "p10": 0.10019023462270134,
+      "median": 0.1527749334425558,
+      "p90": 0.23078347842192998,
+      "max": 0.3892935178441369,
+      "within_target_band": 0,
+      "post_clip_used": 0,
+      "matching_trims": 283,
+      "zero_matched_budget": 0,
+      "underfilled": 283,
+      "before_match_underfilled": 0,
+      "before_match_pooled_ratio": 0.4871414772238215,
+      "selected_before_clamp_pooled_ratio": 0.4871414772238215
+    }
+  },
+  "llmlingua2": {
+    "probability": {
+      "n": 283,
+      "base_rate": 0.6784452296819788,
+      "mean_p_yes": 0.6961484098939928,
+      "ece_equal_width_10": 0.14717314487632507,
+      "reliability": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "n": 4,
+          "mean_p_yes": 0.05,
+          "observed_yes_rate": 0.5
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "n": 37,
+          "mean_p_yes": 0.1289189189189189,
+          "observed_yes_rate": 0.4594594594594595
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "n": 3,
+          "mean_p_yes": 0.21,
+          "observed_yes_rate": 0.3333333333333333
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "n": 12,
+          "mean_p_yes": 0.34,
+          "observed_yes_rate": 0.6666666666666666
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "n": 9,
+          "mean_p_yes": 0.4466666666666667,
+          "observed_yes_rate": 0.3333333333333333
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "n": 35,
+          "mean_p_yes": 0.6422857142857143,
+          "observed_yes_rate": 0.4857142857142857
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "n": 120,
+          "mean_p_yes": 0.8513333333333333,
+          "observed_yes_rate": 0.725
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "n": 63,
+          "mean_p_yes": 0.9312698412698412,
+          "observed_yes_rate": 0.9047619047619048
+        }
+      ],
+      "p_half": 0,
+      "p_zero_or_one": 0,
+      "wrong_zero_or_one": 0,
+      "confident_wrong_95": 2,
+      "distinct_probabilities": 17,
+      "log_loss_sensitivity": {
+        "1e-12": 0.649245962087219,
+        "1e-06": 0.649245962087219,
+        "0.001": 0.649245962087219
+      }
+    },
+    "retention": {
+      "min": 0.03603287209383999,
+      "p10": 0.10019023462270134,
+      "median": 0.1527749334425558,
+      "p90": 0.23078347842192998,
+      "max": 0.3892935178441369,
+      "within_target_band": 0,
+      "post_clip_used": 0,
+      "matching_trims": 283,
+      "zero_matched_budget": 0,
+      "underfilled": 283,
+      "before_match_underfilled": 0,
+      "before_match_pooled_ratio": 0.48934625083284716,
+      "selected_before_clamp_pooled_ratio": 0.48934625083284716
+    }
+  },
+  "salt_summary": {
+    "probability": {
+      "n": 283,
+      "base_rate": 0.6784452296819788,
+      "mean_p_yes": 0.6818021201413427,
+      "ece_equal_width_10": 0.14851590106007065,
+      "reliability": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "n": 4,
+          "mean_p_yes": 0.037500000000000006,
+          "observed_yes_rate": 0.5
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "n": 32,
+          "mean_p_yes": 0.13218749999999999,
+          "observed_yes_rate": 0.4375
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "n": 11,
+          "mean_p_yes": 0.21,
+          "observed_yes_rate": 0.7272727272727273
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "n": 17,
+          "mean_p_yes": 0.33941176470588236,
+          "observed_yes_rate": 0.5294117647058824
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "n": 6,
+          "mean_p_yes": 0.45,
+          "observed_yes_rate": 0.3333333333333333
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "n": 1,
+          "mean_p_yes": 0.55,
+          "observed_yes_rate": 0.0
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "n": 41,
+          "mean_p_yes": 0.6470731707317073,
+          "observed_yes_rate": 0.6097560975609756
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "n": 108,
+          "mean_p_yes": 0.8496296296296295,
+          "observed_yes_rate": 0.6944444444444444
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "n": 63,
+          "mean_p_yes": 0.9357142857142857,
+          "observed_yes_rate": 0.9047619047619048
+        }
+      ],
+      "p_half": 0,
+      "p_zero_or_one": 1,
+      "wrong_zero_or_one": 1,
+      "confident_wrong_95": 4,
+      "distinct_probabilities": 19,
+      "log_loss_sensitivity": {
+        "1e-12": 0.7579624540021916,
+        "1e-06": 0.709144395493484,
+        "0.001": 0.6847353662391301
+      }
+    },
+    "retention": {
+      "min": 0.03603287209383999,
+      "p10": 0.10019023462270134,
+      "median": 0.1527749334425558,
+      "p90": 0.23078347842192998,
+      "max": 0.3892935178441369,
+      "within_target_band": 0,
+      "post_clip_used": 0,
+      "matching_trims": 283,
+      "zero_matched_budget": 0,
+      "underfilled": 283,
+      "before_match_underfilled": 1,
+      "before_match_pooled_ratio": 0.4864063401586952,
+      "selected_before_clamp_pooled_ratio": 0.4864063401586952
+    }
+  },
+  "llm_summary": {
+    "probability": {
+      "n": 283,
+      "base_rate": 0.6784452296819788,
+      "mean_p_yes": 0.7219081272084805,
+      "ece_equal_width_10": 0.14169611307420496,
+      "reliability": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "n": 11,
+          "mean_p_yes": 0.04272727272727273,
+          "observed_yes_rate": 0.36363636363636365
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "n": 34,
+          "mean_p_yes": 0.1341176470588235,
+          "observed_yes_rate": 0.2647058823529412
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "n": 6,
+          "mean_p_yes": 0.21,
+          "observed_yes_rate": 0.6666666666666666
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "n": 11,
+          "mean_p_yes": 0.3463636363636364,
+          "observed_yes_rate": 0.6363636363636364
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "n": 7,
+          "mean_p_yes": 0.44857142857142857,
+          "observed_yes_rate": 0.14285714285714285
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "n": 18,
+          "mean_p_yes": 0.6433333333333333,
+          "observed_yes_rate": 0.5
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "n": 67,
+          "mean_p_yes": 0.8508955223880597,
+          "observed_yes_rate": 0.5970149253731343
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "n": 129,
+          "mean_p_yes": 0.9493798449612403,
+          "observed_yes_rate": 0.9147286821705426
+        }
+      ],
+      "p_half": 0,
+      "p_zero_or_one": 1,
+      "wrong_zero_or_one": 0,
+      "confident_wrong_95": 12,
+      "distinct_probabilities": 20,
+      "log_loss_sensitivity": {
+        "1e-12": 0.5752358702111244,
+        "1e-06": 0.5752358737446915,
+        "0.001": 0.5752394055479887
+      }
+    },
+    "retention": {
+      "min": 0.03603287209383999,
+      "p10": 0.10019023462270134,
+      "median": 0.1527749334425558,
+      "p90": 0.23078347842192998,
+      "max": 0.3892935178441369,
+      "within_target_band": 0,
+      "post_clip_used": 0,
+      "matching_trims": 54,
+      "zero_matched_budget": 0,
+      "underfilled": 283,
+      "before_match_underfilled": 283,
+      "before_match_pooled_ratio": 0.14821969950555178,
+      "selected_before_clamp_pooled_ratio": 0.14821969950555178
+    }
+  },
+  "telegrapher": {
+    "probability": {
+      "n": 283,
+      "base_rate": 0.6784452296819788,
+      "mean_p_yes": 0.6918374558303887,
+      "ece_equal_width_10": 0.1474558303886926,
+      "reliability": [
+        {
+          "lower": 0.0,
+          "upper": 0.1,
+          "n": 4,
+          "mean_p_yes": 0.037500000000000006,
+          "observed_yes_rate": 0.25
+        },
+        {
+          "lower": 0.1,
+          "upper": 0.2,
+          "n": 33,
+          "mean_p_yes": 0.13272727272727272,
+          "observed_yes_rate": 0.45454545454545453
+        },
+        {
+          "lower": 0.2,
+          "upper": 0.3,
+          "n": 7,
+          "mean_p_yes": 0.21571428571428572,
+          "observed_yes_rate": 0.5714285714285714
+        },
+        {
+          "lower": 0.3,
+          "upper": 0.4,
+          "n": 18,
+          "mean_p_yes": 0.3416666666666667,
+          "observed_yes_rate": 0.6111111111111112
+        },
+        {
+          "lower": 0.4,
+          "upper": 0.5,
+          "n": 7,
+          "mean_p_yes": 0.45285714285714285,
+          "observed_yes_rate": 0.0
+        },
+        {
+          "lower": 0.5,
+          "upper": 0.6,
+          "n": 1,
+          "mean_p_yes": 0.55,
+          "observed_yes_rate": 0.0
+        },
+        {
+          "lower": 0.6,
+          "upper": 0.7,
+          "n": 37,
+          "mean_p_yes": 0.6443243243243243,
+          "observed_yes_rate": 0.6486486486486487
+        },
+        {
+          "lower": 0.7,
+          "upper": 0.8,
+          "n": 0,
+          "mean_p_yes": null,
+          "observed_yes_rate": null
+        },
+        {
+          "lower": 0.8,
+          "upper": 0.9,
+          "n": 106,
+          "mean_p_yes": 0.8506603773584905,
+          "observed_yes_rate": 0.7169811320754716
+        },
+        {
+          "lower": 0.9,
+          "upper": 1.0,
+          "n": 70,
+          "mean_p_yes": 0.9410000000000001,
+          "observed_yes_rate": 0.8714285714285714
+        }
+      ],
+      "p_half": 0,
+      "p_zero_or_one": 1,
+      "wrong_zero_or_one": 1,
+      "confident_wrong_95": 5,
+      "distinct_probabilities": 20,
+      "log_loss_sensitivity": {
+        "1e-12": 0.7389510578769057,
+        "1e-06": 0.690132999368198,
+        "0.001": 0.6657239701138442
+      }
+    },
+    "retention": {
+      "min": 0.03603287209383999,
+      "p10": 0.10019023462270134,
+      "median": 0.1527749334425558,
+      "p90": 0.23078347842192998,
+      "max": 0.3892935178441369,
+      "within_target_band": 0,
+      "post_clip_used": 150,
+      "matching_trims": 283,
+      "zero_matched_budget": 0,
+      "underfilled": 283,
+      "before_match_underfilled": 121,
+      "before_match_pooled_ratio": 0.4068731808864363,
+      "selected_before_clamp_pooled_ratio": 0.4919265628038497
+    }
+  }
+}

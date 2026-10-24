@@ -112,11 +112,15 @@ def sample_section(rows, methods):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--datasets',nargs='+',choices=['hotpotqa','qasper','longbench'],default=['hotpotqa','qasper','longbench'])
-    datasets = parser.parse_args().datasets
+    parser.add_argument('--longbench-config', default='configs/aligned_longbench.json',
+                        help='Explicit config for an audited LongBench recovery run; original config remains unchanged.')
+    args = parser.parse_args()
+    datasets = args.datasets
     DESTINATION.mkdir(exist_ok=True,parents=True)
     records = []
     for name in datasets:
-        config = read_json(ROOT / f'configs/aligned_{name}.json')
+        config_path = args.longbench_config if name == 'longbench' else f'configs/aligned_{name}.json'
+        config = read_json(ROOT / config_path)
         run = ROOT / 'runs' / config['run_name']
         require_audit = read_json(run/'audit.json')
         if require_audit['status'] != 'passed' or read_json(run/'manifest.json')['status'] != 'complete':
@@ -154,6 +158,8 @@ def main():
         name, config, run = r['name'],r['config'],r['run']
         title = f"{name} · n={r['metrics']['n']} · {config['dataset_split']}"
         panels = method_panels(config,r['metrics'],r['diagnostics'],scale,r['usage'],r['rows'])
+        if (run/'timeout_recovery_provenance.json').exists():
+            panels += '<section><p>'+bi('Recovery provenance: this dataset uses a separately preserved run with a 30-minute network timeout instead of 10 minutes. Model requests, prompts, output ceilings, samples and cumulative API attempt limits are unchanged. Verified cached results and original attempt ledgers are reused once; failed runs remain preserved.', '恢复记录：该数据集使用独立保存的运行，将网络等待从 10 分钟延长到 30 分钟。模型请求、提示词、输出上限、样本及累计 API 尝试上限不变；核验后的缓存与原账本只统计一次，失败运行完整保留。')+'</p></section>'
         overview += f'<section id="{name}"><h2>{title}</h2><a href="{name}.html">'+bi('Every example and compressed text','逐题预测与压缩文本')+f'</a> · <a href="{name}_predictions.csv">CSV</a> · <a href="{name}_metrics.json">InfoGap JSON</a></section>'+panels
         full = page(title,protocol_section()+panels+sample_section(r['rows'],config['methods']))
         (DESTINATION/f'{name}.html').write_text(full,encoding='utf-8')

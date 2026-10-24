@@ -12,7 +12,7 @@
 
 ## 先看结果与导读
 
-- **[预算对齐实验与概率诊断（持续更新）](docs/Experiments_20261024_Aligned/Experiment_Overview.html)**：已完成并审计的数据集会逐组加入；八组输入、8×8 双向 InfoGap 矩阵、实际长度与概率诊断。当前已发布 HotpotQA，QASPER 和 LongBench 仍在运行。
+- **[预算对齐实验与概率诊断（持续更新）](docs/Experiments_20261024_Aligned/Experiment_Overview.html)**：已完成并审计的数据集会逐组加入；八组输入、8×8 双向 InfoGap 矩阵、实际长度与概率诊断。当前已发布 HotpotQA 和 QASPER；LongBench 正在进行连接故障恢复，旧运行完整保留。
 - **[本轮新增代码导读](docs/Code_Walkthrough_20261024_Aligned.html)**：实际预算对齐、普通摘要与 Telegrapher、概率诊断、报告生成及测试；可点击流程图，逐块查看真实源码、函数参数和固定版提示词。旧版完整导读保留在下方。
 - **[完整代码导读（零基础版）](docs/Code_Walkthrough_20261023.html)**：首页点击流程框图，进入 8 个模块、67 个真实源码片段，逐块阅读代码、参数与解释；保留覆盖 47 个 Python 文件、183 个函数/方法和 332 个参数的完整索引。支持上一块/下一块、返回索引和中英文切换，默认英文；单独分享 HTML 即可阅读。
 - **[SALT-summary 补充实验](docs/Experiments_20261023_SALT/Experiment_Overview.html)**：相同三个数据集，追加 query-blind SALT-summary；5×5 InfoGap 矩阵、实际 token 保留率、新旧调用分开统计。原四组预测和下方历史报告保留。
