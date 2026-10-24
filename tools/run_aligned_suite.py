@@ -18,7 +18,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from blackwell.budgeting import align_local, select_candidate
+from blackwell.budgeting import align_local, select_candidate, match_lengths
 from blackwell.client import CachedChatClient, parse_probability
 from blackwell.compressors import LOCAL_METHODS, create_compressor
 from blackwell.compressors.llm_rewrite import API_METHODS, LLMRewriteCompressor, rewrite_messages
@@ -68,7 +68,8 @@ def prepare(config):
     runtime['budget_policy'] = 'length-only native-rate search <=8 calls; prefer 95-100% cap band, else closest length (feasible wins ties); explicitly head-tail clamp selected overshoots'
     identity = {'config': config, 'dataset': provenance, 'examples_sha256': fingerprint(examples),
                 'code': code['files_sha256'], 'source_files_sha256': snapshots,
-                'local_compressors': runtime}
+                'local_compressors': runtime,
+                'length_alignment': 'Exact per-context token-count matching across six compressed conditions; common feasible length <=50% original; full/no_context unchanged.'}
     run = ROOT / 'runs' / config['run_name']
     if (run / 'manifest.json').exists():
         manifest = read_json(run / 'manifest.json')
@@ -191,9 +192,10 @@ def predict(config, run, tokenizer, examples, manifest, offline=False):
     for index, example in enumerate(examples, 1):
         context = example['context']
         original = tokenizer.count(context)
+        compacted = match_lengths({m: condition_text(context,m,tokenizer,run,manifest) for m in config['methods']},tokenizer)
         conditions = {}
         for method in config['methods']:
-            c = condition_text(context, method, tokenizer, run, manifest)
+            c = compacted[method]
             raw, key = client.complete(prediction_messages(c['text'], example['question']), config['prediction_max_tokens'], json_mode=True)
             probability = parse_probability(raw)
             conditions[method] = {**c, 'p_yes': probability, 'predicted_label': int(probability >= .5),
@@ -231,10 +233,13 @@ def audit(config, run, tokenizer, examples, manifest):
     for row, example in zip(rows, examples):
         require({k: row[k] for k in example} == example, 'Sample pairing changed.')
         require(list(row['conditions']) == config['methods'], 'Condition mismatch.')
+        matched = match_lengths({m:condition_text(row['context'],m,tokenizer,run,manifest) for m in config['methods']},tokenizer)
+        require(len({c['tokens'] for m,c in row['conditions'].items() if m not in {'full','no_context'}}) == 1,
+                'Compressed conditions must have exactly the same realized token count.')
         for method, condition in row['conditions'].items():
             require(tokenizer.count(condition['text']) == condition['tokens'], 'Token count mismatch.')
             check_cached_prediction(run, config, row, condition)
-            expected = condition_text(row['context'], method, tokenizer, run, manifest)
+            expected = matched[method]
             require(all(condition[k] == v for k, v in expected.items()), 'Condition differs from compression cache.')
             if method in {'full', 'no_context', 'head_tail'}:
                 continue
@@ -265,6 +270,8 @@ def audit(config, run, tokenizer, examples, manifest):
     result = {'status': 'passed', 'samples': len(rows), 'forecasts': len(rows)*len(METHODS),
               'compression_contexts_checked': len(checked), 'infogap_cells': len(METHODS)**2,
               'old_files_unchanged': True, 'offline_replay_identical': True,
+              'exact_matched_lengths': True,
+              'zero_common_budget_samples': sum(r['conditions']['head_tail']['matched_budget_tokens'] == 0 for r in rows),
               'scope': 'Full request reconstruction; compression inputs contain context/length only; original forecasts unmodified.'}
     write_json(run / 'audit.json', result)
     print(result, flush=True)

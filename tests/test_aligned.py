@@ -3,7 +3,7 @@ import inspect
 import unittest
 from unittest.mock import patch
 
-from blackwell.budgeting import align_local, select_candidate
+from blackwell.budgeting import align_local, select_candidate, match_lengths
 from blackwell.compressors.llm_rewrite import LLMRewriteCompressor, rewrite_messages
 from blackwell.diagnostics import probability_diagnostics
 
@@ -17,13 +17,30 @@ class WordTokenizer:
 
 
 class AlignmentTests(unittest.TestCase):
+    def test_actual_lengths_are_equal_without_changing_controls(self):
+        c = {'full':{'text':'x '*20,'tokens':20},'no_context':{'text':'','tokens':0}}
+        for method,n in [('a',10),('b',6),('c',9)]:
+            c[method]={'text':'x '*n,'tokens':n,'budget_tokens':10}
+        result=match_lengths(c,WordTokenizer())
+        self.assertEqual({result[m]['tokens'] for m in ('a','b','c')},{6})
+        self.assertEqual(result['full'],c['full'])
+        self.assertEqual(result['no_context'],c['no_context'])
+        self.assertEqual(c['a']['tokens'],10)
+        self.assertEqual(result['a']['before_match_tokens'],10)
+
+    def test_empty_compression_is_flagged_not_silently_dropped(self):
+        c={m:{'text':'x '*n,'tokens':n,'budget_tokens':10} for m,n in [('a',8),('b',0)]}
+        result=match_lengths(c,WordTokenizer())
+        self.assertEqual(result['a']['matched_budget_tokens'],0)
+        self.assertEqual(result['a']['text'],'')
+
     def test_parallel_worker_caps_sum_to_global_cap(self):
         from blackwell.rewrite_client import PacedRewriteClient
         config = {'max_api_attempts':17}
         with patch('blackwell.rewrite_client.CachedChatClient') as client:
             for worker in range(6):
                 PacedRewriteClient(config, 'unused', WordTokenizer(),6,worker)
-            limits = [call.args[0]['max_api_attempts'] for call in client.call_args_list]
+            limits = [call.args[0]['max_api_attempts'] for call in client.call_args_list if not call.kwargs.get('offline')]
         self.assertEqual(sum(limits),17)
         self.assertEqual(max(limits)-min(limits),1)
 
@@ -34,10 +51,23 @@ class AlignmentTests(unittest.TestCase):
              patch('blackwell.rewrite_client.time.monotonic',return_value=0.), \
              patch('blackwell.rewrite_client.time.sleep') as sleep:
             client = PacedRewriteClient({'max_api_attempts':10,'compression_tokens_per_minute':6000},'unused',WordTokenizer(),2,0)
+            from unittest.mock import Mock
+            client.replay = Mock()
+            client.replay.complete.side_effect = RuntimeError('Offline cache miss')
             client.complete(messages,64)
             client.complete(messages,64)
             self.assertAlmostEqual(sleep.call_args.args[0],60*166/3000)
             base.return_value.complete.assert_called_with(messages,64)
+
+    def test_cached_rewrites_need_no_pacing_or_new_api_call(self):
+        from blackwell.rewrite_client import PacedRewriteClient
+        from unittest.mock import Mock
+        with patch('blackwell.rewrite_client.CachedChatClient'), patch('blackwell.rewrite_client.time.sleep') as sleep:
+            client=PacedRewriteClient({'max_api_attempts':10},'unused',WordTokenizer(),2,0)
+            client.replay=Mock();client.replay.complete.return_value=('cached text','hash')
+            self.assertEqual(client.complete([],64),('cached text','hash'))
+            sleep.assert_not_called()
+            client.client.complete.assert_not_called()
 
     def test_compression_model_does_not_change_reader(self):
         from tools.run_aligned_suite import compression_config

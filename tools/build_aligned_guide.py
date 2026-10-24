@@ -11,6 +11,7 @@ sys.path.insert(0,str(ROOT))
 from blackwell.reporting import STYLE,bi,table
 
 PARAMS = {
+ 'compacted':('Dictionary of method names to context-only compression records, before the common-length step.','方法名到压缩记录的字典；只有上下文及长度，尚未统一最终长度。'),
  'contexts':('Deduplicated context strings assigned to this worker; no queries or labels.','分配给此 worker 的去重上下文字符串，不含问题和标签。'),
  'directory':('This worker’s private API cache and ledger directory.','当前 worker 独立的 API 缓存与账本目录。'),
  'workers':('Number of independent rewrite workers; their attempt caps sum to the fixed total.','独立改写 worker 数；各自上限之和等于固定总上限。'),
@@ -54,6 +55,7 @@ PARAMS = {
 }
 
 EXPLAIN = {
+ 'match_lengths':('Choose the shortest feasible compressed output for each context, then deterministically trim the other compressed conditions until all have exactly the same Qwen token count. Full and no-context controls stay unchanged. The resulting common budget is at most 50% of the original and may be lower; no question or label enters this step.','针对每份上下文取最短可行压缩长度，确定性裁剪其他压缩条件，直到 Qwen token 数完全相同。原文与空上下文对照不变。共同预算最多为原文 50%，可能更低；此步骤不接收问题或标签。'),
  'rewrite_worker':('Each worker processes a deterministic shard sequentially and owns a separate API cache and ledger. Only the standard-library thread pool is shared. Attempt caps sum to the configured total; API failures stop other workers before the next context.','每个 worker 顺序处理确定分片，拥有独立 API 缓存和账本，仅使用标准库线程池。各尝试上限之和等于配置总额；API 失败会通知其他 worker 在下一份上下文前停止。'),
  'complete':('Estimate input plus maximum output tokens and space this worker’s calls conservatively. Then delegate the unchanged messages to the original serial cached client. Worker parallelism does not change the compressor prompt or reader.','估计输入与最大输出 token，并保守安排当前 worker 的调用间隔，然后把原样消息交给已有串行缓存客户端。并行不改变压缩提示词或 reader。'),
  'compression_config':('Create a separate configuration for the rewrite model and its ledger. Both new compressors use DeepSeek-V3.2; the reader remains Qwen. This is a copy, so changing the compressor does not silently change the reader.','为改写模型及其账本创建单独配置。两个新增压缩器均用 DeepSeek-V3.2，reader 保持 Qwen。这是配置副本，不会因为更换压缩模型而悄悄更换 reader。'),
@@ -108,13 +110,14 @@ def function_card(path, node, lines, index):
 def main():
     modules = [
         ('prepare','1 · Freeze samples / 冻结样本','tools/run_aligned_suite.py',['prepare','compression_request','compression_config']),
-        ('budget','2 · Match token caps / 对齐预算','blackwell/budgeting.py',None),
+        ('budget','2 · Native budget search / 原生预算搜索','blackwell/budgeting.py',['select_candidate','align_local']),
         ('rewrite','3 · Summary & Telegrapher / API 改写','blackwell/compressors/llm_rewrite.py',None),
         ('pacing','3b · Bounded concurrency / 有界并行','blackwell/rewrite_client.py',None),
         ('cache','4 · Compress & cache / 压缩与缓存','tools/run_aligned_suite.py',['read_compaction','save_compaction','compress_stage','rewrite_worker']),
-        ('reader','5 · Predict / 预测','tools/run_aligned_suite.py',['condition_text','predict']),
-        ('diagnose','6 · Diagnose / 诊断','blackwell/diagnostics.py',None),
-        ('audit','7 · Evaluate & audit / 评估与审计','tools/run_aligned_suite.py',['finish','audit','require','main']),
+        ('match','5 · Match actual lengths / 统一实际长度','blackwell/budgeting.py',['match_lengths']),
+        ('reader','6 · Predict / 预测','tools/run_aligned_suite.py',['condition_text','predict']),
+        ('diagnose','7 · Diagnose / 诊断','blackwell/diagnostics.py',None),
+        ('audit','8 · Evaluate & audit / 评估与审计','tools/run_aligned_suite.py',['finish','audit','require','main']),
         ('interface','8 · Existing interface / 原接口接入','blackwell/compression.py',None),
         ('registry','9 · Method registry / 方法注册','run_experiment.py',['selected_methods']),
     ]
@@ -132,7 +135,7 @@ def main():
             body += function_card(relative,node,lines,index)
             index += 1
         body += '</section>'
-    body += '<section><h2>'+bi('Where outputs live','输出在哪里')+'</h2><pre>runs/aligned50_&lt;dataset&gt;_20261024/\n  manifest.json / examples.json\n  aligned_compression_cache/     # context-only requests + all drafts\n  compression_api/              # rewrite API requests, responses and ledger\n  api_cache/ / api_attempts.json # reader requests, responses and ledger\n  predictions.json / .csv\n  metrics.json / diagnostics.json / audit.json\n  report.html\ndocs/Experiments_20261024_Aligned/Experiment_Overview.html</pre><p>'+bi('InfoGap is unchanged: exact breakpoints and one-sided limits, both directions, factor 2 plus saved unscaled values. ECE is a new diagnostic, not the objective used to choose compressed text. Shared token caps still require inspecting actual fill and clamp counts.','InfoGap 算法未改变：精确断点与单侧极限、双向、系数 2 及未缩放值。ECE 是新增诊断，不用于挑选压缩文本。共同 token 上限仍需结合实际填充率和裁剪次数解读。')+'</p></section>'
+    body += '<section><h2>'+bi('Where outputs live','输出在哪里')+'</h2><pre>runs/aligned50_&lt;dataset&gt;_20261024/\n  manifest.json / examples.json\n  aligned_compression_cache/     # context-only requests + all drafts\n  compression_api/              # rewrite API requests, responses and ledger\n  api_cache/ / api_attempts.json # reader requests, responses and ledger\n  predictions.json / .csv\n  metrics.json / diagnostics.json / audit.json\n  report.html\ndocs/Experiments_20261024_Aligned/Experiment_Overview.html</pre><p>'+bi('InfoGap is unchanged: exact breakpoints and one-sided limits, both directions, factor 2 plus saved unscaled values. ECE is a new diagnostic, not the objective used to choose compressed text. The six compressed conditions are then exactly length-matched per context at their common feasible budget, at most 50% of the original. Inspect initial and matching trims separately.','InfoGap 算法未改变：精确断点与单侧极限、双向、系数 2 及未缩放值。ECE 是新增诊断，不用于挑选压缩文本。六种压缩条件还会按每份上下文的共同可行预算严格等长，最多为原文 50%。需分别检查初次预算裁剪和共同长度裁剪。')+'</p></section>'
     page = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aligned experiment · Code walkthrough</title><style>'+STYLE+'.flow{display:flex;flex-wrap:wrap;gap:12px}.node{padding:20px;border:1px solid #abc;border-radius:8px;background:#edf4fb;text-decoration:none}.line-number{color:#8798a9;user-select:none}article{border-top:1px solid #dce5ee;margin-top:25px}pre{white-space:pre;overflow:auto}section{scroll-margin-top:15px}</style><body>'+body+'<script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}</script></body></html>'
     target = ROOT/'docs/Code_Walkthrough_20261024_Aligned.html'
     target.write_text(page,encoding='utf-8')

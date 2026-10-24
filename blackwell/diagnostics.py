@@ -38,4 +38,6 @@ def retention_diagnostics(conditions):
             'median': ratios[(len(ratios)-1)//2], 'p90': ratios[int(.9*(len(ratios)-1))], 'max': ratios[-1],
             'within_target_band': sum(c.get('within_target_band', False) for c in conditions),
             'post_clip_used': sum(c.get('post_clip_used', False) for c in conditions),
+            'matching_trims': sum(c.get('matching_trim_used', False) for c in conditions),
+            'zero_matched_budget': sum(c.get('matched_budget_tokens') == 0 for c in conditions),
             'underfilled': sum(c.get('budget_fill', 1) < .95 for c in conditions)}

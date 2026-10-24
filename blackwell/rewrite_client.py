@@ -10,12 +10,18 @@ class PacedRewriteClient:
         total = config['max_api_attempts']
         allowance = total // workers + int(worker < total % workers)
         self.client = CachedChatClient({**config, 'max_api_attempts': allowance}, directory)
+        self.replay = CachedChatClient(config, directory, offline=True)
         self.tokenizer = tokenizer
         self.tokens_per_minute = config.get('compression_tokens_per_minute', 35000) / workers
         self.next_start = 0.
 
     def complete(self, messages, max_tokens):
         """按输入 token 估计＋最大输出额度保守安排下一次调用；不改变 API 请求。"""
+        try:
+            return self.replay.complete(messages,max_tokens)
+        except RuntimeError:
+            # 离线客户端的 cache miss：没有发出 API 请求。损坏响应的 ValueError 不会被吞掉。
+            pass
         wait = self.next_start-time.monotonic()
         if wait > 0:
             time.sleep(wait)
