@@ -1,5 +1,5 @@
 {
-  "run_name": "aligned50_longbench_smoke_20261024_v6",
+  "run_name": "aligned50_longbench_smoke_20261024_v7",
   "dataset_split": "test",
   "sample_size": 2,
   "sample_seed": 20261018,
@@ -31,5 +31,7 @@
   "source_run": "salt_summary_longbench_binary_20261023",
   "compression_max_api_attempts": 20,
   "compression_model": "deepseek-ai/DeepSeek-V3.2",
-  "compression_timeout_seconds": 600
+  "compression_timeout_seconds": 600,
+  "compression_workers": 2,
+  "compression_tokens_per_minute": 35000
 }

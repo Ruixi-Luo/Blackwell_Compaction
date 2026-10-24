@@ -10,6 +10,8 @@ import os
 import socket
 import sys
 import time
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
@@ -106,11 +108,18 @@ def save_compaction(run, request, result, seconds):
 
 def compress_stage(config, run, tokenizer, examples, manifest, api=False):
     """先按方法遍历，GPU 一次只装一个模型；相同原文只压缩一次。"""
-    methods = API_METHODS if api else LOCAL_METHODS
     contexts = list(dict.fromkeys(e['context'] for e in examples))
-    api_config = compression_config(config)
-    client = CachedChatClient(api_config, run / 'compression_api') if api else None
-    for method in methods:
+    if api:
+        workers = min(config.get('compression_workers', 1), len(contexts))
+        require(type(workers) is int and 1 <= workers <= 8, 'Use 1–8 rewrite workers.')
+        stop = threading.Event()
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            jobs = [pool.submit(rewrite_worker, config, run, tokenizer, contexts[w::workers], manifest, w, workers, stop)
+                    for w in range(workers)]
+            for job in jobs:
+                job.result()
+        return
+    for method in LOCAL_METHODS:
         engine = None
         for index, context in enumerate(contexts, 1):
             budget = max(1, math.floor(tokenizer.count(context)*config['retained_ratio']))
@@ -122,16 +131,40 @@ def compress_stage(config, run, tokenizer, examples, manifest, api=False):
                 # 先核实进程从 seed=0 启动，再恢复字符串，供 SALT 的防误用检查读取。
                 require(not sys.flags.hash_randomization, 'Start with PYTHONHASHSEED=0.')
                 os.environ['PYTHONHASHSEED'] = '0'
-                engine = LLMRewriteCompressor(client, tokenizer, method) if api else create_compressor(method, config['compression_device'])
+                engine = create_compressor(method, config['compression_device'])
             start = time.perf_counter()
-            result = engine.compress(context, budget) if api else align_local(engine, context, budget, tokenizer)
+            result = align_local(engine, context, budget, tokenizer)
             save_compaction(run, request, result, time.perf_counter()-start)
             print(f'{method} [{index}/{len(contexts)}] {result["tokens"]}/{budget} tokens; clip={result["post_clip_used"]}', flush=True)
         del engine
         gc.collect()
-        if not api:
-            import torch
-            torch.cuda.empty_cache()
+        import torch
+        torch.cuda.empty_cache()
+
+
+def rewrite_worker(config, run, tokenizer, contexts, manifest, worker, workers, stop):
+    """每个 worker 串行处理自己的原文分片；没有共享可写 API 账本。"""
+    from blackwell.rewrite_client import PacedRewriteClient
+    relative = f'compression_api/worker_{worker}'
+    client = PacedRewriteClient(compression_config(config), run/relative, tokenizer, workers, worker)
+    try:
+        for method in API_METHODS:
+            engine = LLMRewriteCompressor(client, tokenizer, method)
+            for index, context in enumerate(contexts, 1):
+                if stop.is_set():
+                    return
+                budget = max(1, math.floor(tokenizer.count(context)*config['retained_ratio']))
+                request = compression_request(context, budget, method, manifest)
+                if read_compaction(run, request) is not None:
+                    continue
+                start = time.perf_counter()
+                result = engine.compress(context, budget)
+                result['compression_api_subdir'] = relative
+                save_compaction(run, request, result, time.perf_counter()-start)
+                print(f'{method} worker {worker} [{index}/{len(contexts)}]: {result["tokens"]}/{budget}, clip={result["post_clip_used"]}', flush=True)
+    except Exception:
+        stop.set()
+        raise
 
 
 def condition_text(context, method, tokenizer, run, manifest):
@@ -219,7 +252,7 @@ def audit(config, run, tokenizer, examples, manifest):
                 previous, previous_tokens = None, None
                 for candidate in candidates:
                     messages = rewrite_messages(row['context'], condition['budget_tokens'], method, previous, previous_tokens)
-                    raw, request_hash = CachedChatClient(compression_config(config), run / 'compression_api', offline=True).complete(
+                    raw, request_hash = CachedChatClient(compression_config(config), run / cached['compression_api_subdir'], offline=True).complete(
                         messages, max_tokens=min(32768, max(512, 2*condition['budget_tokens']+512)))
                     require(raw == candidate['text'] and request_hash == candidate['request_hash'], 'Rewrite request/response mismatch.')
                     previous, previous_tokens = raw, candidate['tokens']

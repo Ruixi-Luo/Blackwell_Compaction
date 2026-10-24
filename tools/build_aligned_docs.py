@@ -108,7 +108,8 @@ def main():
             raise ValueError('Only audited complete runs may be published.')
         usage = {}
         for stage, folder in [('Reader',run),('Compression',run/'compression_api')]:
-            ledger = read_json(folder/'api_attempts.json')
+            ledger_paths = [folder/'api_attempts.json'] if stage == 'Reader' else sorted(folder.rglob('api_attempts.json'))
+            ledger = [entry for path in ledger_paths for entry in read_json(path)]
             usage[stage] = {'attempts':len(ledger), **{k:sum(e.get('usage',{}).get(k,0) for e in ledger) for k in ('prompt_tokens','completion_tokens','total_tokens')}}
         records.append({'name':name,'config':config,'run':run,'metrics':read_json(run/'metrics.json'),
                         'diagnostics':read_json(run/'diagnostics.json'),'rows':read_json(run/'predictions.json'),'usage':usage,'audit':require_audit})

@@ -11,6 +11,13 @@ sys.path.insert(0,str(ROOT))
 from blackwell.reporting import STYLE,bi,table
 
 PARAMS = {
+ 'contexts':('Deduplicated context strings assigned to this worker; no queries or labels.','分配给此 worker 的去重上下文字符串，不含问题和标签。'),
+ 'directory':('This worker’s private API cache and ledger directory.','当前 worker 独立的 API 缓存与账本目录。'),
+ 'workers':('Number of independent rewrite workers; their attempt caps sum to the fixed total.','独立改写 worker 数；各自上限之和等于固定总上限。'),
+ 'worker':('Zero-based worker index for deterministic context assignment and quota splitting.','从 0 起的 worker 编号，用于确定性分配原文及额度。'),
+ 'stop':('Shared stop signal; after a failure, other workers stop before their next context.','共享停止信号；发生错误后，其他 worker 在下个上下文前停止。'),
+ 'messages':('The context-only rewrite messages, including grammar and length instructions.','仅含上下文的改写消息，包括语法和长度指令。'),
+ 'max_tokens':('API output ceiling, also used to conservatively pace requests.','API 输出上限，同时用于保守估计节流额度。'),
  'self':('The current object; Python supplies it automatically.','当前对象，Python 自动传入。'),
  'context':('Only the original context string; not an example, query or answer.','仅原始上下文字符串，不是包含问题答案的整个样本。'),
  'budget':('Maximum number of Qwen tokens allowed in the compressed context.','压缩上下文允许的 Qwen token 数上限。'),
@@ -47,6 +54,8 @@ PARAMS = {
 }
 
 EXPLAIN = {
+ 'rewrite_worker':('Each worker processes a deterministic shard sequentially and owns a separate API cache and ledger. Only the standard-library thread pool is shared. Attempt caps sum to the configured total; API failures stop other workers before the next context.','每个 worker 顺序处理确定分片，拥有独立 API 缓存和账本，仅使用标准库线程池。各尝试上限之和等于配置总额；API 失败会通知其他 worker 在下一份上下文前停止。'),
+ 'complete':('Estimate input plus maximum output tokens and space this worker’s calls conservatively. Then delegate the unchanged messages to the original serial cached client. Worker parallelism does not change the compressor prompt or reader.','估计输入与最大输出 token，并保守安排当前 worker 的调用间隔，然后把原样消息交给已有串行缓存客户端。并行不改变压缩提示词或 reader。'),
  'compression_config':('Create a separate configuration for the rewrite model and its ledger. Both new compressors use DeepSeek-V3.2; the reader remains Qwen. This is a copy, so changing the compressor does not silently change the reader.','为改写模型及其账本创建单独配置。两个新增压缩器均用 DeepSeek-V3.2，reader 保持 Qwen。这是配置副本，不会因为更换压缩模型而悄悄更换 reader。'),
  'select_candidate':('Length is the only selection criterion. Prefer a draft within the target band, otherwise choose the closest length. If the selected draft is too long, use the same deterministic head–tail cap and expose post_clip_used. A short but feasible output is not padded.','只根据长度选择：优先目标区间内候选，否则选择距离预算最近者。若选中草稿超长，使用统一确定性首尾裁剪并记录 post_clip_used。短但合规的文本不补无意义内容。'),
  'align_local':('Translate a Qwen-token cap into a native ratio through bounded search. Every trial sees the same original context. The search is heuristic because lengths need not be monotone; the saved candidates make this auditable.','通过有限搜索把 Qwen token 上限映射为原生保留率。每次尝试都看同一原文。长度不保证单调，所以搜索是启发式；保存所有候选便于审计。'),
@@ -101,7 +110,8 @@ def main():
         ('prepare','1 · Freeze samples / 冻结样本','tools/run_aligned_suite.py',['prepare','compression_request','compression_config']),
         ('budget','2 · Match token caps / 对齐预算','blackwell/budgeting.py',None),
         ('rewrite','3 · Summary & Telegrapher / API 改写','blackwell/compressors/llm_rewrite.py',None),
-        ('cache','4 · Compress & cache / 压缩与缓存','tools/run_aligned_suite.py',['read_compaction','save_compaction','compress_stage']),
+        ('pacing','3b · Bounded concurrency / 有界并行','blackwell/rewrite_client.py',None),
+        ('cache','4 · Compress & cache / 压缩与缓存','tools/run_aligned_suite.py',['read_compaction','save_compaction','compress_stage','rewrite_worker']),
         ('reader','5 · Predict / 预测','tools/run_aligned_suite.py',['condition_text','predict']),
         ('diagnose','6 · Diagnose / 诊断','blackwell/diagnostics.py',None),
         ('audit','7 · Evaluate & audit / 评估与审计','tools/run_aligned_suite.py',['finish','audit','require','main']),

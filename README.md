@@ -225,6 +225,8 @@ $env:PYTHONHASHSEED="0"
 # 可分阶段运行：prepare / local / rewrite / predict / audit
 ```
 
+改写可用标准库线程池并行处理独立原文：`compression_workers` 指定 worker 数，每个 worker 各有缓存和账本，尝试额度之和始终等于总上限；`compression_tokens_per_minute` 用输入估计与最大输出额度做保守节流。GPU 推理及 reader 保持串行。
+
 相同配置可续跑，缓存缺失或协议改变会明确报错。`max_api_attempts` 是 reader 的上限，`compression_max_api_attempts` 是改写阶段的独立上限；失败和超时同样计入账本。`compression_timeout_seconds` 只影响长文本改写等待时间。
 
 [新流程：逐块代码导读](docs/Code_Walkthrough_20261024_Aligned.html) · [上一版全仓库导读](docs/Code_Walkthrough_20261023.html)。新结果会输出到 `docs/Experiments_20261024_Aligned/`；原始缓存与预测仍在 `runs/<run_name>/`，不提交到 Git。

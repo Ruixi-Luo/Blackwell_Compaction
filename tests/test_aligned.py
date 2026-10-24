@@ -1,6 +1,7 @@
 """长度选择、概率分箱、query 隔离和显式失败的最小契约测试。"""
 import inspect
 import unittest
+from unittest.mock import patch
 
 from blackwell.budgeting import align_local, select_candidate
 from blackwell.compressors.llm_rewrite import LLMRewriteCompressor, rewrite_messages
@@ -16,6 +17,28 @@ class WordTokenizer:
 
 
 class AlignmentTests(unittest.TestCase):
+    def test_parallel_worker_caps_sum_to_global_cap(self):
+        from blackwell.rewrite_client import PacedRewriteClient
+        config = {'max_api_attempts':17}
+        with patch('blackwell.rewrite_client.CachedChatClient') as client:
+            for worker in range(6):
+                PacedRewriteClient(config, 'unused', WordTokenizer(),6,worker)
+            limits = [call.args[0]['max_api_attempts'] for call in client.call_args_list]
+        self.assertEqual(sum(limits),17)
+        self.assertEqual(max(limits)-min(limits),1)
+
+    def test_rewrite_pacing_preserves_the_request(self):
+        from blackwell.rewrite_client import PacedRewriteClient
+        messages = [{'role':'user','content':'source text'}]
+        with patch('blackwell.rewrite_client.CachedChatClient') as base, \
+             patch('blackwell.rewrite_client.time.monotonic',return_value=0.), \
+             patch('blackwell.rewrite_client.time.sleep') as sleep:
+            client = PacedRewriteClient({'max_api_attempts':10,'compression_tokens_per_minute':6000},'unused',WordTokenizer(),2,0)
+            client.complete(messages,64)
+            client.complete(messages,64)
+            self.assertAlmostEqual(sleep.call_args.args[0],60*166/3000)
+            base.return_value.complete.assert_called_with(messages,64)
+
     def test_compression_model_does_not_change_reader(self):
         from tools.run_aligned_suite import compression_config
         config = {'model':'reader', 'compression_model':'rewriter', 'max_api_attempts':10,
