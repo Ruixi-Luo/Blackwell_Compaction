@@ -14,6 +14,7 @@ from pathlib import Path
 from blackwell.client import CachedChatClient, parse_probability
 from blackwell.compression import Compactor
 from blackwell.compressors import LOCAL_METHODS
+from blackwell.compressors.llm_rewrite import API_METHODS
 from blackwell.cache_reuse import import_api_cache
 from blackwell.data import load_dataset
 from blackwell.metrics import bootstrap_gaps, forecast_scores, infogap, payoff_curve
@@ -25,7 +26,7 @@ DEFAULT_METHODS = ("full", "no_context", "head_tail", "summary")
 
 def selected_methods(config):
     methods = config.get("methods", list(DEFAULT_METHODS))
-    allowed = set(DEFAULT_METHODS) | set(LOCAL_METHODS)
+    allowed = set(DEFAULT_METHODS) | set(LOCAL_METHODS) | set(API_METHODS)
     if (not isinstance(methods, list) or len(methods) != len(set(methods))
             or not {"full", "no_context"}.issubset(methods) or set(methods) - allowed):
         raise ValueError("methods must be a unique list of supported names including full and no_context.")

@@ -17,6 +17,9 @@ class Compactor:
                 raise RuntimeError("Local compressor cache/runtime was not configured.")
             local = self.local_cache.compress(context, budget, method, self.retained_ratio)
             return {**self._result(local["text"], budget, [], False), **local}
+        if method in ("llm_summary", "telegrapher"):
+            from .compressors.llm_rewrite import LLMRewriteCompressor
+            return LLMRewriteCompressor(self.client, self.tokenizer, method).compress(context, budget)
         if method == "head_tail":
             text = self.tokenizer.head_tail(context, budget)
             return self._result(text, budget, [], False)

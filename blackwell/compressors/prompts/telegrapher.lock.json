@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/sibmike/telegrapher",
+  "commit": "7aadc093eeebe63953722b79df1a57c57f569288",
+  "source_path": "code/prompts/compression_v5.txt",
+  "sha256": "636cf724da3c92f16097e62050454307eab3481f12f7f0d3a887364d237ed7f3",
+  "license": "CC-BY-SA-4.0",
+  "authors": "Telegrapher / sibmike and contributors",
+  "adaptation": "Verbatim v5 grammar; appended explicit budget constraint; Qwen API, full document, length-only repairs. Not original-paper reproduction."
+}
