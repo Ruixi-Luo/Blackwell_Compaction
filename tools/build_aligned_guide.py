@@ -11,6 +11,12 @@ sys.path.insert(0,str(ROOT))
 from blackwell.reporting import STYLE,bi,table
 
 PARAMS = {
+ 'finish': ('Simulated server finish reason, normally stop or length; used only by the test fixture.', '测试替身模拟的服务端结束原因，通常为 stop 或 length。'),
+ 'done': ('Whether the mock stream includes its terminal DONE marker; false simulates interruption.', '模拟流是否包含最终 DONE 标记；false 模拟中断。'),
+
+ 'chunks': ('Decoded SSE events in their original arrival order.', '按原始到达顺序保存的 SSE 事件。'),
+ 'response': ('The open HTTP response; read line by line without waiting for the entire body.', '打开的 HTTP 响应；逐行读取，不必等整个响应体生成完。'),
+
  'request_hash': ('Fingerprint of the exact API request; locates its preserved raw response.', '精确 API 请求的指纹，可定位已保留的原始响应。'),
  'json_mode': ('Ask the API to return a JSON object; used by the probability reader.', '要求 API 返回 JSON 对象；概率 reader 使用此选项。'),
  'body': ('Decoded API response, including finish reason and content.', '解码后的 API 响应，包含结束原因及文本。'),
@@ -75,6 +81,20 @@ PARAMS = {
 }
 
 EXPLAIN = {
+ 'response_stream': ('Create in-memory SSE bytes with Unicode text and realistic usage; no network or paid call.', '在内存中构造含 Unicode 文本和用量的 SSE 字节，不联网或调用付费 API。'),
+ 'setUp': ('Create a disposable D-drive test cache and fake settings before each test; cleanup is automatic.', '每个测试前在 D 盘创建临时缓存和模拟设置，结束时自动清理。'),
+ 'test_unicode_finish_and_usage_are_reassembled_and_verified': ('Check Unicode reconstruction and usage, then ensure tampered cached text is rejected.', '检查 Unicode 拼接和用量，并确认篡改的缓存文本会被拒绝。'),
+ 'test_eof_even_after_stop_is_not_a_complete_response': ('A stop event without the terminal DONE marker is still rejected as an incomplete transfer.', '即使收到 stop 事件，缺少最终 DONE 标记仍拒绝为不完整传输。'),
+ 'test_length_response_keeps_existing_strict_failure': ('Ensure streaming does not weaken the original output-length rejection.', '确认流式传输不会削弱原有输出截断拒绝规则。'),
+ 'test_complete_stream_caches_exact_request_and_replays_without_network': ('Check exact stream request metadata, saved events, and identical offline replay.', '核对精确流式请求参数、保存的事件和完全一致的离线重放。'),
+ 'test_legacy_cache_keeps_original_nonstream_request_identity': ('Reuse only identical old requests, retain their true hashes, and reject changed text or output ceilings.', '仅复用完全相同的旧请求，保留真实哈希，文本或输出上限改变后不误用缓存。'),
+ 'test_disconnect_is_counted_and_bounded_retry_recovers': ('Simulate a disconnected connection followed by success; both attempts must remain in the ledger.', '模拟先断连后成功，确认两次尝试都留在账本。'),
+ 'test_incomplete_streams_never_enter_valid_cache_or_reset_attempt_cap': ('Three incomplete transfers produce no valid cache, and reopening the client does not reset the cap.', '三次不完整传输不产生有效缓存，重新创建客户端也不会重置调用上限。'),
+
+ 'assemble_chunks': ('Reassemble text in server order and retain the final finish reason and actual usage. This does not summarize or edit model output.', '按服务端顺序拼接文本，保留最终结束原因与实际用量；不会摘要或修改模型输出。'),
+ 'read_stream': ('Read SSE data events until DONE. EOF or disconnection is a failed attempt even if partial text was received. Preserve raw events with complete responses.', '读取 SSE 数据事件直到 DONE；即使收到部分文本，提前 EOF 或断连仍是失败尝试。完整响应连同原事件保存。'),
+ 'verify_stream_cache': ('Reassemble the preserved events during offline replay and compare them with the stored text and usage. A missing DONE marker or mismatch is rejected.', '离线重放时再次组装原事件，并核对缓存文本和用量；缺少 DONE 或内容不一致均拒绝。'),
+
  '_extract': ('Reject abnormal or empty responses. A length-limited response raises OutputLimitError with its request fingerprint; partial text never becomes a prediction or a compression candidate.', '拒绝异常或空响应。达到输出上限时抛出携带请求指纹的 OutputLimitError；不把不完整文本作为预测或压缩候选。'),
  'parse_probability': ('Accept only a finite numeric p_yes in [0,1], with no extra fields or substitute values.', '仅接受 [0,1] 内有限数值 p_yes，不允许额外字段或替代值。'),
  'test_output_limit_retry_keeps_prompt_and_records_both_requests': ('Verify identical prompts, one larger output ceiling, one complete candidate and preservation of both request fingerprints.', '核验提示词完全不变、仅扩大一次输出上限、仅保留完整候选，并记录两个请求指纹。'),
@@ -155,7 +175,7 @@ def function_card(path, node, lines, index):
             meaning = ('Optional paired records for probability scatterplots; omitting them skips those plots.','可选的配对记录，用来画概率散点图；省略时只跳过这组图。')
         if node.name == 'section_title' and arg.arg == 'title':
             meaning = ('A static English / Chinese label from the module list.','模块列表中的静态“英文 / 中文”名称。')
-        if path == 'blackwell/client.py' and arg.arg == 'body':
+        if path in {'blackwell/client.py','blackwell/streaming.py'} and arg.arg == 'body':
             meaning = ('Decoded raw API response; its finish reason must be checked before reading content.','解码后的原始 API 响应；读取文本前必须核验结束原因。')
         if meaning is None:
             raise ValueError(f'Missing parameter explanation: {path}:{node.name}:{arg.arg}')
@@ -192,6 +212,7 @@ def main():
         ('budget','2 · Native budget search / 原生预算搜索','blackwell/budgeting.py',['select_candidate','align_local']),
         ('rewrite','3 · Summary & Telegrapher / API 改写','blackwell/compressors/llm_rewrite.py',None),
         ('api','3a · API cache & finish checks / API 缓存与结束检查','blackwell/client.py',None),
+        ('streaming','3c · Streaming transport / 流式传输','blackwell/streaming.py',None),
         ('pacing','3b · Bounded concurrency / 有界并行','blackwell/rewrite_client.py',None),
         ('cache','4 · Compress & cache / 压缩与缓存','tools/run_aligned_suite.py',['read_compaction','save_compaction','compress_stage','rewrite_worker']),
         ('match','5 · Match actual lengths / 统一实际长度','blackwell/budgeting.py',['match_lengths']),
@@ -202,6 +223,7 @@ def main():
         ('interface','Support · Shared interface / 共用接口','blackwell/compression.py',None),
         ('registry','Support · Method registry / 方法注册','run_experiment.py',['selected_methods']),
         ('tests','Appendix · Tests / 测试','tests/test_aligned.py',None),
+        ('stream_tests','Appendix · Streaming tests / 流式测试','tests/test_streaming.py',None),
         ('guide_builder','Appendix · Guide generation / 导读生成','tools/build_aligned_guide.py',None),
     ]
     body = '<header><div class="toolbar"><button onclick="language(\'en\')">English</button><button onclick="language(\'zh\')">中文</button></div><h1>'+bi('Read the aligned-budget experiment','逐块阅读预算对齐实验')+'</h1><p>'+bi('Click a stage to read the actual source code and every parameter. This is the current extension; the previous full-repository tutorial remains available below.','点击流程节点，阅读真实源码与每个参数。此页讲解当前扩展；下方保留上一版全仓库导读。')+'</p></header>'
@@ -226,7 +248,8 @@ def main():
             body += '<details><summary>Telegrapher v5 · pinned grammar</summary><p><a href="'+html.escape(url)+'">'+html.escape(lock['authors'])+'</a> · '+html.escape(lock['license'])+'</p><pre>'+html.escape(prompt_path.read_text(encoding='utf-8'))+'</pre></details><p>'+bi('The lock records the grammar source and license. Its adaptation note dates from an earlier Qwen pilot; the current rewrite model is compression_model in the experiment configuration (DeepSeek-V3.2).','版本锁记录语法来源和许可；其中的 adaptation 备注来自早期 Qwen 试验。当前改写模型由实验配置的 compression_model 指定，本轮为 DeepSeek-V3.2。')+'</p>'
         body += '</section>'
     body += '<section><h2>'+bi('Complete output before compression','完整响应后才能压缩')+'</h2><p>'+bi('The formal protocol still uses one rewrite draft. If an API response ends with finish_reason=length, the compressor retries the identical prompt once with a doubled output ceiling, capped at 32768. It never uses the truncated text. A second truncation or any unrelated error stops the run. Both raw responses and attempt counts are retained. Reader forecasts do not use this retry. The v2 runs preserve the failed v1 directories; cache_reuse_provenance.json records verified equivalent outputs, their old compute times and the imported API ledgers.', '正式协议仍使用一稿改写。若 API 因输出上限结束，压缩器仅把相同提示词的输出上限翻倍后重试一次，最多 32768。截断文本不参与实验。再次截断或其他错误会停止运行；原始响应和尝试次数均留存。reader 概率不使用此重试。v2 保留失败的 v1 目录；cache_reuse_provenance.json 记录经核验可复用的结果、原计算时间及导入的 API 账本。')+'</p></section>'
-    body += '<section><h2>'+bi('Where outputs live','输出在哪里')+'</h2><pre>runs/aligned50_&lt;dataset&gt;_20261024_v2/\n  manifest.json / examples.json\n  aligned_compression_cache/     # context-only requests + all drafts\n  compression_api/              # rewrite API requests, responses and ledger\n  api_cache/ / api_attempts.json # reader requests, responses and ledger\n  predictions.json / .csv\n  metrics.json / diagnostics.json / audit.json\n  report.html\ndocs/Experiments_20261024_Aligned/Experiment_Overview.html</pre><p>'+bi('InfoGap is unchanged: exact breakpoints and one-sided limits, both directions, factor 2 plus saved unscaled values. ECE is a new diagnostic, not the objective used to choose compressed text. The six compressed conditions are then exactly length-matched per context at their common feasible budget, at most 50% of the original. Inspect initial and matching trims separately.','InfoGap 算法未改变：精确断点与单侧极限、双向、系数 2 及未缩放值。ECE 是新增诊断，不用于挑选压缩文本。六种压缩条件还会按每份上下文的共同可行预算严格等长，最多为原文 50%。需分别检查初次预算裁剪和共同长度裁剪。')+'</p></section>'
+    body += '<section><h2>'+bi('Connection recovery and cache provenance','连接恢复与缓存来源')+'</h2><p>'+bi('The LongBench streaming recovery uses configs/aligned_longbench_streaming.json and a separate v4 directory. compression_stream only affects rewrite transport; the reader remains non-streaming. Complete legacy non-stream responses may be reused only when every generation parameter and message matches; their original request hashes remain unchanged. New streams have their own true request identities and preserve raw SSE events. All reused API compression results must replay identically offline. Disconnections consume the existing cumulative attempt allowance. A changed transport does not imply proven output equivalence across new calls; compare the actual saved outputs.', 'LongBench 流式恢复使用 configs/aligned_longbench_streaming.json 与独立 v4 目录。compression_stream 只影响改写传输，reader 保持非流式。已有非流式完整响应仅在全部生成参数和消息完全一致时复用，保留真实原请求哈希；新流式请求使用自己的真实身份并保存 SSE 原事件。所有复用的 API 压缩须离线精确重放。断连也占用原累计尝试额度。传输改变不等于证明新调用输出完全等价，比较时仍以保存的实际输出为准。')+'</p></section>'
+    body += '<section><h2>'+bi('Where outputs live','输出在哪里')+'</h2><pre>runs/aligned50_hotpotqa_20261024_v2/\nruns/aligned50_qasper_20261024_v2/\nruns/aligned50_longbench_20261025_v4/\n  manifest.json / examples.json\n  aligned_compression_cache/     # context-only requests + all drafts\n  compression_api/              # rewrite API requests, responses and ledger\n  api_cache/ / api_attempts.json # reader requests, responses and ledger\n  predictions.json / .csv\n  metrics.json / diagnostics.json / audit.json\n  report.html\ndocs/Experiments_20261024_Aligned/Experiment_Overview.html</pre><p>'+bi('InfoGap is unchanged: exact breakpoints and one-sided limits, both directions, factor 2 plus saved unscaled values. ECE is a new diagnostic, not the objective used to choose compressed text. The six compressed conditions are then exactly length-matched per context at their common feasible budget, at most 50% of the original. Inspect initial and matching trims separately.','InfoGap 算法未改变：精确断点与单侧极限、双向、系数 2 及未缩放值。ECE 是新增诊断，不用于挑选压缩文本。六种压缩条件还会按每份上下文的共同可行预算严格等长，最多为原文 50%。需分别检查初次预算裁剪和共同长度裁剪。')+'</p></section>'
     page = '<!doctype html><html lang="en" data-language="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aligned experiment · Code walkthrough</title><style>'+STYLE+'.flow{display:flex;flex-wrap:wrap;gap:12px}.node{padding:20px;border:1px solid #abc;border-radius:8px;background:#edf4fb;text-decoration:none}.line-number{color:#8798a9;user-select:none}article{border-top:1px solid #dce5ee;margin-top:25px}pre{white-space:pre;overflow:auto}section{scroll-margin-top:15px}</style><body>'+body+'<script>function language(x){document.documentElement.dataset.language=x;document.documentElement.lang=x}</script></body></html>'
     target = ROOT/'docs/Code_Walkthrough_20261024_Aligned.html'
     target.write_text(page,encoding='utf-8')

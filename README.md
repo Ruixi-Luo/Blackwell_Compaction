@@ -12,7 +12,7 @@
 
 ## 先看结果与导读
 
-- **[预算对齐实验与概率诊断（持续更新）](docs/Experiments_20261024_Aligned/Experiment_Overview.html)**：已完成并审计的数据集会逐组加入；八组输入、8×8 双向 InfoGap 矩阵、实际长度与概率诊断。当前已发布 HotpotQA 和 QASPER；LongBench 正在进行连接故障恢复，旧运行完整保留。
+- **[预算对齐实验与概率诊断（已完成）](docs/Experiments_20261024_Aligned/Experiment_Overview.html)**：HotpotQA 458 题、QASPER 283 题、LongBench 52 题均已完成并通过审计，共 793 题、6,344 个预测；八组输入、三个 8×8 双向 InfoGap 矩阵、实际长度与概率诊断。旧结果与失败运行完整保留。
 - **[本轮新增代码导读](docs/Code_Walkthrough_20261024_Aligned.html)**：实际预算对齐、普通摘要与 Telegrapher、概率诊断、报告生成及测试；可点击流程图，逐块查看真实源码、函数参数和固定版提示词。旧版完整导读保留在下方。
 - **[完整代码导读（零基础版）](docs/Code_Walkthrough_20261023.html)**：首页点击流程框图，进入 8 个模块、67 个真实源码片段，逐块阅读代码、参数与解释；保留覆盖 47 个 Python 文件、183 个函数/方法和 332 个参数的完整索引。支持上一块/下一块、返回索引和中英文切换，默认英文；单独分享 HTML 即可阅读。
 - **[SALT-summary 补充实验](docs/Experiments_20261023_SALT/Experiment_Overview.html)**：相同三个数据集，追加 query-blind SALT-summary；5×5 InfoGap 矩阵、实际 token 保留率、新旧调用分开统计。原四组预测和下方历史报告保留。
@@ -59,11 +59,21 @@ InfoGap 保持精确断点、左侧极限及双向计算。另加十个等宽箱
 $env:PYTHONHASHSEED = "0"
 # 三个 smoke 配置各取 2 题。缓存不存在时才调用 API。
 .\.venv\Scripts\python.exe tools/run_aligned_suite.py --config configs/aligned_hotpotqa_smoke.json --stage all
-# 正式配置分别是 aligned_hotpotqa / aligned_qasper / aligned_longbench.json。
+# 已保存的 H/Q 正式配置为 aligned_hotpotqa / aligned_qasper.json；LongBench 恢复使用 aligned_longbench_streaming.json。
 .\.venv\Scripts\python.exe tools/run_aligned_suite.py --config configs/aligned_hotpotqa.json --stage all
 ```
 
-阶段可选 `prepare`、`local`、`rewrite`、`predict`、`audit` 或 `all`。同一配置可从缓存续跑；更改代码、配置或样本时必须换 `run_name`。本轮正式输出在 `runs/aligned50_<dataset>_20261024_v2/`。此前失败或完成的运行都保留；`cache_reuse_provenance.json` 记录经核验复用的旧结果哈希、原计算时间和 API 账本。原始数据、密钥、模型和运行缓存不提交 GitHub。
+阶段可选 `prepare`、`local`、`rewrite`、`predict`、`audit` 或 `all`。同一配置可从缓存续跑；更改代码、配置或样本时必须换 `run_name`。本轮 HotpotQA/QASPER 输出在 `runs/aligned50_<dataset>_20261024_v2/`；LongBench 使用 `runs/aligned50_longbench_20261025_v4/`，配置为 `configs/aligned_longbench_streaming.json`。此前失败或完成的运行都保留；`cache_reuse_provenance.json` 记录经核验复用的旧结果哈希、原计算时间和 API 账本。原始数据、密钥、模型和运行缓存不提交 GitHub。
+
+LongBench 连接恢复保留了 v2/v3 失败目录。v4 仅为压缩启用流式接收并延长网络等待；收到完整 `[DONE]` 且正常结束后才接受文本。reader 仍使用非流式请求。已有完整非流式响应保留其真实请求哈希，新流式响应保存原始事件；251 个压缩结果经核验迁移，95 个已有 API 压缩结果在新代码下离线精确重放。累计调用额度不重置，未返回 usage 的失败请求费用未知。
+
+当前源码与 H/Q 已冻结源码不同；严格重放 H/Q 应在提交 `39a25ca` 的独立 checkout 中运行。LongBench v4 的源码以其 manifest 中的逐文件哈希为准。新实验必须另起 `run_name`，不要覆盖已保存的运行。
+
+只重建报告（不调用 API）：
+
+```powershell
+.\.venv\Scripts\python.exe tools/build_aligned_docs.py --longbench-config configs/aligned_longbench_streaming.json
+```
 
 ## 第一次运行
 
@@ -243,7 +253,7 @@ SC 0.1.4 的旧 spaCy / click 依赖约束不兼容当前环境，安装时显�
 ```powershell
 $env:PYTHONHASHSEED="0"
 .\.venv\Scripts\python.exe tools/run_aligned_suite.py --config configs/aligned_hotpotqa_smoke.json --stage all
-# 正式配置另有 aligned_hotpotqa.json / aligned_qasper.json / aligned_longbench.json
+# 已保存配置：aligned_hotpotqa.json / aligned_qasper.json；LongBench 恢复为 aligned_longbench_streaming.json。
 # 可分阶段运行：prepare / local / rewrite / predict / audit
 ```
 

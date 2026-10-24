@@ -160,6 +160,8 @@ def main():
         panels = method_panels(config,r['metrics'],r['diagnostics'],scale,r['usage'],r['rows'])
         if (run/'timeout_recovery_provenance.json').exists():
             panels += '<section><p>'+bi('Recovery provenance: this dataset uses a separately preserved run with a 30-minute network timeout instead of 10 minutes. Model requests, prompts, output ceilings, samples and cumulative API attempt limits are unchanged. Verified cached results and original attempt ledgers are reused once; failed runs remain preserved.', '恢复记录：该数据集使用独立保存的运行，将网络等待从 10 分钟延长到 30 分钟。模型请求、提示词、输出上限、样本及累计 API 尝试上限不变；核验后的缓存与原账本只统计一次，失败运行完整保留。')+'</p></section>'
+        if (run/'streaming_recovery_provenance.json').exists():
+            panels += '<section><p>'+bi('Streaming recovery: remaining rewrites were received as SSE streams and accepted only after complete termination. Existing non-stream responses retain their exact original request identities; all reused compression results replay identically offline. Generation parameters and cumulative attempt caps are unchanged, but transport equivalence does not guarantee identical outputs across fresh calls. Failed attempts without returned usage have unknown cost.', '流式恢复：剩余改写以 SSE 逐段接收，仅在完整结束后接受。已有非流式响应保留真实原请求身份，复用压缩结果均已离线精确重放。生成参数及累计尝试上限不变，但传输等价并不保证新调用输出相同。未返回用量的失败请求费用未知。')+'</p></section>'
         overview += f'<section id="{name}"><h2>{title}</h2><a href="{name}.html">'+bi('Every example and compressed text','逐题预测与压缩文本')+f'</a> · <a href="{name}_predictions.csv">CSV</a> · <a href="{name}_metrics.json">InfoGap JSON</a></section>'+panels
         full = page(title,protocol_section()+panels+sample_section(r['rows'],config['methods']))
         (DESTINATION/f'{name}.html').write_text(full,encoding='utf-8')

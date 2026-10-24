@@ -32,7 +32,8 @@ METHODS = ['full', 'no_context', 'head_tail', *LOCAL_METHODS, *API_METHODS]
 
 def compression_config(config):
     """只覆盖生成器的模型、超时和尝试上限；不修改 reader 配置。"""
-    return {**config, 'model': config['compression_model'],
+    return {**config, 'stream': config.get('compression_stream', False),
+            'model': config['compression_model'],
             'max_api_attempts': config['compression_max_api_attempts'],
             'timeout_seconds': config.get('compression_timeout_seconds', 600)}
 

@@ -3,11 +3,13 @@ import json
 import math
 import os
 import time
+from http.client import HTTPException
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from .storage import fingerprint, read_json, write_json
+from .streaming import read_stream, verify_stream_cache
 
 
 class OutputLimitError(ValueError):
@@ -34,7 +36,7 @@ class CachedChatClient:
         payload = {
             "model": self.config["model"], "messages": messages,
             "temperature": self.config["temperature"], "max_tokens": max_tokens,
-            "enable_thinking": self.config["enable_thinking"], "stream": False,
+            "enable_thinking": self.config["enable_thinking"], "stream": self.config.get("stream", False),
         }
         if json_mode:
             payload["response_format"] = {"type": "json_object"}
@@ -47,6 +49,18 @@ class CachedChatClient:
             if record["request"] != identity:
                 raise ValueError("Cache content does not match the requested input.")
             return self._extract(record["response"], request_hash)
+        # 恢复运行可复用完全相同生成参数的旧非流式响应，保留其真实请求和哈希。
+        # 新请求仍以 stream=True 单独记账，绝不把旧响应伪装成流式响应。
+        if payload['stream']:
+            legacy_identity = {**identity, 'payload': {**payload, 'stream': False}}
+            legacy_hash = fingerprint(legacy_identity)
+            legacy_path = self.cache_dir / f'{legacy_hash}.json'
+            if legacy_path.exists():
+                record = read_json(legacy_path)
+                if record['request'] != legacy_identity:
+                    raise ValueError('Legacy cache content does not match the requested input.')
+                self.cache_hits += 1
+                return self._extract(record['response'], legacy_hash)
         if self.offline:
             raise RuntimeError("Offline replay is missing a cached response. No API call was made.")
         key = os.environ.get(self.config["api_key_env"], "").strip()
@@ -79,7 +93,7 @@ class CachedChatClient:
             self.last_call = time.monotonic()
             try:
                 with urlopen(request, timeout=self.config["timeout_seconds"]) as response:
-                    body = json.load(response)
+                    body = read_stream(response) if payload["stream"] else json.load(response)
                 entry["status"] = "received"
                 entry["usage"] = body.get("usage", {})
                 write_json(self.ledger_path, self.ledger)
@@ -97,7 +111,7 @@ class CachedChatClient:
                 if error.code == 429:
                     # 免费端点的每分钟限额较低；不以密集重试加重限流。
                     retry_delay = 15 * (attempt + 1)
-            except (URLError, TimeoutError) as error:
+            except (URLError, TimeoutError, HTTPException, ConnectionError) as error:
                 entry.update(status="network_error", error_type=type(error).__name__)
                 write_json(self.ledger_path, self.ledger)
                 if attempt == 2:
@@ -107,6 +121,8 @@ class CachedChatClient:
 
     @staticmethod
     def _extract(body, request_hash):
+        if "_stream_chunks" in body:
+            verify_stream_cache(body)
         choice = body["choices"][0]
         if choice.get("finish_reason") == "length":
             raise OutputLimitError(request_hash)

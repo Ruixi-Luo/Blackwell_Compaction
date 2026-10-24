@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "samples": 52,
+  "forecasts": 416,
+  "compression_contexts_checked": 260,
+  "infogap_cells": 64,
+  "old_files_unchanged": true,
+  "offline_replay_identical": true,
+  "exact_matched_lengths": true,
+  "zero_common_budget_samples": 0,
+  "scope": "Full request reconstruction; compression inputs contain context/length only; original forecasts unmodified."
+}
