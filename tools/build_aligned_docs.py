@@ -1,5 +1,6 @@
 """从通过审计的新运行生成双语 HTML；不调用 API、不修改预测概率。"""
 import html
+import argparse
 import json
 import shutil
 import sys
@@ -55,8 +56,8 @@ def reliability_plot(data, name):
 
 def protocol_section():
     return '<section><h2>'+bi('What changed','本轮改进')+'</h2><p>'+bi(
-        'Eight paired conditions; all forecasts were collected anew. The target cap is floor(0.5 × original Qwen tokens). The preferred band is 95–100% of this cap (about 47.5–50% of the original). Local methods use at most eight length-only native-rate trials. API rewrites use up to three drafts, restoring source details if too short. A draft within the target band is preferred; otherwise select the closest measured length, favoring feasible drafts at ties. A selected overshoot is clamped with a common head–tail adapter and explicitly counted. Underfilled outputs are kept and reported; no padding, gold-based selection or silent sample removal.',
-        '共八组配对输入，全部重新获取预测。共同上限为 floor(0.5×原文 Qwen tokens)，目标区间是上限的 95%–100%，约等于原文的 47.5%–50%。本地方法最多尝试八个原生保留率，只看长度；API 改写最多三稿，过短则从原文恢复细节。优先选目标区间内候选，否则选实测长度距预算最近者，同距时优先不超长；选中超长稿则使用共同首尾裁剪并明确计数。填不满的结果保留且报告，不补无意义内容，不用答案选候选，不悄悄删题。')+'</p><p>'+bi(
+        'Eight paired conditions; all forecasts were collected anew. The target cap is floor(0.5 × original Qwen tokens). The preferred band is 95–100% of this cap (about 47.5–50% of the original). Local methods use at most eight length-only native-rate trials. The formal baselines use one API rewrite per unique context and method; optional length-repair drafts are supported in code but disabled here. Final equality is enforced by the separate common-length step. A draft within the target band is preferred; otherwise select the closest measured length, favoring feasible drafts at ties. A selected overshoot is clamped with a common head–tail adapter and explicitly counted. Underfilled outputs are kept and reported; no padding, gold-based selection or silent sample removal.',
+        '共八组配对输入，全部重新获取预测。共同上限为 floor(0.5×原文 Qwen tokens)，目标区间是上限的 95%–100%，约等于原文的 47.5%–50%。本地方法最多尝试八个原生保留率，只看长度；正式 baseline 每种方法对每份独立上下文只改写一次；代码保留可选的长度修订能力，本轮关闭。最终等长由单独的共同长度步骤保证。优先选目标区间内候选，否则选实测长度距预算最近者，同距时优先不超长；选中超长稿则使用共同首尾裁剪并明确计数。填不满的结果保留且报告，不补无意义内容，不用答案选候选，不悄悄删题。')+'</p><p>'+bi(
         'For the primary comparison, each context is then matched to the shortest feasible output among the six compressed conditions. Longer outputs are deterministically trimmed until their actual Qwen token counts are exactly equal. Full and no-context controls are unchanged. The common budget can be below 50% and varies by context; no query or label is used to choose it. Read the actual-length distribution, underfill and clamp counts alongside InfoGap. Summary and Telegrapher both use DeepSeek-V3.2 as the rewrite model; the reader remains Qwen3-30B-A3B-Instruct-2507. Rewrite requests contain no query. Telegrapher uses the pinned official v5 grammar with an explicit budget instruction; full-document input, DeepSeek deployment and length repairs are adaptations, not the original paper configuration.',
         '主比较还会按每份上下文在六种压缩条件中取最短可行长度，将更长输出确定性裁剪到实际 Qwen token 数完全相同。原文和空上下文对照不变。共同预算可能低于 50%，因上下文而异，确定它不使用 query 或标签。解读 InfoGap 时应同时查看实际长度分布、欠填和裁剪次数。摘要与 Telegrapher 均用 DeepSeek-V3.2 改写，reader 保持 Qwen3-30B-A3B-Instruct-2507；改写请求不含 query。Telegrapher 使用固定官方 v5 语法及额外预算指令；全文输入、DeepSeek 部署和长度修订属于适配，并非论文原配置。')+'</p><p>'+bi(
         'Compression receives only context and budget. The reader alone receives the evaluation question; labels are used only during evaluation. Shared paper contexts reuse the same compression. All six compressed conditions have the same token count per question, including the head–tail control. The 458 HotpotQA / 283 QASPER-train / 52 LongBench binary examples and order are frozen from the old runs. LongBench is a native binary subset, not its official full benchmark; 14 questions overlap HotpotQA and one overlaps QASPER train.',
@@ -98,9 +99,12 @@ def sample_section(rows, methods):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--datasets',nargs='+',choices=['hotpotqa','qasper','longbench'],default=['hotpotqa','qasper','longbench'])
+    datasets = parser.parse_args().datasets
     DESTINATION.mkdir(exist_ok=True,parents=True)
     records = []
-    for name in ('hotpotqa','qasper','longbench'):
+    for name in datasets:
         config = read_json(ROOT / f'configs/aligned_{name}.json')
         run = ROOT / 'runs' / config['run_name']
         require_audit = read_json(run/'audit.json')
@@ -128,7 +132,7 @@ def main():
             record['diagnostics'][method]['retention']['before_match_pooled_ratio'] = before_match_tokens / sum(row['original_tokens'] for row in record['rows'])
             record['diagnostics'][method]['retention']['selected_before_clamp_pooled_ratio'] = native_tokens / sum(row['original_tokens'] for row in record['rows'])
     scale = max(c['value'] for r in records for row in r['metrics']['infogap'].values() for c in row.values())
-    overview = protocol_section()
+    overview = '<section><p>'+bi(f'Completed and audited datasets shown: {len(records)} / 3. The page is updated as each full dataset finishes.',f'当前展示已完成且通过审计的数据集：{len(records)} / 3；每个完整数据集完成后更新。')+'</p></section>'+protocol_section()
     overview += '<section><h2>'+bi('Choose a dataset','选择数据集')+'</h2><p>'+ ' · '.join(f'<a href="#{r["name"]}">{r["name"]} (n={r["metrics"]["n"]})</a>' for r in records)+'</p><p><a href="../Code_Walkthrough_20261024_Aligned.html">'+bi('Read the new pipeline and its code','查看新流程与逐块代码导读')+'</a></p></section>'
     for r in records:
         name, config, run = r['name'],r['config'],r['run']
@@ -141,7 +145,7 @@ def main():
         for file in ('metrics.json','predictions.csv','diagnostics.json','audit.json'):
             shutil.copyfile(run/file,DESTINATION/f'{name}_{file}')
         write_json(DESTINATION/f'{name}_diagnostics.json',r['diagnostics'])
-    overview += '<section><h2>'+bi('Interpretation and sources','解释与来源')+'</h2><pre>G(A,B) = 2 sup_t mean[(t−y)(1[p_A≤t]−1[p_B≤t])]</pre><p>'+bi('All breakpoints and left limits are evaluated. Both scaled and unscaled values are saved. These are verbalized forecasts, not verified Bayesian posteriors. The experiment evaluates usefulness for these question distributions; it does not establish query-distribution-independent Blackwell dominance.','计算所有概率断点及左侧极限，同时保存乘 2 与未乘 2 的结果。这些是模型口头报告的概率，并非核实过的贝叶斯后验。实验评价当前问题分布下的预测价值，不证明与问题分布无关的 Blackwell 支配。')+'</p><p><a href="https://arxiv.org/html/2507.12094v2">InfoGap</a> · <a href="https://github.com/sibmike/telegrapher/tree/7aadc093eeebe63953722b79df1a57c57f569288">Telegrapher pinned source</a> · <a href="https://github.com/oteomamo/SALT">SALT</a></p><p><a href="../Experiments_20261023_SALT/Experiment_Overview.html">'+bi('Previous five-condition results (unchanged)','旧五组结果（保留不变）')+'</a></p></section>'
+    overview += '<section><h2>'+bi('Interpretation and sources','解释与来源')+'</h2><pre>G(A,B) = 2 sup_t mean[(t−y)(1[p_A≤t]−1[p_B≤t])]</pre><p>'+bi('All breakpoints and left limits are evaluated. Both scaled and unscaled values are saved. These are verbalized forecasts, not verified Bayesian posteriors. The experiment evaluates usefulness for these question distributions; it does not establish query-distribution-independent Blackwell dominance.','计算所有概率断点及左侧极限，同时保存乘 2 与未乘 2 的结果。这些是模型口头报告的概率，并非核实过的贝叶斯后验。实验评价当前问题分布下的预测价值，不证明与问题分布无关的 Blackwell 支配。')+'</p><p><a href="https://hotpotqa.github.io/">HotpotQA</a> · <a href="https://aclanthology.org/2021.naacl-main.365/">QASPER</a> · <a href="https://github.com/THUDM/LongBench">LongBench</a> · <a href="https://arxiv.org/html/2507.12094v2">InfoGap</a> · <a href="https://github.com/sibmike/telegrapher/tree/7aadc093eeebe63953722b79df1a57c57f569288">Telegrapher pinned source</a> · <a href="https://github.com/oteomamo/SALT">SALT</a></p><p><a href="../Experiments_20261023_SALT/Experiment_Overview.html">'+bi('Previous five-condition results (unchanged)','旧五组结果（保留不变）')+'</a></p></section>'
     (DESTINATION/'Experiment_Overview.html').write_text(page('Compaction · matched context lengths & probability diagnostics',overview),encoding='utf-8')
     write_json(DESTINATION/'summary.json',[{k:v for k,v in r.items() if k not in ('rows','run')} for r in records])
     print(DESTINATION/'Experiment_Overview.html')

@@ -24,7 +24,7 @@ a{color:#176b97}svg{width:100%;height:auto}svg text{font-family:Segoe UI,Arial,s
   &quot;enable_thinking&quot;: false,
   &quot;prediction_max_tokens&quot;: 128,
   &quot;timeout_seconds&quot;: 90,
-  &quot;min_interval_seconds&quot;: 3.1,
+  &quot;min_interval_seconds&quot;: 1.5,
   &quot;max_api_attempts&quot;: 4580,
   &quot;bootstrap_repetitions&quot;: 500,
   &quot;bootstrap_seed&quot;: 20261018,
@@ -41,11 +41,12 @@ a{color:#176b97}svg{width:100%;height:auto}svg text{font-family:Segoe UI,Arial,s
   &quot;dataset&quot;: &quot;hotpotqa_yesno&quot;,
   &quot;compression_device&quot;: &quot;cuda&quot;,
   &quot;source_run&quot;: &quot;salt_summary_hotpotqa_full_20261023&quot;,
-  &quot;compression_max_api_attempts&quot;: 3664,
+  &quot;compression_max_api_attempts&quot;: 1374,
   &quot;compression_model&quot;: &quot;deepseek-ai/DeepSeek-V3.2&quot;,
   &quot;compression_timeout_seconds&quot;: 600,
   &quot;compression_workers&quot;: 6,
-  &quot;compression_tokens_per_minute&quot;: 35000
+  &quot;compression_tokens_per_minute&quot;: 35000,
+  &quot;rewrite_max_trials&quot;: 1
 }
 </pre></details><p><span lang="en">sample_size freezes the existing sample count; retained_ratio sets the 0.5 cap; max_api_attempts limits reader attempts; compression_max_api_attempts separately limits rewrite attempts; min_interval_seconds controls pacing, not sample size. Failed and timed-out calls also count.</span><span lang="zh">sample_size 冻结既有样本数；retained_ratio 设置 0.5 上限；max_api_attempts 限制 reader 尝试；compression_max_api_attempts 独立限制改写尝试；min_interval_seconds 控制请求间隔而非样本数。失败及超时也计入尝试。</span></p></section><section id="prepare"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>1 · Freeze samples / 冻结样本</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;预算对齐的新实验：固定旧样本 → 本地压缩 → API 改写 → 全部重新预测 → 审计。
 
@@ -100,6 +101,7 @@ def prepare(config):
     verify_assets(LOCAL_METHODS)
     require(config[&#x27;methods&#x27;] == METHODS, &#x27;Unexpected paired methods.&#x27;)
     require(config[&#x27;retained_ratio&#x27;] == .5, &#x27;This protocol fixes 50% token cap.&#x27;)
+    require(config.get(&#x27;rewrite_max_trials&#x27;,1) in (1,2,3), &#x27;Use one to three rewrite drafts.&#x27;)
     source = ROOT / &#x27;runs&#x27; / config[&#x27;source_run&#x27;]
     require(source.parent == ROOT / &#x27;runs&#x27; and source.name != config[&#x27;run_name&#x27;], &#x27;Unsafe source path.&#x27;)
     old = read_json(source / &#x27;manifest.json&#x27;)
@@ -137,7 +139,8 @@ def compression_request(context, budget, method, manifest):
     return {&#x27;context&#x27;: context, &#x27;budget&#x27;: budget, &#x27;method&#x27;: method,
             &#x27;protocol_sha256&#x27;: fingerprint({&#x27;code&#x27;: identity[&#x27;code&#x27;],
                                            &#x27;runtime&#x27;: identity[&#x27;local_compressors&#x27;],
-                                           &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;]})}
+                                           &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;],
+                                           &#x27;rewrite_max_trials&#x27;: identity[&#x27;config&#x27;].get(&#x27;rewrite_max_trials&#x27;,1)})}
 
 
 def read_compaction(run, request):
@@ -199,7 +202,7 @@ def rewrite_worker(config, run, tokenizer, contexts, manifest, worker, workers, 
     client = PacedRewriteClient(compression_config(config), run/relative, tokenizer, workers, worker)
     try:
         for method in API_METHODS:
-            engine = LLMRewriteCompressor(client, tokenizer, method)
+            engine = LLMRewriteCompressor(client, tokenizer, method,max_trials=config.get(&#x27;rewrite_max_trials&#x27;,1))
             for index, context in enumerate(contexts, 1):
                 if stop.is_set():
                     return
@@ -363,7 +366,7 @@ if __name__ == &#x27;__main__&#x27;:
 <span class="line-number"> 34</span>     &quot;&quot;&quot;只覆盖生成器的模型、超时和尝试上限；不修改 reader 配置。&quot;&quot;&quot;
 <span class="line-number"> 35</span>     return {**config, &#x27;model&#x27;: config[&#x27;compression_model&#x27;],
 <span class="line-number"> 36</span>             &#x27;max_api_attempts&#x27;: config[&#x27;compression_max_api_attempts&#x27;],
-<span class="line-number"> 37</span>             &#x27;timeout_seconds&#x27;: config.get(&#x27;compression_timeout_seconds&#x27;, 600)}</code></pre></article><article id="function-1"><h3><code>prepare</code></h3><p><span lang="en">Read the old sample order, independently reload the pinned dataset, and record old file hashes. A new directory freezes code/config/runtime. Changing any of them requires a new run name.</span><span lang="zh">读取旧样本顺序，独立重载固定数据，并记录旧文件哈希。新目录冻结代码、配置和环境；改变其中任何一项需换运行名。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 45–62</p><pre data-code-sha256="685d6c2e724eb438ebe1bb59a05aa3b8d439b8e8ba15f75173ae211cdceb6a2d"><code><span class="line-number"> 45</span> def prepare(config):
+<span class="line-number"> 37</span>             &#x27;timeout_seconds&#x27;: config.get(&#x27;compression_timeout_seconds&#x27;, 600)}</code></pre></article><article id="function-1"><h3><code>prepare</code></h3><p><span lang="en">Read the old sample order, independently reload the pinned dataset, and record old file hashes. A new directory freezes code/config/runtime. Changing any of them requires a new run name.</span><span lang="zh">读取旧样本顺序，独立重载固定数据，并记录旧文件哈希。新目录冻结代码、配置和环境；改变其中任何一项需换运行名。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 45–62</p><pre data-code-sha256="30b4e3dc732d3a3bd3893aa9608446199414e04f7bb953cc0809abb5e64ffcf4"><code><span class="line-number"> 45</span> def prepare(config):
 <span class="line-number"> 46</span>     &quot;&quot;&quot;固定既有样本和源文件哈希；重新预测全部条件，避免混用旧日期的 forecasts。&quot;&quot;&quot;
 <span class="line-number"> 47</span>     from blackwell.data import load_dataset
 <span class="line-number"> 48</span>     from blackwell.compressors.runtime import configure_cache, runtime_identity, verify_assets
@@ -372,39 +375,41 @@ if __name__ == &#x27;__main__&#x27;:
 <span class="line-number"> 51</span>     verify_assets(LOCAL_METHODS)
 <span class="line-number"> 52</span>     require(config[&#x27;methods&#x27;] == METHODS, &#x27;Unexpected paired methods.&#x27;)
 <span class="line-number"> 53</span>     require(config[&#x27;retained_ratio&#x27;] == .5, &#x27;This protocol fixes 50% token cap.&#x27;)
-<span class="line-number"> 54</span>     source = ROOT / &#x27;runs&#x27; / config[&#x27;source_run&#x27;]
-<span class="line-number"> 55</span>     require(source.parent == ROOT / &#x27;runs&#x27; and source.name != config[&#x27;run_name&#x27;], &#x27;Unsafe source path.&#x27;)
-<span class="line-number"> 56</span>     old = read_json(source / &#x27;manifest.json&#x27;)
-<span class="line-number"> 57</span>     require(old[&#x27;status&#x27;] == &#x27;complete&#x27;, &#x27;Source run incomplete.&#x27;)
-<span class="line-number"> 58</span>     examples = read_json(source / &#x27;examples.json&#x27;)
-<span class="line-number"> 59</span>     reloaded, provenance = load_dataset(old[&#x27;identity&#x27;][&#x27;config&#x27;], offline=True)
-<span class="line-number"> 60</span>     require(examples == reloaded and fingerprint(examples) == old[&#x27;identity&#x27;][&#x27;examples_sha256&#x27;], &#x27;Source samples changed.&#x27;)
-<span class="line-number"> 61</span>     require(config[&#x27;sample_size&#x27;] &lt;= len(examples), &#x27;Cannot expand the frozen source population.&#x27;)
-<span class="line-number"> 62</span>     examples = examples[:config[&#x27;sample_size&#x27;]]</code></pre><p class="muted">tools/run_aligned_suite.py · 63–80</p><pre data-code-sha256="3783d7205890a5876758a1113bd4ecad8365523b7943c82d505cdaf212d84f97"><code><span class="line-number"> 63</span>     snapshots = {p.name: file_hash(p) for p in source.iterdir() if p.is_file()}
-<span class="line-number"> 64</span>     code = code_provenance()
-<span class="line-number"> 65</span>     for path in [Path(__file__), *sorted((ROOT / &#x27;blackwell/compressors/prompts&#x27;).glob(&#x27;*&#x27;))]:
-<span class="line-number"> 66</span>         code[&#x27;files_sha256&#x27;][path.relative_to(ROOT).as_posix()] = file_hash(path)
-<span class="line-number"> 67</span>     runtime = runtime_identity(LOCAL_METHODS, config[&#x27;compression_device&#x27;])
-<span class="line-number"> 68</span>     runtime[&#x27;budget_policy&#x27;] = &#x27;length-only native-rate search &lt;=8 calls; prefer 95-100% cap band, else closest length (feasible wins ties); explicitly head-tail clamp selected overshoots&#x27;
-<span class="line-number"> 69</span>     identity = {&#x27;config&#x27;: config, &#x27;dataset&#x27;: provenance, &#x27;examples_sha256&#x27;: fingerprint(examples),
-<span class="line-number"> 70</span>                 &#x27;code&#x27;: code[&#x27;files_sha256&#x27;], &#x27;source_files_sha256&#x27;: snapshots,
-<span class="line-number"> 71</span>                 &#x27;local_compressors&#x27;: runtime,
-<span class="line-number"> 72</span>                 &#x27;length_alignment&#x27;: &#x27;Exact per-context token-count matching across six compressed conditions; common feasible length &lt;=50% original; full/no_context unchanged.&#x27;}
-<span class="line-number"> 73</span>     run = ROOT / &#x27;runs&#x27; / config[&#x27;run_name&#x27;]
-<span class="line-number"> 74</span>     if (run / &#x27;manifest.json&#x27;).exists():
-<span class="line-number"> 75</span>         manifest = read_json(run / &#x27;manifest.json&#x27;)
-<span class="line-number"> 76</span>         require(manifest[&#x27;identity&#x27;] == identity, &#x27;Code/config/data changed: choose a new run_name.&#x27;)
-<span class="line-number"> 77</span>         require(read_json(run / &#x27;examples.json&#x27;) == examples, &#x27;Saved examples changed.&#x27;)
-<span class="line-number"> 78</span>     else:
-<span class="line-number"> 79</span>         manifest = {&#x27;identity&#x27;: identity, &#x27;created_utc&#x27;: datetime.now(timezone.utc).isoformat(), &#x27;status&#x27;: &#x27;prepared&#x27;}
-<span class="line-number"> 80</span>         write_json(run / &#x27;manifest.json&#x27;, manifest)</code></pre><p class="muted">tools/run_aligned_suite.py · 81–82</p><pre data-code-sha256="c52f92b95cd07d339c10ed972aaaae2e353c9f4b237d8c3837851b9dac9bdb60"><code><span class="line-number"> 81</span>         write_json(run / &#x27;examples.json&#x27;, examples)
-<span class="line-number"> 82</span>     return run, ContextTokenizer(), examples, manifest</code></pre></article><article id="function-2"><h3><code>compression_request</code></h3><p><span lang="en">The cache identity deliberately excludes question, label, supporting facts and reader outputs. Equal contexts share a result even when asked different questions.</span><span lang="zh">缓存身份有意排除问题、标签、证据标注及 reader 输出。同一上下文面对不同问题时复用同一压缩结果。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>context</code></td><td><span lang="en">Only the original context string; not an example, query or answer.</span><span lang="zh">仅原始上下文字符串，不是包含问题答案的整个样本。</span></td></tr><tr><td><code>budget</code></td><td><span lang="en">Maximum number of Qwen tokens allowed in the compressed context.</span><span lang="zh">压缩上下文允许的 Qwen token 数上限。</span></td></tr><tr><td><code>method</code></td><td><span lang="en">The compressor name selecting a local algorithm or rewrite prompt.</span><span lang="zh">方法名，选择本地算法或改写提示词。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 85–91</p><pre data-code-sha256="367900320f5a612dc26faa3085b86c35c210233febbb965410516e56d466053c"><code><span class="line-number"> 85</span> def compression_request(context, budget, method, manifest):
-<span class="line-number"> 86</span>     &quot;&quot;&quot;压缩缓存键只含上下文、预算和固定协议；绝不传整个 example。&quot;&quot;&quot;
-<span class="line-number"> 87</span>     identity = manifest[&#x27;identity&#x27;]
-<span class="line-number"> 88</span>     return {&#x27;context&#x27;: context, &#x27;budget&#x27;: budget, &#x27;method&#x27;: method,
-<span class="line-number"> 89</span>             &#x27;protocol_sha256&#x27;: fingerprint({&#x27;code&#x27;: identity[&#x27;code&#x27;],
-<span class="line-number"> 90</span>                                            &#x27;runtime&#x27;: identity[&#x27;local_compressors&#x27;],
-<span class="line-number"> 91</span>                                            &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;]})}</code></pre></article></section><section id="budget"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>2 · Native budget search / 原生预算搜索</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;只根据实际 Qwen token 数选择压缩结果；不读取问题或答案。&quot;&quot;&quot;
+<span class="line-number"> 54</span>     require(config.get(&#x27;rewrite_max_trials&#x27;,1) in (1,2,3), &#x27;Use one to three rewrite drafts.&#x27;)
+<span class="line-number"> 55</span>     source = ROOT / &#x27;runs&#x27; / config[&#x27;source_run&#x27;]
+<span class="line-number"> 56</span>     require(source.parent == ROOT / &#x27;runs&#x27; and source.name != config[&#x27;run_name&#x27;], &#x27;Unsafe source path.&#x27;)
+<span class="line-number"> 57</span>     old = read_json(source / &#x27;manifest.json&#x27;)
+<span class="line-number"> 58</span>     require(old[&#x27;status&#x27;] == &#x27;complete&#x27;, &#x27;Source run incomplete.&#x27;)
+<span class="line-number"> 59</span>     examples = read_json(source / &#x27;examples.json&#x27;)
+<span class="line-number"> 60</span>     reloaded, provenance = load_dataset(old[&#x27;identity&#x27;][&#x27;config&#x27;], offline=True)
+<span class="line-number"> 61</span>     require(examples == reloaded and fingerprint(examples) == old[&#x27;identity&#x27;][&#x27;examples_sha256&#x27;], &#x27;Source samples changed.&#x27;)
+<span class="line-number"> 62</span>     require(config[&#x27;sample_size&#x27;] &lt;= len(examples), &#x27;Cannot expand the frozen source population.&#x27;)</code></pre><p class="muted">tools/run_aligned_suite.py · 63–80</p><pre data-code-sha256="1dfd0db40f0502647f290af4bdf2a01e4e07fabeb8ffd772dc66d2e6914fc7fc"><code><span class="line-number"> 63</span>     examples = examples[:config[&#x27;sample_size&#x27;]]
+<span class="line-number"> 64</span>     snapshots = {p.name: file_hash(p) for p in source.iterdir() if p.is_file()}
+<span class="line-number"> 65</span>     code = code_provenance()
+<span class="line-number"> 66</span>     for path in [Path(__file__), *sorted((ROOT / &#x27;blackwell/compressors/prompts&#x27;).glob(&#x27;*&#x27;))]:
+<span class="line-number"> 67</span>         code[&#x27;files_sha256&#x27;][path.relative_to(ROOT).as_posix()] = file_hash(path)
+<span class="line-number"> 68</span>     runtime = runtime_identity(LOCAL_METHODS, config[&#x27;compression_device&#x27;])
+<span class="line-number"> 69</span>     runtime[&#x27;budget_policy&#x27;] = &#x27;length-only native-rate search &lt;=8 calls; prefer 95-100% cap band, else closest length (feasible wins ties); explicitly head-tail clamp selected overshoots&#x27;
+<span class="line-number"> 70</span>     identity = {&#x27;config&#x27;: config, &#x27;dataset&#x27;: provenance, &#x27;examples_sha256&#x27;: fingerprint(examples),
+<span class="line-number"> 71</span>                 &#x27;code&#x27;: code[&#x27;files_sha256&#x27;], &#x27;source_files_sha256&#x27;: snapshots,
+<span class="line-number"> 72</span>                 &#x27;local_compressors&#x27;: runtime,
+<span class="line-number"> 73</span>                 &#x27;length_alignment&#x27;: &#x27;Exact per-context token-count matching across six compressed conditions; common feasible length &lt;=50% original; full/no_context unchanged.&#x27;}
+<span class="line-number"> 74</span>     run = ROOT / &#x27;runs&#x27; / config[&#x27;run_name&#x27;]
+<span class="line-number"> 75</span>     if (run / &#x27;manifest.json&#x27;).exists():
+<span class="line-number"> 76</span>         manifest = read_json(run / &#x27;manifest.json&#x27;)
+<span class="line-number"> 77</span>         require(manifest[&#x27;identity&#x27;] == identity, &#x27;Code/config/data changed: choose a new run_name.&#x27;)
+<span class="line-number"> 78</span>         require(read_json(run / &#x27;examples.json&#x27;) == examples, &#x27;Saved examples changed.&#x27;)
+<span class="line-number"> 79</span>     else:
+<span class="line-number"> 80</span>         manifest = {&#x27;identity&#x27;: identity, &#x27;created_utc&#x27;: datetime.now(timezone.utc).isoformat(), &#x27;status&#x27;: &#x27;prepared&#x27;}</code></pre><p class="muted">tools/run_aligned_suite.py · 81–83</p><pre data-code-sha256="911ef271e99443bb7051b6344b8c8352f452e287b867b577b8a870bcf5599347"><code><span class="line-number"> 81</span>         write_json(run / &#x27;manifest.json&#x27;, manifest)
+<span class="line-number"> 82</span>         write_json(run / &#x27;examples.json&#x27;, examples)
+<span class="line-number"> 83</span>     return run, ContextTokenizer(), examples, manifest</code></pre></article><article id="function-2"><h3><code>compression_request</code></h3><p><span lang="en">The cache identity deliberately excludes question, label, supporting facts and reader outputs. Equal contexts share a result even when asked different questions.</span><span lang="zh">缓存身份有意排除问题、标签、证据标注及 reader 输出。同一上下文面对不同问题时复用同一压缩结果。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>context</code></td><td><span lang="en">Only the original context string; not an example, query or answer.</span><span lang="zh">仅原始上下文字符串，不是包含问题答案的整个样本。</span></td></tr><tr><td><code>budget</code></td><td><span lang="en">Maximum number of Qwen tokens allowed in the compressed context.</span><span lang="zh">压缩上下文允许的 Qwen token 数上限。</span></td></tr><tr><td><code>method</code></td><td><span lang="en">The compressor name selecting a local algorithm or rewrite prompt.</span><span lang="zh">方法名，选择本地算法或改写提示词。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 86–93</p><pre data-code-sha256="c1556cacbadf2dc8ec447e8689940fd10b40de40f87c6d2a7d90e2f32603e296"><code><span class="line-number"> 86</span> def compression_request(context, budget, method, manifest):
+<span class="line-number"> 87</span>     &quot;&quot;&quot;压缩缓存键只含上下文、预算和固定协议；绝不传整个 example。&quot;&quot;&quot;
+<span class="line-number"> 88</span>     identity = manifest[&#x27;identity&#x27;]
+<span class="line-number"> 89</span>     return {&#x27;context&#x27;: context, &#x27;budget&#x27;: budget, &#x27;method&#x27;: method,
+<span class="line-number"> 90</span>             &#x27;protocol_sha256&#x27;: fingerprint({&#x27;code&#x27;: identity[&#x27;code&#x27;],
+<span class="line-number"> 91</span>                                            &#x27;runtime&#x27;: identity[&#x27;local_compressors&#x27;],
+<span class="line-number"> 92</span>                                            &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;],
+<span class="line-number"> 93</span>                                            &#x27;rewrite_max_trials&#x27;: identity[&#x27;config&#x27;].get(&#x27;rewrite_max_trials&#x27;,1)})}</code></pre></article></section><section id="budget"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>2 · Native budget search / 原生预算搜索</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;只根据实际 Qwen token 数选择压缩结果；不读取问题或答案。&quot;&quot;&quot;
 import math
 
 
@@ -729,6 +734,7 @@ def prepare(config):
     verify_assets(LOCAL_METHODS)
     require(config[&#x27;methods&#x27;] == METHODS, &#x27;Unexpected paired methods.&#x27;)
     require(config[&#x27;retained_ratio&#x27;] == .5, &#x27;This protocol fixes 50% token cap.&#x27;)
+    require(config.get(&#x27;rewrite_max_trials&#x27;,1) in (1,2,3), &#x27;Use one to three rewrite drafts.&#x27;)
     source = ROOT / &#x27;runs&#x27; / config[&#x27;source_run&#x27;]
     require(source.parent == ROOT / &#x27;runs&#x27; and source.name != config[&#x27;run_name&#x27;], &#x27;Unsafe source path.&#x27;)
     old = read_json(source / &#x27;manifest.json&#x27;)
@@ -766,7 +772,8 @@ def compression_request(context, budget, method, manifest):
     return {&#x27;context&#x27;: context, &#x27;budget&#x27;: budget, &#x27;method&#x27;: method,
             &#x27;protocol_sha256&#x27;: fingerprint({&#x27;code&#x27;: identity[&#x27;code&#x27;],
                                            &#x27;runtime&#x27;: identity[&#x27;local_compressors&#x27;],
-                                           &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;]})}
+                                           &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;],
+                                           &#x27;rewrite_max_trials&#x27;: identity[&#x27;config&#x27;].get(&#x27;rewrite_max_trials&#x27;,1)})}
 
 
 def read_compaction(run, request):
@@ -828,7 +835,7 @@ def rewrite_worker(config, run, tokenizer, contexts, manifest, worker, workers, 
     client = PacedRewriteClient(compression_config(config), run/relative, tokenizer, workers, worker)
     try:
         for method in API_METHODS:
-            engine = LLMRewriteCompressor(client, tokenizer, method)
+            engine = LLMRewriteCompressor(client, tokenizer, method,max_trials=config.get(&#x27;rewrite_max_trials&#x27;,1))
             for index, context in enumerate(contexts, 1):
                 if stop.is_set():
                     return
@@ -988,70 +995,70 @@ def main():
 
 
 if __name__ == &#x27;__main__&#x27;:
-    main()</pre></details><article id="function-10"><h3><code>read_compaction</code></h3><p><span lang="en">Verify both the request and the stored result digest before accepting a cache hit. Missing cache is explicit, never an alternative compressor.</span><span lang="zh">命中缓存前校验请求及结果指纹。缓存缺失明确返回，不擅自换压缩方法。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>request</code></td><td><span lang="en">Compression cache identity: context, budget, method and protocol hash.</span><span lang="zh">压缩缓存身份：原文、预算、方法及协议哈希。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 94–101</p><pre data-code-sha256="31c5fc8f00e9e3b338d8b6a814836c2a617a4688d49cd64c189522fcbb90c166"><code><span class="line-number"> 94</span> def read_compaction(run, request):
-<span class="line-number"> 95</span>     key = fingerprint(request)
-<span class="line-number"> 96</span>     path = run / &#x27;aligned_compression_cache&#x27; / f&#x27;{key}.json&#x27;
-<span class="line-number"> 97</span>     if not path.exists():
-<span class="line-number"> 98</span>         return None
-<span class="line-number"> 99</span>     entry = read_json(path)
-<span class="line-number">100</span>     require(entry[&#x27;request&#x27;] == request and entry[&#x27;sha256&#x27;] == fingerprint(entry[&#x27;result&#x27;]), &#x27;Compression cache corruption.&#x27;)
-<span class="line-number">101</span>     return {**entry[&#x27;result&#x27;], &#x27;local_compression_hash&#x27;: key}</code></pre></article><article id="function-11"><h3><code>save_compaction</code></h3><p><span lang="en">Save every candidate and its final selection atomically. Timing counts the complete length-search procedure.</span><span lang="zh">原子保存全部候选及最终选择；耗时统计完整长度搜索过程。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>request</code></td><td><span lang="en">Compression cache identity: context, budget, method and protocol hash.</span><span lang="zh">压缩缓存身份：原文、预算、方法及协议哈希。</span></td></tr><tr><td><code>result</code></td><td><span lang="en">A compression result including selected text and length diagnostics.</span><span lang="zh">压缩结果，含选定文本和长度诊断。</span></td></tr><tr><td><code>seconds</code></td><td><span lang="en">Measured time for all attempts for one unique context.</span><span lang="zh">单份独立上下文的全部尝试耗时。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 104–107</p><pre data-code-sha256="e1a08ec824f767a069e194ca0f801bdd1950379c771a02d436a21652ce26ae23"><code><span class="line-number">104</span> def save_compaction(run, request, result, seconds):
-<span class="line-number">105</span>     result = {**result, &#x27;compression_seconds&#x27;: seconds}
-<span class="line-number">106</span>     write_json(run / &#x27;aligned_compression_cache&#x27; / f&#x27;{fingerprint(request)}.json&#x27;,
-<span class="line-number">107</span>                {&#x27;request&#x27;: request, &#x27;result&#x27;: result, &#x27;sha256&#x27;: fingerprint(result)})</code></pre></article><article id="function-12"><h3><code>compress_stage</code></h3><p><span lang="en">Deduplicate identical contexts and process one method at a time to bound GPU memory. Local inference blocks network; API rewrites use a separate ledger. No evaluation question is read here.</span><span lang="zh">去重相同上下文，每次只装一个方法以控制显存。本地推理禁网；API 改写使用独立账本。此处不读取评测问题。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>examples</code></td><td><span lang="en">The frozen paired sample list; only context is passed to compression.</span><span lang="zh">冻结的配对样本列表；压缩阶段只取 context。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr><tr><td><code>api</code></td><td><span lang="en">False selects local GPU compressors; True selects API rewrites.</span><span lang="zh">False 运行本地 GPU 压缩器；True 运行 API 改写。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 110–127</p><pre data-code-sha256="ad8c1f6da5702abfae9aaf71dd4616fb990d082a31a7314b624801d965700145"><code><span class="line-number">110</span> def compress_stage(config, run, tokenizer, examples, manifest, api=False):
-<span class="line-number">111</span>     &quot;&quot;&quot;先按方法遍历，GPU 一次只装一个模型；相同原文只压缩一次。&quot;&quot;&quot;
-<span class="line-number">112</span>     contexts = list(dict.fromkeys(e[&#x27;context&#x27;] for e in examples))
-<span class="line-number">113</span>     if api:
-<span class="line-number">114</span>         workers = min(config.get(&#x27;compression_workers&#x27;, 1), len(contexts))
-<span class="line-number">115</span>         require(type(workers) is int and 1 &lt;= workers &lt;= 8, &#x27;Use 1–8 rewrite workers.&#x27;)
-<span class="line-number">116</span>         stop = threading.Event()
-<span class="line-number">117</span>         with ThreadPoolExecutor(max_workers=workers) as pool:
-<span class="line-number">118</span>             jobs = [pool.submit(rewrite_worker, config, run, tokenizer, contexts[w::workers], manifest, w, workers, stop)
-<span class="line-number">119</span>                     for w in range(workers)]
-<span class="line-number">120</span>             for job in jobs:
-<span class="line-number">121</span>                 job.result()
-<span class="line-number">122</span>         return
-<span class="line-number">123</span>     for method in LOCAL_METHODS:
-<span class="line-number">124</span>         engine = None
-<span class="line-number">125</span>         for index, context in enumerate(contexts, 1):
-<span class="line-number">126</span>             budget = max(1, math.floor(tokenizer.count(context)*config[&#x27;retained_ratio&#x27;]))
-<span class="line-number">127</span>             request = compression_request(context, budget, method, manifest)</code></pre><p class="muted">tools/run_aligned_suite.py · 128–143</p><pre data-code-sha256="2b02f489dec22e604e314a9f36ec2d2e25eede2a61bd0701e0990508dd5c4986"><code><span class="line-number">128</span>             if read_compaction(run, request) is not None:
-<span class="line-number">129</span>                 continue
-<span class="line-number">130</span>             if engine is None:
-<span class="line-number">131</span>                 # LLMLingua 的 seed_everything 会改环境字符串，但不会改变已启动进程的 hash seed。
-<span class="line-number">132</span>                 # 先核实进程从 seed=0 启动，再恢复字符串，供 SALT 的防误用检查读取。
-<span class="line-number">133</span>                 require(not sys.flags.hash_randomization, &#x27;Start with PYTHONHASHSEED=0.&#x27;)
-<span class="line-number">134</span>                 os.environ[&#x27;PYTHONHASHSEED&#x27;] = &#x27;0&#x27;
-<span class="line-number">135</span>                 engine = create_compressor(method, config[&#x27;compression_device&#x27;])
-<span class="line-number">136</span>             start = time.perf_counter()
-<span class="line-number">137</span>             result = align_local(engine, context, budget, tokenizer)
-<span class="line-number">138</span>             save_compaction(run, request, result, time.perf_counter()-start)
-<span class="line-number">139</span>             print(f&#x27;{method} [{index}/{len(contexts)}] {result[&quot;tokens&quot;]}/{budget} tokens; clip={result[&quot;post_clip_used&quot;]}&#x27;, flush=True)
-<span class="line-number">140</span>         del engine
-<span class="line-number">141</span>         gc.collect()
-<span class="line-number">142</span>         import torch
-<span class="line-number">143</span>         torch.cuda.empty_cache()</code></pre></article><article id="function-13"><h3><code>rewrite_worker</code></h3><p><span lang="en">Each worker processes a deterministic shard sequentially and owns a separate API cache and ledger. Only the standard-library thread pool is shared. Attempt caps sum to the configured total; API failures stop other workers before the next context.</span><span lang="zh">每个 worker 顺序处理确定分片，拥有独立 API 缓存和账本，仅使用标准库线程池。各尝试上限之和等于配置总额；API 失败会通知其他 worker 在下一份上下文前停止。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>contexts</code></td><td><span lang="en">Deduplicated context strings assigned to this worker; no queries or labels.</span><span lang="zh">分配给此 worker 的去重上下文字符串，不含问题和标签。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr><tr><td><code>worker</code></td><td><span lang="en">Zero-based worker index for deterministic context assignment and quota splitting.</span><span lang="zh">从 0 起的 worker 编号，用于确定性分配原文及额度。</span></td></tr><tr><td><code>workers</code></td><td><span lang="en">Number of independent rewrite workers; their attempt caps sum to the fixed total.</span><span lang="zh">独立改写 worker 数；各自上限之和等于固定总上限。</span></td></tr><tr><td><code>stop</code></td><td><span lang="en">Shared stop signal; after a failure, other workers stop before their next context.</span><span lang="zh">共享停止信号；发生错误后，其他 worker 在下个上下文前停止。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 146–163</p><pre data-code-sha256="4205a757052d6af031b323ff207f052910ea805f0b0e05e01e4655da916dc74b"><code><span class="line-number">146</span> def rewrite_worker(config, run, tokenizer, contexts, manifest, worker, workers, stop):
-<span class="line-number">147</span>     &quot;&quot;&quot;每个 worker 串行处理自己的原文分片；没有共享可写 API 账本。&quot;&quot;&quot;
-<span class="line-number">148</span>     from blackwell.rewrite_client import PacedRewriteClient
-<span class="line-number">149</span>     relative = f&#x27;compression_api/worker_{worker}&#x27;
-<span class="line-number">150</span>     client = PacedRewriteClient(compression_config(config), run/relative, tokenizer, workers, worker)
-<span class="line-number">151</span>     try:
-<span class="line-number">152</span>         for method in API_METHODS:
-<span class="line-number">153</span>             engine = LLMRewriteCompressor(client, tokenizer, method)
-<span class="line-number">154</span>             for index, context in enumerate(contexts, 1):
-<span class="line-number">155</span>                 if stop.is_set():
-<span class="line-number">156</span>                     return
-<span class="line-number">157</span>                 budget = max(1, math.floor(tokenizer.count(context)*config[&#x27;retained_ratio&#x27;]))
-<span class="line-number">158</span>                 request = compression_request(context, budget, method, manifest)
-<span class="line-number">159</span>                 if read_compaction(run, request) is not None:
-<span class="line-number">160</span>                     continue
-<span class="line-number">161</span>                 start = time.perf_counter()
-<span class="line-number">162</span>                 result = engine.compress(context, budget)
-<span class="line-number">163</span>                 result[&#x27;compression_api_subdir&#x27;] = relative</code></pre><p class="muted">tools/run_aligned_suite.py · 164–168</p><pre data-code-sha256="78158c1bfb347098c9861167f2c086cbc9409405cf70648a02281a18f5c10829"><code><span class="line-number">164</span>                 save_compaction(run, request, result, time.perf_counter()-start)
-<span class="line-number">165</span>                 print(f&#x27;{method} worker {worker} [{index}/{len(contexts)}]: {result[&quot;tokens&quot;]}/{budget}, clip={result[&quot;post_clip_used&quot;]}&#x27;, flush=True)
-<span class="line-number">166</span>     except Exception:
-<span class="line-number">167</span>         stop.set()
-<span class="line-number">168</span>         raise</code></pre></article></section><section id="match"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>5 · Match actual lengths / 统一实际长度</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;只根据实际 Qwen token 数选择压缩结果；不读取问题或答案。&quot;&quot;&quot;
+    main()</pre></details><article id="function-10"><h3><code>read_compaction</code></h3><p><span lang="en">Verify both the request and the stored result digest before accepting a cache hit. Missing cache is explicit, never an alternative compressor.</span><span lang="zh">命中缓存前校验请求及结果指纹。缓存缺失明确返回，不擅自换压缩方法。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>request</code></td><td><span lang="en">Compression cache identity: context, budget, method and protocol hash.</span><span lang="zh">压缩缓存身份：原文、预算、方法及协议哈希。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 96–103</p><pre data-code-sha256="31c5fc8f00e9e3b338d8b6a814836c2a617a4688d49cd64c189522fcbb90c166"><code><span class="line-number"> 96</span> def read_compaction(run, request):
+<span class="line-number"> 97</span>     key = fingerprint(request)
+<span class="line-number"> 98</span>     path = run / &#x27;aligned_compression_cache&#x27; / f&#x27;{key}.json&#x27;
+<span class="line-number"> 99</span>     if not path.exists():
+<span class="line-number">100</span>         return None
+<span class="line-number">101</span>     entry = read_json(path)
+<span class="line-number">102</span>     require(entry[&#x27;request&#x27;] == request and entry[&#x27;sha256&#x27;] == fingerprint(entry[&#x27;result&#x27;]), &#x27;Compression cache corruption.&#x27;)
+<span class="line-number">103</span>     return {**entry[&#x27;result&#x27;], &#x27;local_compression_hash&#x27;: key}</code></pre></article><article id="function-11"><h3><code>save_compaction</code></h3><p><span lang="en">Save every candidate and its final selection atomically. Timing counts the complete length-search procedure.</span><span lang="zh">原子保存全部候选及最终选择；耗时统计完整长度搜索过程。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>request</code></td><td><span lang="en">Compression cache identity: context, budget, method and protocol hash.</span><span lang="zh">压缩缓存身份：原文、预算、方法及协议哈希。</span></td></tr><tr><td><code>result</code></td><td><span lang="en">A compression result including selected text and length diagnostics.</span><span lang="zh">压缩结果，含选定文本和长度诊断。</span></td></tr><tr><td><code>seconds</code></td><td><span lang="en">Measured time for all attempts for one unique context.</span><span lang="zh">单份独立上下文的全部尝试耗时。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 106–109</p><pre data-code-sha256="e1a08ec824f767a069e194ca0f801bdd1950379c771a02d436a21652ce26ae23"><code><span class="line-number">106</span> def save_compaction(run, request, result, seconds):
+<span class="line-number">107</span>     result = {**result, &#x27;compression_seconds&#x27;: seconds}
+<span class="line-number">108</span>     write_json(run / &#x27;aligned_compression_cache&#x27; / f&#x27;{fingerprint(request)}.json&#x27;,
+<span class="line-number">109</span>                {&#x27;request&#x27;: request, &#x27;result&#x27;: result, &#x27;sha256&#x27;: fingerprint(result)})</code></pre></article><article id="function-12"><h3><code>compress_stage</code></h3><p><span lang="en">Deduplicate identical contexts and process one method at a time to bound GPU memory. Local inference blocks network; API rewrites use a separate ledger. No evaluation question is read here.</span><span lang="zh">去重相同上下文，每次只装一个方法以控制显存。本地推理禁网；API 改写使用独立账本。此处不读取评测问题。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>examples</code></td><td><span lang="en">The frozen paired sample list; only context is passed to compression.</span><span lang="zh">冻结的配对样本列表；压缩阶段只取 context。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr><tr><td><code>api</code></td><td><span lang="en">False selects local GPU compressors; True selects API rewrites.</span><span lang="zh">False 运行本地 GPU 压缩器；True 运行 API 改写。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 112–129</p><pre data-code-sha256="ad8c1f6da5702abfae9aaf71dd4616fb990d082a31a7314b624801d965700145"><code><span class="line-number">112</span> def compress_stage(config, run, tokenizer, examples, manifest, api=False):
+<span class="line-number">113</span>     &quot;&quot;&quot;先按方法遍历，GPU 一次只装一个模型；相同原文只压缩一次。&quot;&quot;&quot;
+<span class="line-number">114</span>     contexts = list(dict.fromkeys(e[&#x27;context&#x27;] for e in examples))
+<span class="line-number">115</span>     if api:
+<span class="line-number">116</span>         workers = min(config.get(&#x27;compression_workers&#x27;, 1), len(contexts))
+<span class="line-number">117</span>         require(type(workers) is int and 1 &lt;= workers &lt;= 8, &#x27;Use 1–8 rewrite workers.&#x27;)
+<span class="line-number">118</span>         stop = threading.Event()
+<span class="line-number">119</span>         with ThreadPoolExecutor(max_workers=workers) as pool:
+<span class="line-number">120</span>             jobs = [pool.submit(rewrite_worker, config, run, tokenizer, contexts[w::workers], manifest, w, workers, stop)
+<span class="line-number">121</span>                     for w in range(workers)]
+<span class="line-number">122</span>             for job in jobs:
+<span class="line-number">123</span>                 job.result()
+<span class="line-number">124</span>         return
+<span class="line-number">125</span>     for method in LOCAL_METHODS:
+<span class="line-number">126</span>         engine = None
+<span class="line-number">127</span>         for index, context in enumerate(contexts, 1):
+<span class="line-number">128</span>             budget = max(1, math.floor(tokenizer.count(context)*config[&#x27;retained_ratio&#x27;]))
+<span class="line-number">129</span>             request = compression_request(context, budget, method, manifest)</code></pre><p class="muted">tools/run_aligned_suite.py · 130–145</p><pre data-code-sha256="2b02f489dec22e604e314a9f36ec2d2e25eede2a61bd0701e0990508dd5c4986"><code><span class="line-number">130</span>             if read_compaction(run, request) is not None:
+<span class="line-number">131</span>                 continue
+<span class="line-number">132</span>             if engine is None:
+<span class="line-number">133</span>                 # LLMLingua 的 seed_everything 会改环境字符串，但不会改变已启动进程的 hash seed。
+<span class="line-number">134</span>                 # 先核实进程从 seed=0 启动，再恢复字符串，供 SALT 的防误用检查读取。
+<span class="line-number">135</span>                 require(not sys.flags.hash_randomization, &#x27;Start with PYTHONHASHSEED=0.&#x27;)
+<span class="line-number">136</span>                 os.environ[&#x27;PYTHONHASHSEED&#x27;] = &#x27;0&#x27;
+<span class="line-number">137</span>                 engine = create_compressor(method, config[&#x27;compression_device&#x27;])
+<span class="line-number">138</span>             start = time.perf_counter()
+<span class="line-number">139</span>             result = align_local(engine, context, budget, tokenizer)
+<span class="line-number">140</span>             save_compaction(run, request, result, time.perf_counter()-start)
+<span class="line-number">141</span>             print(f&#x27;{method} [{index}/{len(contexts)}] {result[&quot;tokens&quot;]}/{budget} tokens; clip={result[&quot;post_clip_used&quot;]}&#x27;, flush=True)
+<span class="line-number">142</span>         del engine
+<span class="line-number">143</span>         gc.collect()
+<span class="line-number">144</span>         import torch
+<span class="line-number">145</span>         torch.cuda.empty_cache()</code></pre></article><article id="function-13"><h3><code>rewrite_worker</code></h3><p><span lang="en">Each worker processes a deterministic shard sequentially and owns a separate API cache and ledger. Only the standard-library thread pool is shared. Attempt caps sum to the configured total; API failures stop other workers before the next context.</span><span lang="zh">每个 worker 顺序处理确定分片，拥有独立 API 缓存和账本，仅使用标准库线程池。各尝试上限之和等于配置总额；API 失败会通知其他 worker 在下一份上下文前停止。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>contexts</code></td><td><span lang="en">Deduplicated context strings assigned to this worker; no queries or labels.</span><span lang="zh">分配给此 worker 的去重上下文字符串，不含问题和标签。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr><tr><td><code>worker</code></td><td><span lang="en">Zero-based worker index for deterministic context assignment and quota splitting.</span><span lang="zh">从 0 起的 worker 编号，用于确定性分配原文及额度。</span></td></tr><tr><td><code>workers</code></td><td><span lang="en">Number of independent rewrite workers; their attempt caps sum to the fixed total.</span><span lang="zh">独立改写 worker 数；各自上限之和等于固定总上限。</span></td></tr><tr><td><code>stop</code></td><td><span lang="en">Shared stop signal; after a failure, other workers stop before their next context.</span><span lang="zh">共享停止信号；发生错误后，其他 worker 在下个上下文前停止。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 148–165</p><pre data-code-sha256="756e1d830dd4a2346acfefdff48d66036c4b6a8da30acfbe282ac364979a2ba9"><code><span class="line-number">148</span> def rewrite_worker(config, run, tokenizer, contexts, manifest, worker, workers, stop):
+<span class="line-number">149</span>     &quot;&quot;&quot;每个 worker 串行处理自己的原文分片；没有共享可写 API 账本。&quot;&quot;&quot;
+<span class="line-number">150</span>     from blackwell.rewrite_client import PacedRewriteClient
+<span class="line-number">151</span>     relative = f&#x27;compression_api/worker_{worker}&#x27;
+<span class="line-number">152</span>     client = PacedRewriteClient(compression_config(config), run/relative, tokenizer, workers, worker)
+<span class="line-number">153</span>     try:
+<span class="line-number">154</span>         for method in API_METHODS:
+<span class="line-number">155</span>             engine = LLMRewriteCompressor(client, tokenizer, method,max_trials=config.get(&#x27;rewrite_max_trials&#x27;,1))
+<span class="line-number">156</span>             for index, context in enumerate(contexts, 1):
+<span class="line-number">157</span>                 if stop.is_set():
+<span class="line-number">158</span>                     return
+<span class="line-number">159</span>                 budget = max(1, math.floor(tokenizer.count(context)*config[&#x27;retained_ratio&#x27;]))
+<span class="line-number">160</span>                 request = compression_request(context, budget, method, manifest)
+<span class="line-number">161</span>                 if read_compaction(run, request) is not None:
+<span class="line-number">162</span>                     continue
+<span class="line-number">163</span>                 start = time.perf_counter()
+<span class="line-number">164</span>                 result = engine.compress(context, budget)
+<span class="line-number">165</span>                 result[&#x27;compression_api_subdir&#x27;] = relative</code></pre><p class="muted">tools/run_aligned_suite.py · 166–170</p><pre data-code-sha256="78158c1bfb347098c9861167f2c086cbc9409405cf70648a02281a18f5c10829"><code><span class="line-number">166</span>                 save_compaction(run, request, result, time.perf_counter()-start)
+<span class="line-number">167</span>                 print(f&#x27;{method} worker {worker} [{index}/{len(contexts)}]: {result[&quot;tokens&quot;]}/{budget}, clip={result[&quot;post_clip_used&quot;]}&#x27;, flush=True)
+<span class="line-number">168</span>     except Exception:
+<span class="line-number">169</span>         stop.set()
+<span class="line-number">170</span>         raise</code></pre></article></section><section id="match"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>5 · Match actual lengths / 统一实际长度</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;只根据实际 Qwen token 数选择压缩结果；不读取问题或答案。&quot;&quot;&quot;
 import math
 
 
@@ -1198,6 +1205,7 @@ def prepare(config):
     verify_assets(LOCAL_METHODS)
     require(config[&#x27;methods&#x27;] == METHODS, &#x27;Unexpected paired methods.&#x27;)
     require(config[&#x27;retained_ratio&#x27;] == .5, &#x27;This protocol fixes 50% token cap.&#x27;)
+    require(config.get(&#x27;rewrite_max_trials&#x27;,1) in (1,2,3), &#x27;Use one to three rewrite drafts.&#x27;)
     source = ROOT / &#x27;runs&#x27; / config[&#x27;source_run&#x27;]
     require(source.parent == ROOT / &#x27;runs&#x27; and source.name != config[&#x27;run_name&#x27;], &#x27;Unsafe source path.&#x27;)
     old = read_json(source / &#x27;manifest.json&#x27;)
@@ -1235,7 +1243,8 @@ def compression_request(context, budget, method, manifest):
     return {&#x27;context&#x27;: context, &#x27;budget&#x27;: budget, &#x27;method&#x27;: method,
             &#x27;protocol_sha256&#x27;: fingerprint({&#x27;code&#x27;: identity[&#x27;code&#x27;],
                                            &#x27;runtime&#x27;: identity[&#x27;local_compressors&#x27;],
-                                           &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;]})}
+                                           &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;],
+                                           &#x27;rewrite_max_trials&#x27;: identity[&#x27;config&#x27;].get(&#x27;rewrite_max_trials&#x27;,1)})}
 
 
 def read_compaction(run, request):
@@ -1297,7 +1306,7 @@ def rewrite_worker(config, run, tokenizer, contexts, manifest, worker, workers, 
     client = PacedRewriteClient(compression_config(config), run/relative, tokenizer, workers, worker)
     try:
         for method in API_METHODS:
-            engine = LLMRewriteCompressor(client, tokenizer, method)
+            engine = LLMRewriteCompressor(client, tokenizer, method,max_trials=config.get(&#x27;rewrite_max_trials&#x27;,1))
             for index, context in enumerate(contexts, 1):
                 if stop.is_set():
                     return
@@ -1457,39 +1466,39 @@ def main():
 
 
 if __name__ == &#x27;__main__&#x27;:
-    main()</pre></details><article id="function-15"><h3><code>condition_text</code></h3><p><span lang="en">During prediction, read the already chosen compression from cache. Full, empty-context and head–tail are deterministic controls. No compression model is loaded here.</span><span lang="zh">预测时读取已选定的压缩缓存。原文、空上下文及首尾截断是确定性对照。此处不加载压缩模型。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>context</code></td><td><span lang="en">Only the original context string; not an example, query or answer.</span><span lang="zh">仅原始上下文字符串，不是包含问题答案的整个样本。</span></td></tr><tr><td><code>method</code></td><td><span lang="en">The compressor name selecting a local algorithm or rewrite prompt.</span><span lang="zh">方法名，选择本地算法或改写提示词。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 171–185</p><pre data-code-sha256="19e1b981676ce82fd4fd6a970873fee37812854c1e3736f4c2665c7b269df128"><code><span class="line-number">171</span> def condition_text(context, method, tokenizer, run, manifest):
-<span class="line-number">172</span>     &quot;&quot;&quot;预测阶段只读已完成的压缩结果，不再加载压缩模型或修改压缩文本。&quot;&quot;&quot;
-<span class="line-number">173</span>     original = tokenizer.count(context)
-<span class="line-number">174</span>     budget = max(1, math.floor(.5*original))
-<span class="line-number">175</span>     if method in LOCAL_METHODS or method in API_METHODS:
-<span class="line-number">176</span>         result = read_compaction(run, compression_request(context, budget, method, manifest))
-<span class="line-number">177</span>         require(result is not None, f&#x27;Missing compression: {method}&#x27;)
-<span class="line-number">178</span>         # 候选全文保存在压缩缓存，不在每道问题中重复复制。
-<span class="line-number">179</span>         return {k: v for k, v in result.items() if k != &#x27;candidates&#x27;}
-<span class="line-number">180</span>     text = context if method == &#x27;full&#x27; else &#x27;&#x27;
-<span class="line-number">181</span>     if method == &#x27;head_tail&#x27;:
-<span class="line-number">182</span>         text = tokenizer.head_tail(context, budget)
-<span class="line-number">183</span>         return select_candidate([{&#x27;text&#x27;: text, &#x27;tokens&#x27;: tokenizer.count(text)}], budget, tokenizer)
-<span class="line-number">184</span>     return {&#x27;text&#x27;: text, &#x27;tokens&#x27;: tokenizer.count(text), &#x27;budget_tokens&#x27;: None,
-<span class="line-number">185</span>             &#x27;budget_met&#x27;: None, &#x27;length_repair_used&#x27;: False, &#x27;compression_request_hashes&#x27;: []}</code></pre></article><article id="function-16"><h3><code>predict</code></h3><p><span lang="en">Only now attach the evaluation question. All methods receive the same question and reader settings. Strictly parse p_yes and persist paired completed rows; cached responses make interruption resumable.</span><span lang="zh">到这里才加入评测问题。所有方法使用相同问题和 reader 设置。严格解析 p_yes 并保存完整配对行；响应缓存支持中断续跑。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>examples</code></td><td><span lang="en">The frozen paired sample list; only context is passed to compression.</span><span lang="zh">冻结的配对样本列表；压缩阶段只取 context。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr><tr><td><code>offline</code></td><td><span lang="en">True forbids new API requests and requires complete response caches.</span><span lang="zh">True 禁止新增 API 请求，必须命中完整缓存。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 188–205</p><pre data-code-sha256="d0327afd5eb49f4ec9714b549e2033e53c2c07fb07bd39a85a99047965d49b47"><code><span class="line-number">188</span> def predict(config, run, tokenizer, examples, manifest, offline=False):
-<span class="line-number">189</span>     client = CachedChatClient(config, run, offline=offline)
-<span class="line-number">190</span>     rows = []
-<span class="line-number">191</span>     # 全部压缩完成后才访问 question / label；每题的所有条件配对。
-<span class="line-number">192</span>     for index, example in enumerate(examples, 1):
-<span class="line-number">193</span>         context = example[&#x27;context&#x27;]
-<span class="line-number">194</span>         original = tokenizer.count(context)
-<span class="line-number">195</span>         compacted = match_lengths({m: condition_text(context,m,tokenizer,run,manifest) for m in config[&#x27;methods&#x27;]},tokenizer)
-<span class="line-number">196</span>         conditions = {}
-<span class="line-number">197</span>         for method in config[&#x27;methods&#x27;]:
-<span class="line-number">198</span>             c = compacted[method]
-<span class="line-number">199</span>             raw, key = client.complete(prediction_messages(c[&#x27;text&#x27;], example[&#x27;question&#x27;]), config[&#x27;prediction_max_tokens&#x27;], json_mode=True)
-<span class="line-number">200</span>             probability = parse_probability(raw)
-<span class="line-number">201</span>             conditions[method] = {**c, &#x27;p_yes&#x27;: probability, &#x27;predicted_label&#x27;: int(probability &gt;= .5),
-<span class="line-number">202</span>                                   &#x27;prediction_request_hash&#x27;: key, &#x27;retained_ratio_actual&#x27;: c[&#x27;tokens&#x27;]/original}
-<span class="line-number">203</span>         rows.append({**example, &#x27;original_tokens&#x27;: original, &#x27;conditions&#x27;: conditions})
-<span class="line-number">204</span>         if not offline:
-<span class="line-number">205</span>             write_json(run / &#x27;predictions.json&#x27;, rows)</code></pre><p class="muted">tools/run_aligned_suite.py · 206–207</p><pre data-code-sha256="ef13faefb658635bd742346340450529924ea171c52e849f6850a2b9345166d5"><code><span class="line-number">206</span>             print(f&#x27;Predict [{index}/{len(examples)}] &#x27;+example[&#x27;id&#x27;], flush=True)
-<span class="line-number">207</span>     return rows</code></pre></article></section><section id="diagnose"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>7 · Diagnose / 诊断</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;预测概率与预算的描述性诊断；不拟合校准器，不改变原始 p_yes。&quot;&quot;&quot;
+    main()</pre></details><article id="function-15"><h3><code>condition_text</code></h3><p><span lang="en">During prediction, read the already chosen compression from cache. Full, empty-context and head–tail are deterministic controls. No compression model is loaded here.</span><span lang="zh">预测时读取已选定的压缩缓存。原文、空上下文及首尾截断是确定性对照。此处不加载压缩模型。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>context</code></td><td><span lang="en">Only the original context string; not an example, query or answer.</span><span lang="zh">仅原始上下文字符串，不是包含问题答案的整个样本。</span></td></tr><tr><td><code>method</code></td><td><span lang="en">The compressor name selecting a local algorithm or rewrite prompt.</span><span lang="zh">方法名，选择本地算法或改写提示词。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 173–187</p><pre data-code-sha256="19e1b981676ce82fd4fd6a970873fee37812854c1e3736f4c2665c7b269df128"><code><span class="line-number">173</span> def condition_text(context, method, tokenizer, run, manifest):
+<span class="line-number">174</span>     &quot;&quot;&quot;预测阶段只读已完成的压缩结果，不再加载压缩模型或修改压缩文本。&quot;&quot;&quot;
+<span class="line-number">175</span>     original = tokenizer.count(context)
+<span class="line-number">176</span>     budget = max(1, math.floor(.5*original))
+<span class="line-number">177</span>     if method in LOCAL_METHODS or method in API_METHODS:
+<span class="line-number">178</span>         result = read_compaction(run, compression_request(context, budget, method, manifest))
+<span class="line-number">179</span>         require(result is not None, f&#x27;Missing compression: {method}&#x27;)
+<span class="line-number">180</span>         # 候选全文保存在压缩缓存，不在每道问题中重复复制。
+<span class="line-number">181</span>         return {k: v for k, v in result.items() if k != &#x27;candidates&#x27;}
+<span class="line-number">182</span>     text = context if method == &#x27;full&#x27; else &#x27;&#x27;
+<span class="line-number">183</span>     if method == &#x27;head_tail&#x27;:
+<span class="line-number">184</span>         text = tokenizer.head_tail(context, budget)
+<span class="line-number">185</span>         return select_candidate([{&#x27;text&#x27;: text, &#x27;tokens&#x27;: tokenizer.count(text)}], budget, tokenizer)
+<span class="line-number">186</span>     return {&#x27;text&#x27;: text, &#x27;tokens&#x27;: tokenizer.count(text), &#x27;budget_tokens&#x27;: None,
+<span class="line-number">187</span>             &#x27;budget_met&#x27;: None, &#x27;length_repair_used&#x27;: False, &#x27;compression_request_hashes&#x27;: []}</code></pre></article><article id="function-16"><h3><code>predict</code></h3><p><span lang="en">Only now attach the evaluation question. All methods receive the same question and reader settings. Strictly parse p_yes and persist paired completed rows; cached responses make interruption resumable.</span><span lang="zh">到这里才加入评测问题。所有方法使用相同问题和 reader 设置。严格解析 p_yes 并保存完整配对行；响应缓存支持中断续跑。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>examples</code></td><td><span lang="en">The frozen paired sample list; only context is passed to compression.</span><span lang="zh">冻结的配对样本列表；压缩阶段只取 context。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr><tr><td><code>offline</code></td><td><span lang="en">True forbids new API requests and requires complete response caches.</span><span lang="zh">True 禁止新增 API 请求，必须命中完整缓存。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 190–207</p><pre data-code-sha256="d0327afd5eb49f4ec9714b549e2033e53c2c07fb07bd39a85a99047965d49b47"><code><span class="line-number">190</span> def predict(config, run, tokenizer, examples, manifest, offline=False):
+<span class="line-number">191</span>     client = CachedChatClient(config, run, offline=offline)
+<span class="line-number">192</span>     rows = []
+<span class="line-number">193</span>     # 全部压缩完成后才访问 question / label；每题的所有条件配对。
+<span class="line-number">194</span>     for index, example in enumerate(examples, 1):
+<span class="line-number">195</span>         context = example[&#x27;context&#x27;]
+<span class="line-number">196</span>         original = tokenizer.count(context)
+<span class="line-number">197</span>         compacted = match_lengths({m: condition_text(context,m,tokenizer,run,manifest) for m in config[&#x27;methods&#x27;]},tokenizer)
+<span class="line-number">198</span>         conditions = {}
+<span class="line-number">199</span>         for method in config[&#x27;methods&#x27;]:
+<span class="line-number">200</span>             c = compacted[method]
+<span class="line-number">201</span>             raw, key = client.complete(prediction_messages(c[&#x27;text&#x27;], example[&#x27;question&#x27;]), config[&#x27;prediction_max_tokens&#x27;], json_mode=True)
+<span class="line-number">202</span>             probability = parse_probability(raw)
+<span class="line-number">203</span>             conditions[method] = {**c, &#x27;p_yes&#x27;: probability, &#x27;predicted_label&#x27;: int(probability &gt;= .5),
+<span class="line-number">204</span>                                   &#x27;prediction_request_hash&#x27;: key, &#x27;retained_ratio_actual&#x27;: c[&#x27;tokens&#x27;]/original}
+<span class="line-number">205</span>         rows.append({**example, &#x27;original_tokens&#x27;: original, &#x27;conditions&#x27;: conditions})
+<span class="line-number">206</span>         if not offline:
+<span class="line-number">207</span>             write_json(run / &#x27;predictions.json&#x27;, rows)</code></pre><p class="muted">tools/run_aligned_suite.py · 208–209</p><pre data-code-sha256="ef13faefb658635bd742346340450529924ea171c52e849f6850a2b9345166d5"><code><span class="line-number">208</span>             print(f&#x27;Predict [{index}/{len(examples)}] &#x27;+example[&#x27;id&#x27;], flush=True)
+<span class="line-number">209</span>     return rows</code></pre></article></section><section id="diagnose"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>7 · Diagnose / 诊断</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;预测概率与预算的描述性诊断；不拟合校准器，不改变原始 p_yes。&quot;&quot;&quot;
 import math
 
 from .metrics import forecast_scores
@@ -1616,6 +1625,7 @@ def prepare(config):
     verify_assets(LOCAL_METHODS)
     require(config[&#x27;methods&#x27;] == METHODS, &#x27;Unexpected paired methods.&#x27;)
     require(config[&#x27;retained_ratio&#x27;] == .5, &#x27;This protocol fixes 50% token cap.&#x27;)
+    require(config.get(&#x27;rewrite_max_trials&#x27;,1) in (1,2,3), &#x27;Use one to three rewrite drafts.&#x27;)
     source = ROOT / &#x27;runs&#x27; / config[&#x27;source_run&#x27;]
     require(source.parent == ROOT / &#x27;runs&#x27; and source.name != config[&#x27;run_name&#x27;], &#x27;Unsafe source path.&#x27;)
     old = read_json(source / &#x27;manifest.json&#x27;)
@@ -1653,7 +1663,8 @@ def compression_request(context, budget, method, manifest):
     return {&#x27;context&#x27;: context, &#x27;budget&#x27;: budget, &#x27;method&#x27;: method,
             &#x27;protocol_sha256&#x27;: fingerprint({&#x27;code&#x27;: identity[&#x27;code&#x27;],
                                            &#x27;runtime&#x27;: identity[&#x27;local_compressors&#x27;],
-                                           &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;]})}
+                                           &#x27;model&#x27;: identity[&#x27;config&#x27;][&#x27;compression_model&#x27;],
+                                           &#x27;rewrite_max_trials&#x27;: identity[&#x27;config&#x27;].get(&#x27;rewrite_max_trials&#x27;,1)})}
 
 
 def read_compaction(run, request):
@@ -1715,7 +1726,7 @@ def rewrite_worker(config, run, tokenizer, contexts, manifest, worker, workers, 
     client = PacedRewriteClient(compression_config(config), run/relative, tokenizer, workers, worker)
     try:
         for method in API_METHODS:
-            engine = LLMRewriteCompressor(client, tokenizer, method)
+            engine = LLMRewriteCompressor(client, tokenizer, method,max_trials=config.get(&#x27;rewrite_max_trials&#x27;,1))
             for index, context in enumerate(contexts, 1):
                 if stop.is_set():
                     return
@@ -1877,97 +1888,97 @@ def main():
 if __name__ == &#x27;__main__&#x27;:
     main()</pre></details><article id="function-19"><h3><code>require</code></h3><p><span lang="en">A failed invariant stops the run with a readable error instead of silently weakening the protocol.</span><span lang="zh">必要条件失败就停止并给出可读错误，不悄悄放宽协议。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>condition</code></td><td><span lang="en">The Boolean invariant that must be true to continue.</span><span lang="zh">必须为真的布尔条件；否则停止运行。</span></td></tr><tr><td><code>message</code></td><td><span lang="en">The explanation raised when a required invariant fails.</span><span lang="zh">必要条件不成立时抛出的解释。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 40–42</p><pre data-code-sha256="570ace48effbcffbb325b4bdc4424b575500114187d28c59c86b8870081e9f76"><code><span class="line-number"> 40</span> def require(condition, message):
 <span class="line-number"> 41</span>     if not condition:
-<span class="line-number"> 42</span>         raise ValueError(message)</code></pre></article><article id="function-20"><h3><code>finish</code></h3><p><span lang="en">Reuse the existing exact InfoGap and bootstrap implementation, then add descriptive probability and budget diagnostics. No forecast is modified by these diagnostics.</span><span lang="zh">复用已有精确 InfoGap 及 bootstrap，再追加概率和预算诊断。诊断不修改任何预测概率。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>rows</code></td><td><span lang="en">Completed paired predictions, one row per question.</span><span lang="zh">完成的配对预测，每题一行。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 210–221</p><pre data-code-sha256="98cfc10e901c83c481d2fd2f95a15eead8dcf93943d9cc92f87e05d29417b3c4"><code><span class="line-number">210</span> def finish(config, run, rows, manifest):
-<span class="line-number">211</span>     metrics = write_outputs(run, rows, config)
-<span class="line-number">212</span>     labels = [row[&#x27;label&#x27;] for row in rows]
-<span class="line-number">213</span>     diagnostics = {}
-<span class="line-number">214</span>     for method in config[&#x27;methods&#x27;]:
-<span class="line-number">215</span>         conditions = [row[&#x27;conditions&#x27;][method] for row in rows]
-<span class="line-number">216</span>         diagnostics[method] = {&#x27;probability&#x27;: probability_diagnostics([c[&#x27;p_yes&#x27;] for c in conditions], labels),
-<span class="line-number">217</span>                                &#x27;retention&#x27;: retention_diagnostics(conditions)}
-<span class="line-number">218</span>     write_json(run / &#x27;diagnostics.json&#x27;, diagnostics)
-<span class="line-number">219</span>     manifest.update(status=&#x27;complete&#x27;, completed_utc=datetime.now(timezone.utc).isoformat())
-<span class="line-number">220</span>     write_json(run / &#x27;manifest.json&#x27;, manifest)
-<span class="line-number">221</span>     return metrics</code></pre></article><article id="function-21"><h3><code>audit</code></h3><p><span lang="en">Reconstruct complete API requests, check each saved candidate’s token count and length-only selection, verify old files stayed unchanged, independently check all 64 InfoGap cells, and replay forecasts with network blocked.</span><span lang="zh">重建完整 API 请求，核对候选长度和纯长度选择，确认旧文件不变，独立核验全部 64 个 InfoGap 单元格，并在断网下重放预测。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>examples</code></td><td><span lang="en">The frozen paired sample list; only context is passed to compression.</span><span lang="zh">冻结的配对样本列表；压缩阶段只取 context。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 224–241</p><pre data-code-sha256="f9c5ecd4be612f9ed535cde307a5a100566887d59d412e7a8064411149a6ac56"><code><span class="line-number">224</span> def audit(config, run, tokenizer, examples, manifest):
-<span class="line-number">225</span>     &quot;&quot;&quot;重新构造每条 API 请求，核验长度与 query 边界，并独立验证全部 InfoGap 单元格。&quot;&quot;&quot;
-<span class="line-number">226</span>     from tools.extend_with_salt import check_cached_prediction, check_matrix
-<span class="line-number">227</span>     rows = read_json(run / &#x27;predictions.json&#x27;)
-<span class="line-number">228</span>     require(len(rows) == len(examples), &#x27;Incomplete sample set.&#x27;)
-<span class="line-number">229</span>     source = ROOT / &#x27;runs&#x27; / config[&#x27;source_run&#x27;]
-<span class="line-number">230</span>     for name, digest in manifest[&#x27;identity&#x27;][&#x27;source_files_sha256&#x27;].items():
-<span class="line-number">231</span>         require(file_hash(source / name) == digest, &#x27;Old source file changed: &#x27;+name)
-<span class="line-number">232</span>     checked = set()
-<span class="line-number">233</span>     for row, example in zip(rows, examples):
-<span class="line-number">234</span>         require({k: row[k] for k in example} == example, &#x27;Sample pairing changed.&#x27;)
-<span class="line-number">235</span>         require(list(row[&#x27;conditions&#x27;]) == config[&#x27;methods&#x27;], &#x27;Condition mismatch.&#x27;)
-<span class="line-number">236</span>         matched = match_lengths({m:condition_text(row[&#x27;context&#x27;],m,tokenizer,run,manifest) for m in config[&#x27;methods&#x27;]},tokenizer)
-<span class="line-number">237</span>         require(len({c[&#x27;tokens&#x27;] for m,c in row[&#x27;conditions&#x27;].items() if m not in {&#x27;full&#x27;,&#x27;no_context&#x27;}}) == 1,
-<span class="line-number">238</span>                 &#x27;Compressed conditions must have exactly the same realized token count.&#x27;)
-<span class="line-number">239</span>         for method, condition in row[&#x27;conditions&#x27;].items():
-<span class="line-number">240</span>             require(tokenizer.count(condition[&#x27;text&#x27;]) == condition[&#x27;tokens&#x27;], &#x27;Token count mismatch.&#x27;)
-<span class="line-number">241</span>             check_cached_prediction(run, config, row, condition)</code></pre><p class="muted">tools/run_aligned_suite.py · 242–259</p><pre data-code-sha256="ddac63728c0d69eacc4145203723674c3f1f8570d71d6c8558df853a1084287e"><code><span class="line-number">242</span>             expected = matched[method]
-<span class="line-number">243</span>             require(all(condition[k] == v for k, v in expected.items()), &#x27;Condition differs from compression cache.&#x27;)
-<span class="line-number">244</span>             if method in {&#x27;full&#x27;, &#x27;no_context&#x27;, &#x27;head_tail&#x27;}:
-<span class="line-number">245</span>                 continue
-<span class="line-number">246</span>             request = compression_request(row[&#x27;context&#x27;], condition[&#x27;budget_tokens&#x27;], method, manifest)
-<span class="line-number">247</span>             cached = read_compaction(run, request)
-<span class="line-number">248</span>             key = fingerprint(request)
-<span class="line-number">249</span>             if key in checked:
-<span class="line-number">250</span>                 continue
-<span class="line-number">251</span>             checked.add(key)
-<span class="line-number">252</span>             candidates = cached[&#x27;candidates&#x27;]
-<span class="line-number">253</span>             require(all(tokenizer.count(c[&#x27;text&#x27;]) == c[&#x27;tokens&#x27;] for c in candidates), &#x27;Candidate length mismatch.&#x27;)
-<span class="line-number">254</span>             selection = select_candidate(candidates, condition[&#x27;budget_tokens&#x27;], tokenizer)
-<span class="line-number">255</span>             require(all(cached[k] == v for k, v in selection.items() if k != &#x27;compression_request_hashes&#x27;), &#x27;Length-only candidate selection mismatch.&#x27;)
-<span class="line-number">256</span>             if method in API_METHODS:
-<span class="line-number">257</span>                 previous, previous_tokens = None, None
-<span class="line-number">258</span>                 for candidate in candidates:
-<span class="line-number">259</span>                     messages = rewrite_messages(row[&#x27;context&#x27;], condition[&#x27;budget_tokens&#x27;], method, previous, previous_tokens)</code></pre><p class="muted">tools/run_aligned_suite.py · 260–277</p><pre data-code-sha256="798a4678f08ae4dfb7ede617555c1883744fd8a12bace2aec9f18c10feb21f83"><code><span class="line-number">260</span>                     raw, request_hash = CachedChatClient(compression_config(config), run / cached[&#x27;compression_api_subdir&#x27;], offline=True).complete(
-<span class="line-number">261</span>                         messages, max_tokens=min(32768, max(512, 2*condition[&#x27;budget_tokens&#x27;]+512)))
-<span class="line-number">262</span>                     require(raw == candidate[&#x27;text&#x27;] and request_hash == candidate[&#x27;request_hash&#x27;], &#x27;Rewrite request/response mismatch.&#x27;)
-<span class="line-number">263</span>                     previous, previous_tokens = raw, candidate[&#x27;tokens&#x27;]
-<span class="line-number">264</span>     check_matrix(rows, read_json(run / &#x27;metrics.json&#x27;), config[&#x27;methods&#x27;])
-<span class="line-number">265</span>     before = {name: file_hash(run / name) for name in (&#x27;predictions.json&#x27;, &#x27;metrics.json&#x27;, &#x27;api_attempts.json&#x27;)}
-<span class="line-number">266</span>     with patch.object(socket.socket, &#x27;connect&#x27;, side_effect=AssertionError(&#x27;Offline replay&#x27;)):
-<span class="line-number">267</span>         replayed = predict(config, run, tokenizer, examples, manifest, offline=True)
-<span class="line-number">268</span>     require(replayed == rows, &#x27;Offline predictions changed.&#x27;)
-<span class="line-number">269</span>     require(before == {name: file_hash(run / name) for name in before}, &#x27;Replay changed files.&#x27;)
-<span class="line-number">270</span>     result = {&#x27;status&#x27;: &#x27;passed&#x27;, &#x27;samples&#x27;: len(rows), &#x27;forecasts&#x27;: len(rows)*len(METHODS),
-<span class="line-number">271</span>               &#x27;compression_contexts_checked&#x27;: len(checked), &#x27;infogap_cells&#x27;: len(METHODS)**2,
-<span class="line-number">272</span>               &#x27;old_files_unchanged&#x27;: True, &#x27;offline_replay_identical&#x27;: True,
-<span class="line-number">273</span>               &#x27;exact_matched_lengths&#x27;: True,
-<span class="line-number">274</span>               &#x27;zero_common_budget_samples&#x27;: sum(r[&#x27;conditions&#x27;][&#x27;head_tail&#x27;][&#x27;matched_budget_tokens&#x27;] == 0 for r in rows),
-<span class="line-number">275</span>               &#x27;scope&#x27;: &#x27;Full request reconstruction; compression inputs contain context/length only; original forecasts unmodified.&#x27;}
-<span class="line-number">276</span>     write_json(run / &#x27;audit.json&#x27;, result)
-<span class="line-number">277</span>     print(result, flush=True)</code></pre></article><article id="function-22"><h3><code>main</code></h3><p><span lang="en">The command line chooses one stage or the full sequence. Preparation and local inference are network-blocked; only rewrite and reader stages use API access.</span><span lang="zh">命令行选择单一阶段或完整顺序。准备与本地推理禁止网络，只有改写及 reader 阶段使用 API。</span></p><p class="muted">tools/run_aligned_suite.py · 280–297</p><pre data-code-sha256="478b4b8db13c28dbc499c33de95f0815681e0c04a7034fd931555118e8d6ac43"><code><span class="line-number">280</span> def main():
-<span class="line-number">281</span>     parser = argparse.ArgumentParser(description=__doc__)
-<span class="line-number">282</span>     parser.add_argument(&#x27;--config&#x27;, required=True)
-<span class="line-number">283</span>     parser.add_argument(&#x27;--stage&#x27;, choices=[&#x27;prepare&#x27;, &#x27;local&#x27;, &#x27;rewrite&#x27;, &#x27;predict&#x27;, &#x27;audit&#x27;, &#x27;all&#x27;], default=&#x27;all&#x27;)
-<span class="line-number">284</span>     args = parser.parse_args()
-<span class="line-number">285</span>     config = load_config(ROOT / args.config)
-<span class="line-number">286</span>     with patch.object(socket.socket, &#x27;connect&#x27;, side_effect=AssertionError(&#x27;Preparation must be offline&#x27;)):
-<span class="line-number">287</span>         run, tokenizer, examples, manifest = prepare(config)
-<span class="line-number">288</span>     load_local_keys()
-<span class="line-number">289</span>     try:
-<span class="line-number">290</span>         if args.stage in {&#x27;all&#x27;, &#x27;local&#x27;}:
-<span class="line-number">291</span>             manifest[&#x27;status&#x27;] = &#x27;local_compression&#x27;
-<span class="line-number">292</span>             write_json(run / &#x27;manifest.json&#x27;, manifest)
-<span class="line-number">293</span>             with patch.object(socket.socket, &#x27;connect&#x27;, side_effect=AssertionError(&#x27;Local compression must be offline&#x27;)):
-<span class="line-number">294</span>                 compress_stage(config, run, tokenizer, examples, manifest)
-<span class="line-number">295</span>         if args.stage in {&#x27;all&#x27;, &#x27;rewrite&#x27;}:
-<span class="line-number">296</span>             manifest[&#x27;status&#x27;] = &#x27;api_compression&#x27;
-<span class="line-number">297</span>             write_json(run / &#x27;manifest.json&#x27;, manifest)</code></pre><p class="muted">tools/run_aligned_suite.py · 298–309</p><pre data-code-sha256="7ed6e0771d857e262634f914861fbd7f83158f04b4ba0edf5d8555c3b0e66a5d"><code><span class="line-number">298</span>             compress_stage(config, run, tokenizer, examples, manifest, api=True)
-<span class="line-number">299</span>         if args.stage in {&#x27;all&#x27;, &#x27;predict&#x27;}:
-<span class="line-number">300</span>             manifest[&#x27;status&#x27;] = &#x27;predicting&#x27;
-<span class="line-number">301</span>             write_json(run / &#x27;manifest.json&#x27;, manifest)
-<span class="line-number">302</span>             rows = predict(config, run, tokenizer, examples, manifest)
-<span class="line-number">303</span>             finish(config, run, rows, manifest)
-<span class="line-number">304</span>         if args.stage in {&#x27;all&#x27;, &#x27;audit&#x27;}:
-<span class="line-number">305</span>             audit(config, run, tokenizer, examples, manifest)
-<span class="line-number">306</span>     except Exception as error:
-<span class="line-number">307</span>         manifest.update(status=&#x27;failed&#x27;, error_type=type(error).__name__)
-<span class="line-number">308</span>         write_json(run / &#x27;manifest.json&#x27;, manifest)
-<span class="line-number">309</span>         raise</code></pre></article></section><section id="interface"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>8 · Existing interface / 原接口接入</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;统一压缩接口：公共输入只有上下文、预算和方法名。&quot;&quot;&quot;
+<span class="line-number"> 42</span>         raise ValueError(message)</code></pre></article><article id="function-20"><h3><code>finish</code></h3><p><span lang="en">Reuse the existing exact InfoGap and bootstrap implementation, then add descriptive probability and budget diagnostics. No forecast is modified by these diagnostics.</span><span lang="zh">复用已有精确 InfoGap 及 bootstrap，再追加概率和预算诊断。诊断不修改任何预测概率。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>rows</code></td><td><span lang="en">Completed paired predictions, one row per question.</span><span lang="zh">完成的配对预测，每题一行。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 212–223</p><pre data-code-sha256="98cfc10e901c83c481d2fd2f95a15eead8dcf93943d9cc92f87e05d29417b3c4"><code><span class="line-number">212</span> def finish(config, run, rows, manifest):
+<span class="line-number">213</span>     metrics = write_outputs(run, rows, config)
+<span class="line-number">214</span>     labels = [row[&#x27;label&#x27;] for row in rows]
+<span class="line-number">215</span>     diagnostics = {}
+<span class="line-number">216</span>     for method in config[&#x27;methods&#x27;]:
+<span class="line-number">217</span>         conditions = [row[&#x27;conditions&#x27;][method] for row in rows]
+<span class="line-number">218</span>         diagnostics[method] = {&#x27;probability&#x27;: probability_diagnostics([c[&#x27;p_yes&#x27;] for c in conditions], labels),
+<span class="line-number">219</span>                                &#x27;retention&#x27;: retention_diagnostics(conditions)}
+<span class="line-number">220</span>     write_json(run / &#x27;diagnostics.json&#x27;, diagnostics)
+<span class="line-number">221</span>     manifest.update(status=&#x27;complete&#x27;, completed_utc=datetime.now(timezone.utc).isoformat())
+<span class="line-number">222</span>     write_json(run / &#x27;manifest.json&#x27;, manifest)
+<span class="line-number">223</span>     return metrics</code></pre></article><article id="function-21"><h3><code>audit</code></h3><p><span lang="en">Reconstruct complete API requests, check each saved candidate’s token count and length-only selection, verify old files stayed unchanged, independently check all 64 InfoGap cells, and replay forecasts with network blocked.</span><span lang="zh">重建完整 API 请求，核对候选长度和纯长度选择，确认旧文件不变，独立核验全部 64 个 InfoGap 单元格，并在断网下重放预测。</span></p><div class="tablewrap"><table><thead><tr><th><span lang="en">Parameter</span><span lang="zh">参数</span></th><th><span lang="en">Purpose</span><span lang="zh">含义及作用</span></th></tr></thead><tbody><tr><td><code>config</code></td><td><span lang="en">The JSON configuration: model, dataset, methods, rate and API caps.</span><span lang="zh">JSON 配置：模型、数据集、方法、保留率及 API 上限。</span></td></tr><tr><td><code>run</code></td><td><span lang="en">The new run directory under runs/; old run directories are read-only.</span><span lang="zh">runs/ 下的新实验目录；旧运行目录只读。</span></td></tr><tr><td><code>tokenizer</code></td><td><span lang="en">The frozen Qwen tokenizer used to count and clamp text consistently.</span><span lang="zh">固定 Qwen tokenizer，统一计算长度及执行裁剪。</span></td></tr><tr><td><code>examples</code></td><td><span lang="en">The frozen paired sample list; only context is passed to compression.</span><span lang="zh">冻结的配对样本列表；压缩阶段只取 context。</span></td></tr><tr><td><code>manifest</code></td><td><span lang="en">The frozen identity: config, source sample hashes, code and runtime.</span><span lang="zh">冻结身份记录：配置、来源样本哈希、代码及运行环境。</span></td></tr></tbody></table></div><p class="muted">tools/run_aligned_suite.py · 226–243</p><pre data-code-sha256="f9c5ecd4be612f9ed535cde307a5a100566887d59d412e7a8064411149a6ac56"><code><span class="line-number">226</span> def audit(config, run, tokenizer, examples, manifest):
+<span class="line-number">227</span>     &quot;&quot;&quot;重新构造每条 API 请求，核验长度与 query 边界，并独立验证全部 InfoGap 单元格。&quot;&quot;&quot;
+<span class="line-number">228</span>     from tools.extend_with_salt import check_cached_prediction, check_matrix
+<span class="line-number">229</span>     rows = read_json(run / &#x27;predictions.json&#x27;)
+<span class="line-number">230</span>     require(len(rows) == len(examples), &#x27;Incomplete sample set.&#x27;)
+<span class="line-number">231</span>     source = ROOT / &#x27;runs&#x27; / config[&#x27;source_run&#x27;]
+<span class="line-number">232</span>     for name, digest in manifest[&#x27;identity&#x27;][&#x27;source_files_sha256&#x27;].items():
+<span class="line-number">233</span>         require(file_hash(source / name) == digest, &#x27;Old source file changed: &#x27;+name)
+<span class="line-number">234</span>     checked = set()
+<span class="line-number">235</span>     for row, example in zip(rows, examples):
+<span class="line-number">236</span>         require({k: row[k] for k in example} == example, &#x27;Sample pairing changed.&#x27;)
+<span class="line-number">237</span>         require(list(row[&#x27;conditions&#x27;]) == config[&#x27;methods&#x27;], &#x27;Condition mismatch.&#x27;)
+<span class="line-number">238</span>         matched = match_lengths({m:condition_text(row[&#x27;context&#x27;],m,tokenizer,run,manifest) for m in config[&#x27;methods&#x27;]},tokenizer)
+<span class="line-number">239</span>         require(len({c[&#x27;tokens&#x27;] for m,c in row[&#x27;conditions&#x27;].items() if m not in {&#x27;full&#x27;,&#x27;no_context&#x27;}}) == 1,
+<span class="line-number">240</span>                 &#x27;Compressed conditions must have exactly the same realized token count.&#x27;)
+<span class="line-number">241</span>         for method, condition in row[&#x27;conditions&#x27;].items():
+<span class="line-number">242</span>             require(tokenizer.count(condition[&#x27;text&#x27;]) == condition[&#x27;tokens&#x27;], &#x27;Token count mismatch.&#x27;)
+<span class="line-number">243</span>             check_cached_prediction(run, config, row, condition)</code></pre><p class="muted">tools/run_aligned_suite.py · 244–261</p><pre data-code-sha256="ddac63728c0d69eacc4145203723674c3f1f8570d71d6c8558df853a1084287e"><code><span class="line-number">244</span>             expected = matched[method]
+<span class="line-number">245</span>             require(all(condition[k] == v for k, v in expected.items()), &#x27;Condition differs from compression cache.&#x27;)
+<span class="line-number">246</span>             if method in {&#x27;full&#x27;, &#x27;no_context&#x27;, &#x27;head_tail&#x27;}:
+<span class="line-number">247</span>                 continue
+<span class="line-number">248</span>             request = compression_request(row[&#x27;context&#x27;], condition[&#x27;budget_tokens&#x27;], method, manifest)
+<span class="line-number">249</span>             cached = read_compaction(run, request)
+<span class="line-number">250</span>             key = fingerprint(request)
+<span class="line-number">251</span>             if key in checked:
+<span class="line-number">252</span>                 continue
+<span class="line-number">253</span>             checked.add(key)
+<span class="line-number">254</span>             candidates = cached[&#x27;candidates&#x27;]
+<span class="line-number">255</span>             require(all(tokenizer.count(c[&#x27;text&#x27;]) == c[&#x27;tokens&#x27;] for c in candidates), &#x27;Candidate length mismatch.&#x27;)
+<span class="line-number">256</span>             selection = select_candidate(candidates, condition[&#x27;budget_tokens&#x27;], tokenizer)
+<span class="line-number">257</span>             require(all(cached[k] == v for k, v in selection.items() if k != &#x27;compression_request_hashes&#x27;), &#x27;Length-only candidate selection mismatch.&#x27;)
+<span class="line-number">258</span>             if method in API_METHODS:
+<span class="line-number">259</span>                 previous, previous_tokens = None, None
+<span class="line-number">260</span>                 for candidate in candidates:
+<span class="line-number">261</span>                     messages = rewrite_messages(row[&#x27;context&#x27;], condition[&#x27;budget_tokens&#x27;], method, previous, previous_tokens)</code></pre><p class="muted">tools/run_aligned_suite.py · 262–279</p><pre data-code-sha256="798a4678f08ae4dfb7ede617555c1883744fd8a12bace2aec9f18c10feb21f83"><code><span class="line-number">262</span>                     raw, request_hash = CachedChatClient(compression_config(config), run / cached[&#x27;compression_api_subdir&#x27;], offline=True).complete(
+<span class="line-number">263</span>                         messages, max_tokens=min(32768, max(512, 2*condition[&#x27;budget_tokens&#x27;]+512)))
+<span class="line-number">264</span>                     require(raw == candidate[&#x27;text&#x27;] and request_hash == candidate[&#x27;request_hash&#x27;], &#x27;Rewrite request/response mismatch.&#x27;)
+<span class="line-number">265</span>                     previous, previous_tokens = raw, candidate[&#x27;tokens&#x27;]
+<span class="line-number">266</span>     check_matrix(rows, read_json(run / &#x27;metrics.json&#x27;), config[&#x27;methods&#x27;])
+<span class="line-number">267</span>     before = {name: file_hash(run / name) for name in (&#x27;predictions.json&#x27;, &#x27;metrics.json&#x27;, &#x27;api_attempts.json&#x27;)}
+<span class="line-number">268</span>     with patch.object(socket.socket, &#x27;connect&#x27;, side_effect=AssertionError(&#x27;Offline replay&#x27;)):
+<span class="line-number">269</span>         replayed = predict(config, run, tokenizer, examples, manifest, offline=True)
+<span class="line-number">270</span>     require(replayed == rows, &#x27;Offline predictions changed.&#x27;)
+<span class="line-number">271</span>     require(before == {name: file_hash(run / name) for name in before}, &#x27;Replay changed files.&#x27;)
+<span class="line-number">272</span>     result = {&#x27;status&#x27;: &#x27;passed&#x27;, &#x27;samples&#x27;: len(rows), &#x27;forecasts&#x27;: len(rows)*len(METHODS),
+<span class="line-number">273</span>               &#x27;compression_contexts_checked&#x27;: len(checked), &#x27;infogap_cells&#x27;: len(METHODS)**2,
+<span class="line-number">274</span>               &#x27;old_files_unchanged&#x27;: True, &#x27;offline_replay_identical&#x27;: True,
+<span class="line-number">275</span>               &#x27;exact_matched_lengths&#x27;: True,
+<span class="line-number">276</span>               &#x27;zero_common_budget_samples&#x27;: sum(r[&#x27;conditions&#x27;][&#x27;head_tail&#x27;][&#x27;matched_budget_tokens&#x27;] == 0 for r in rows),
+<span class="line-number">277</span>               &#x27;scope&#x27;: &#x27;Full request reconstruction; compression inputs contain context/length only; original forecasts unmodified.&#x27;}
+<span class="line-number">278</span>     write_json(run / &#x27;audit.json&#x27;, result)
+<span class="line-number">279</span>     print(result, flush=True)</code></pre></article><article id="function-22"><h3><code>main</code></h3><p><span lang="en">The command line chooses one stage or the full sequence. Preparation and local inference are network-blocked; only rewrite and reader stages use API access.</span><span lang="zh">命令行选择单一阶段或完整顺序。准备与本地推理禁止网络，只有改写及 reader 阶段使用 API。</span></p><p class="muted">tools/run_aligned_suite.py · 282–299</p><pre data-code-sha256="478b4b8db13c28dbc499c33de95f0815681e0c04a7034fd931555118e8d6ac43"><code><span class="line-number">282</span> def main():
+<span class="line-number">283</span>     parser = argparse.ArgumentParser(description=__doc__)
+<span class="line-number">284</span>     parser.add_argument(&#x27;--config&#x27;, required=True)
+<span class="line-number">285</span>     parser.add_argument(&#x27;--stage&#x27;, choices=[&#x27;prepare&#x27;, &#x27;local&#x27;, &#x27;rewrite&#x27;, &#x27;predict&#x27;, &#x27;audit&#x27;, &#x27;all&#x27;], default=&#x27;all&#x27;)
+<span class="line-number">286</span>     args = parser.parse_args()
+<span class="line-number">287</span>     config = load_config(ROOT / args.config)
+<span class="line-number">288</span>     with patch.object(socket.socket, &#x27;connect&#x27;, side_effect=AssertionError(&#x27;Preparation must be offline&#x27;)):
+<span class="line-number">289</span>         run, tokenizer, examples, manifest = prepare(config)
+<span class="line-number">290</span>     load_local_keys()
+<span class="line-number">291</span>     try:
+<span class="line-number">292</span>         if args.stage in {&#x27;all&#x27;, &#x27;local&#x27;}:
+<span class="line-number">293</span>             manifest[&#x27;status&#x27;] = &#x27;local_compression&#x27;
+<span class="line-number">294</span>             write_json(run / &#x27;manifest.json&#x27;, manifest)
+<span class="line-number">295</span>             with patch.object(socket.socket, &#x27;connect&#x27;, side_effect=AssertionError(&#x27;Local compression must be offline&#x27;)):
+<span class="line-number">296</span>                 compress_stage(config, run, tokenizer, examples, manifest)
+<span class="line-number">297</span>         if args.stage in {&#x27;all&#x27;, &#x27;rewrite&#x27;}:
+<span class="line-number">298</span>             manifest[&#x27;status&#x27;] = &#x27;api_compression&#x27;
+<span class="line-number">299</span>             write_json(run / &#x27;manifest.json&#x27;, manifest)</code></pre><p class="muted">tools/run_aligned_suite.py · 300–311</p><pre data-code-sha256="7ed6e0771d857e262634f914861fbd7f83158f04b4ba0edf5d8555c3b0e66a5d"><code><span class="line-number">300</span>             compress_stage(config, run, tokenizer, examples, manifest, api=True)
+<span class="line-number">301</span>         if args.stage in {&#x27;all&#x27;, &#x27;predict&#x27;}:
+<span class="line-number">302</span>             manifest[&#x27;status&#x27;] = &#x27;predicting&#x27;
+<span class="line-number">303</span>             write_json(run / &#x27;manifest.json&#x27;, manifest)
+<span class="line-number">304</span>             rows = predict(config, run, tokenizer, examples, manifest)
+<span class="line-number">305</span>             finish(config, run, rows, manifest)
+<span class="line-number">306</span>         if args.stage in {&#x27;all&#x27;, &#x27;audit&#x27;}:
+<span class="line-number">307</span>             audit(config, run, tokenizer, examples, manifest)
+<span class="line-number">308</span>     except Exception as error:
+<span class="line-number">309</span>         manifest.update(status=&#x27;failed&#x27;, error_type=type(error).__name__)
+<span class="line-number">310</span>         write_json(run / &#x27;manifest.json&#x27;, manifest)
+<span class="line-number">311</span>         raise</code></pre></article></section><section id="interface"><a href="#overview">↑ <span lang="en">Map</span><span lang="zh">总览</span></a><h2>8 · Existing interface / 原接口接入</h2><details><summary><span lang="en">Complete current file (imports and constants included)</span><span lang="zh">完整当前文件（含导入与常量）</span></summary><pre>&quot;&quot;&quot;统一压缩接口：公共输入只有上下文、预算和方法名。&quot;&quot;&quot;
 from .prompts import compression_messages
 from .compressors import LOCAL_METHODS
 

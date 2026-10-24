@@ -29,9 +29,10 @@
   "dataset": "longbench_yesno",
   "compression_device": "cuda",
   "source_run": "salt_summary_longbench_binary_20261023",
-  "compression_max_api_attempts": 416,
+  "compression_max_api_attempts": 156,
   "compression_model": "deepseek-ai/DeepSeek-V3.2",
   "compression_timeout_seconds": 600,
   "compression_workers": 6,
-  "compression_tokens_per_minute": 35000
+  "compression_tokens_per_minute": 35000,
+  "rewrite_max_trials": 1
 }

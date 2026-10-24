@@ -51,6 +51,7 @@ def prepare(config):
     verify_assets(LOCAL_METHODS)
     require(config['methods'] == METHODS, 'Unexpected paired methods.')
     require(config['retained_ratio'] == .5, 'This protocol fixes 50% token cap.')
+    require(config.get('rewrite_max_trials',1) in (1,2,3), 'Use one to three rewrite drafts.')
     source = ROOT / 'runs' / config['source_run']
     require(source.parent == ROOT / 'runs' and source.name != config['run_name'], 'Unsafe source path.')
     old = read_json(source / 'manifest.json')
@@ -88,7 +89,8 @@ def compression_request(context, budget, method, manifest):
     return {'context': context, 'budget': budget, 'method': method,
             'protocol_sha256': fingerprint({'code': identity['code'],
                                            'runtime': identity['local_compressors'],
-                                           'model': identity['config']['compression_model']})}
+                                           'model': identity['config']['compression_model'],
+                                           'rewrite_max_trials': identity['config'].get('rewrite_max_trials',1)})}
 
 
 def read_compaction(run, request):
@@ -150,7 +152,7 @@ def rewrite_worker(config, run, tokenizer, contexts, manifest, worker, workers, 
     client = PacedRewriteClient(compression_config(config), run/relative, tokenizer, workers, worker)
     try:
         for method in API_METHODS:
-            engine = LLMRewriteCompressor(client, tokenizer, method)
+            engine = LLMRewriteCompressor(client, tokenizer, method,max_trials=config.get('rewrite_max_trials',1))
             for index, context in enumerate(contexts, 1):
                 if stop.is_set():
                     return
