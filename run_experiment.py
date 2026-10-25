@@ -26,7 +26,7 @@ DEFAULT_METHODS = ("full", "no_context", "head_tail", "summary")
 
 def selected_methods(config):
     methods = config.get("methods", list(DEFAULT_METHODS))
-    allowed = set(DEFAULT_METHODS) | set(LOCAL_METHODS) | set(API_METHODS)
+    allowed = set(DEFAULT_METHODS) | set(LOCAL_METHODS) | set(API_METHODS) | {"dac"}
     if (not isinstance(methods, list) or len(methods) != len(set(methods))
             or not {"full", "no_context"}.issubset(methods) or set(methods) - allowed):
         raise ValueError("methods must be a unique list of supported names including full and no_context.")

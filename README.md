@@ -45,6 +45,43 @@ LongBench：从固定 SHA-256 的官方标准 v1 归档筛选所有参考答案�
 
 长度适配：仅对超过 GPT-2 1024-token 上限的 SC 长句进行保留全部字符的分段，再使用全文统一短语阈值；仅对 LLMLingua-2 原生分块重新分词后超过 511 正文 token 的块进行同类分段。正常输入保留原生分块。QASPER 的 233 篇论文中 4 篇需要适配，HotpotQA/LongBench 均不需要。适配规则、GPU 型号、CUDA/PyTorch 版本都写入运行清单。GPU 耗时经过同步，不把异步提交时间当成实际推理时间。
 
+## 100+100 题小报告：统一原始摘要第一稿（2026-10-25）
+
+- [老师版 HTML：中英文切换，默认英文](docs/Mini100_FirstDraft_20261025/Mini100_Report.html)
+- [老师版 PDF：三页英文报告](docs/Mini100_FirstDraft_20261025/Mini100_Report.pdf)
+- 逐题审计页在本机 `docs/Mini100_FirstDraft_20261025/Mini100_Audit.html`；它包含完整原文、模型输出和实际摘要请求，离线可用，不上传 Git。
+
+HotpotQA、QASPER 各 100 道二元题，共 1,200 条概率。条件是 Full、No context、Selective Context、LLMLingua-2、普通 LLM summary、DAC。Reader prompt、模型和生成参数未变。摘要统一使用同一原始 prompt 模板的首次完整生成，不修订、不截断、不按长度或答题效果挑稿；197 份独立摘要均已核验没有输出上限重试。
+
+**摘要的 50% 是提示词目标，不是强制上限。** HotpotQA 原始摘要总体保留 50.9%，51/100 题超目标，最高约 80%；QASPER 总体保留 14.6%，没有超目标。本地方法仍满足 50% 上限。结果必须结合实际长度解释，不能当作等长或共同硬上限排名。InfoGap 比较固定 reader 的决策表现，原始口头概率不等于已校准后验；双向正值不证明 Blackwell 支配。
+
+本轮新目录是 `runs/mini100_firstdraft_20261025_v5`，继承并完整保留合规摘要参考版本 `runs/mini100_cap50_20261025_v4`。仅替换摘要条件：其他五条件的 1,000 条预测完全不变，仅新增 51 次 HotpotQA reader 请求；不新增压缩调用。费用继承一次，未知用量保守预留，平台账单为最终依据。
+
+运行逻辑只有三步：
+
+```text
+prepare：验证来源审计 → 选原始第一稿 → 复制缓存与累计费用
+predict：保持五条件 → 对摘要查完全相同请求缓存 → 只补缺失概率
+ audit ：核验第一稿/真实响应/旧文件 → 重算双向 InfoGap → 离线重放
+```
+
+最新入口 `tools/extend_mini100_firstdraft.py` 是本轮缓存衔接脚本，依赖本机保留的 v4 来源结果；缓存不足时不会偷偷重新调用压缩模型。
+
+```powershell
+$env:PYTHONHASHSEED = "0"
+.\.venv\Scripts\python.exe tools/extend_mini100_firstdraft.py --stage prepare
+.\.venv\Scripts\python.exe tools/extend_mini100_firstdraft.py --stage predict
+.\.venv\Scripts\python.exe tools/extend_mini100_firstdraft.py --stage audit
+# 报告生成需要 reportlab；不调用模型。
+python tools/build_mini100_firstdraft_docs.py
+```
+
+阅读新代码时，先看 `select_original_first(candidates)`：唯一参数 `candidates` 是历史顺序的候选列表，函数只接受经过完整性核验的原始第零稿，即使它超出目标。再看 `prepare(config)`：`config` 指定数据、模型及费用设置；函数导入旧结果并冻结来源哈希。`predict(config, tokenizer, offline=False)` 中，`tokenizer` 负责一致的长度计数，`offline=True` 禁止网络并检查缓存重放。最后看 `audit(config, tokenizer, manifest)`：`manifest` 是来源哈希与冻结配置的记录，审计检查旧结果和其他条件未改动，并独立计算全部 72 个 InfoGap 单元格。
+
+DAC 模块位于 `blackwell/compressors/dac.py`。`DACCompressor(device='cuda', query_block=128, logit_block=64)` 的三个参数分别指定运算设备、一次处理的注意力查询行数、一次计算词表 logits 的位置数；两个分块参数只降低峰值内存，不截断原文或缩短注意力范围。`compress(context, retained_ratio=0.5)` 只接收原文和目标保留比例，不接收问题。固定官方版本和权重见 `configs/dac.lock.json`；`python tools/setup_dac.py --offline` 可检查本地文件，去掉 `--offline` 才会下载缺失的固定版本资产，均存于 D 盘仓库的 `data/`。
+
+早期 `run_mini100.py`、`_v2.py`、`_v3.py` 保留为长度修订流程记录；`run_mini100_cap.py` 对应严格上限参考版本。最新分析请从 `extend_mini100_firstdraft.py` 和本节报告开始。
+
 ## 预算对齐实验（2026-10-24）
 
 本轮保持原有三组题目，使用八个条件：`full`、`no_context`、`head_tail`、`selective_context`、`llmlingua2`、`salt_summary`、`llm_summary`、`telegrapher`。两个新增 API 压缩器共用 DeepSeek-V3.2，reader 仍是上面的 Qwen。普通摘要输出自然语言；Telegrapher 使用固定 commit 的官方 v5 语法提示词及随附许可。

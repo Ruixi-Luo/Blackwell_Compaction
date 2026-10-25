@@ -10,3 +10,6 @@ __pycache__/
 *.log
 .DS_Store
 
+
+# Local audit viewer embeds full dataset text and raw model outputs.
+docs/Mini100_*/Mini100_Audit.html
