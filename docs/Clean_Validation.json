@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "validated_utc": "2026-10-25T06:22:13.286456+00:00",
+  "source_run": "runs/mini100_firstdraft_20261025_v5",
+  "clean_run": "runs/clean_mini100_verified",
+  "datasets": {
+    "hotpotqa": {
+      "questions": 100,
+      "forecasts": 600,
+      "infogap_cells": 36,
+      "all_metrics_exact": true,
+      "source_texts_exact": true
+    },
+    "qasper": {
+      "questions": 100,
+      "forecasts": 600,
+      "infogap_cells": 36,
+      "all_metrics_exact": true,
+      "source_texts_exact": true
+    }
+  },
+  "offline_tests_passed": 97,
+  "new_api_attempts": 0,
+  "new_gpu_compressions": 0,
+  "old_result_files_unchanged": 3659,
+  "import_source_files_unchanged": 2209,
+  "historical_cost_inherited_once": true,
+  "clean_cli_smoke_with_simulated_models": "passed; no historical run dependency",
+  "guide": {
+    "functions": 99,
+    "blocks": 93,
+    "files": 24,
+    "source_hashes_verified": true
+  },
+  "html_qa": {
+    "status": "passed",
+    "guide_blocks": 93,
+    "anchors": "all valid",
+    "page_errors": [],
+    "heatmap_cells": 72,
+    "hotpotqa_summary_over": 51,
+    "qasper_summary_over": 0,
+    "text_exact": true
+  },
+  "limitation": "This is exact cached replay, not independent model regeneration. Fresh full workflow tested with simulated models; existing model adapters unchanged."
+}
